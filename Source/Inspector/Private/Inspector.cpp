@@ -6,6 +6,7 @@
 
 void FInspectorModule::StartupModule()
 {
+	throw std::runtime_error("not implemented");
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
@@ -16,5 +17,5 @@ void FInspectorModule::ShutdownModule()
 }
 
 #undef LOCTEXT_NAMESPACE
-	
+
 IMPLEMENT_MODULE(FInspectorModule, Inspector)
