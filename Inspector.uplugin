@@ -19,6 +19,16 @@
 			"Name": "Inspector",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "Details",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "Preview",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	]
 }
