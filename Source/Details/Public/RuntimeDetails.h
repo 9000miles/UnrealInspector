@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FDetialsModule : public IModuleInterface
+class FRuntimeDetailsModule : public IModuleInterface
 {
 public:
 	/** IModuleInterface implementation */

@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class Detials : ModuleRules
+public class RuntimeDetails : ModuleRules
 {
-    public Detials(ReadOnlyTargetRules Target) : base(Target)
+    public RuntimeDetails(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         //OptimizeCode = CodeOptimization.InShippingBuildsOnly;

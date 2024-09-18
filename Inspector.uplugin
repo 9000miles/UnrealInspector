@@ -21,7 +21,7 @@
 			"LoadingPhase": "Default"
 		},
 		{
-			"Name": "Details",
+			"Name": "RuntimeDetails",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},
