@@ -9,7 +9,7 @@ namespace Inspector
 		ObjectPtr(InObjectPtr)
 	{
 		ObjectInfo = MakeShared<FObjectInfo>(InObjectPtr);
-		UE_LOG(LogInspector, Log, TEXT("ObjectInfor: %s"), *ObjectInfo->ToString());
+		UE_LOG(LogInspector, Log, TEXT("ObjectInfo: %s"), *ObjectInfo->ToString());
 	}
 
 	FObjectHolder::~FObjectHolder()
