@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Inspector.h"
-#include "../ObjectListener.h"
+#include "ObjectListener.h"
 
 #define LOCTEXT_NAMESPACE "FInspectorModule"
 

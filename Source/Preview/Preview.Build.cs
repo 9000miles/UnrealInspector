@@ -7,7 +7,7 @@ public class Preview : ModuleRules
     public Preview(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        //OptimizeCode = CodeOptimization.InShippingBuildsOnly;
+        OptimizeCode = CodeOptimization.InShippingBuildsOnly;
 
         PublicIncludePaths.AddRange(
             new string[] {

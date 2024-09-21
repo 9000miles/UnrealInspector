@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
-#include "../ObjectListener.h"
+#include "ObjectListener.h"
 
 class FInspectorModule : public IModuleInterface
 {

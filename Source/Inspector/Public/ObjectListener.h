@@ -13,13 +13,11 @@ namespace Inspector
 	class FObjectListener : public FUObjectArray::FUObjectCreateListener, public FUObjectArray::FUObjectDeleteListener
 	{
 	public:
-		// Sets default values for this actor's properties
 		FObjectListener();
 		~FObjectListener();
 
 		void NotifyUObjectCreated(const class UObjectBase* Object, int32 Index) override;
 		void NotifyUObjectDeleted(const class UObjectBase* Object, int32 Index) override;
 		void OnUObjectArrayShutdown() override;
-
 	};
 }

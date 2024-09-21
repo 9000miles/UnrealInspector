@@ -7,7 +7,8 @@ public class Inspector : ModuleRules
 	public Inspector(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
+		OptimizeCode = CodeOptimization.InShippingBuildsOnly;
+
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
@@ -26,6 +27,7 @@ public class Inspector : ModuleRules
 			new string[]
 			{
 				"Core",
+                "Json",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

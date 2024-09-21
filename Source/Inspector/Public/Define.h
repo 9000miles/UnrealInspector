@@ -3,6 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Logging/LogMacros.h"
 
-
-DECLARE_LOG_CATEGORY_EXTERN(LogInspector, Display, All);
+INSPECTOR_API DECLARE_LOG_CATEGORY_EXTERN(LogInspector, Log, All);
