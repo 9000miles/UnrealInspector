@@ -21,6 +21,8 @@ namespace Inspector
 		inline FString GetClassPath() const { return ClassPath; }
 		inline FString GetObjectPath() const { return ObjectPath; }
 
+		bool IsInModule(const FString& Module);
+
 		FString ToString();
 		TSharedPtr<FJsonObject> ToJSON();
 		void FromJSON(TSharedPtr<FJsonObject> JsonObject);

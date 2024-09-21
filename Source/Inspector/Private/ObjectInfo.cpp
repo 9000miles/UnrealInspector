@@ -41,6 +41,11 @@ namespace Inspector
 		}
 	}
 
+	bool FObjectInfo::IsInModule(const FString& Module)
+	{
+		return ClassPath.StartsWith(Module);
+	}
+
 	FString FObjectInfo::ToString()
 	{
 		TSharedPtr<FJsonObject> Json = ToJSON();

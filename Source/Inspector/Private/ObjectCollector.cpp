@@ -108,4 +108,18 @@ namespace Inspector
 		return Result;
 	}
 
+	TArray<TWeakPtr<Inspector::FObjectHolder>> FObjectCollector::FindByModule(const FString& Module)
+	{
+		TArray<TWeakPtr<FObjectHolder>> Result;
+		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
+		{
+			TSharedPtr<FObjectHolder> Holder = It.Value();
+			if (Holder->GetObjectInfo()->IsInModule(Module))
+			{
+				Result.Add(Holder);
+			}
+		}
+		return Result;
+	}
+
 }
