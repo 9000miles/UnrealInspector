@@ -14,6 +14,13 @@ namespace Inspector
 		FObjectInfo(UObject* InObjectPtr);
 		~FObjectInfo();
 
+		inline FString GetName() const { return Name; }
+		inline int32 GetObjectIndex() const { return ObjectIndex; }
+		inline FString GetSuperClassName() const { return SuperClassName; }
+		inline FString GetClassName() const { return ClassName; }
+		inline FString GetClassPath() const { return ClassPath; }
+		inline FString GetObjectPath() const { return ObjectPath; }
+
 		FString ToString();
 		TSharedPtr<FJsonObject> ToJSON();
 		void FromJSON(TSharedPtr<FJsonObject> JsonObject);

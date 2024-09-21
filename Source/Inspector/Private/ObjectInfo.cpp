@@ -34,7 +34,11 @@ namespace Inspector
 
 	FObjectInfo::~FObjectInfo()
 	{
-
+		if (Outer.IsValid())
+		{
+			Outer.Reset();
+			Outer = nullptr;
+		}
 	}
 
 	FString FObjectInfo::ToString()

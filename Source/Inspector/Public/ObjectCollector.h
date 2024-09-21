@@ -22,6 +22,11 @@ namespace Inspector
 		TSharedPtr<FObjectHolder> GetObject(int32 Index);
 		int32 GetObjectCount();
 
+		TArray<TWeakPtr<FObjectHolder>> FindByName(const FString& Name);
+		TArray<TWeakPtr<FObjectHolder>> FindByClass(const FString& ClassName);
+		TArray<TWeakPtr<FObjectHolder>> FindBySuperClass(const FString& ClassName);
+		TArray<TWeakPtr<FObjectHolder>> FindByOuter(const FString& Outer);
+
 	private:
 		TMap<int32, TSharedPtr<FObjectHolder>> ObjectHolders;
 	};

@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-namespace Inspector { class FObjectInfo; }
+#include "ObjectInfo.h"
 
 namespace Inspector
 {
@@ -20,7 +19,7 @@ namespace Inspector
 		inline bool IsValid() const { return ObjectPtr.IsValid(); }
 		inline UObject* Get() const { return ObjectPtr.Get(); }
 		inline void Reset() { ObjectPtr.Reset(); }
-		inline const TSharedPtr<FObjectInfo>& GetObjectInfo() const { return ObjectInfo; }
+		inline TSharedRef<FObjectInfo> GetObjectInfo() { return ObjectInfo.ToSharedRef(); }
 
 	private:
 		TSharedPtr<FObjectInfo> ObjectInfo;

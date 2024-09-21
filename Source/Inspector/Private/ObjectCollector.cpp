@@ -3,6 +3,7 @@
 #include "Misc/LazySingleton.h"
 #include "ObjectHolder.h"
 #include "Define.h"
+#include "ObjectInfo.h"
 
 namespace Inspector
 {
@@ -50,4 +51,61 @@ namespace Inspector
 	{
 		return ObjectHolders.Num();
 	}
+
+	TArray<TWeakPtr<FObjectHolder>> FObjectCollector::FindByName(const FString& Name)
+	{
+		TArray<TWeakPtr<FObjectHolder>> Result;
+		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
+		{
+			TSharedPtr<FObjectHolder> Holder = It.Value();
+			if (Holder->GetObjectInfo()->GetName() == Name)
+			{
+				Result.Add(Holder);
+			}
+		}
+		return Result;
+	}
+
+	TArray<TWeakPtr<FObjectHolder>> FObjectCollector::FindByClass(const FString& ClassName)
+	{
+		TArray<TWeakPtr<FObjectHolder>> Result;
+		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
+		{
+			TSharedPtr<FObjectHolder> Holder = It.Value();
+			if (Holder->GetObjectInfo()->GetSuperClassName() == ClassName)
+			{
+				Result.Add(Holder);
+			}
+		}
+		return Result;
+	}
+
+	TArray<TWeakPtr<FObjectHolder>> FObjectCollector::FindBySuperClass(const FString& ClassName)
+	{
+		TArray<TWeakPtr<FObjectHolder>> Result;
+		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
+		{
+			TSharedPtr<FObjectHolder> Holder = It.Value();
+			if (Holder->GetObjectInfo()->GetClassName() == ClassName)
+			{
+				Result.Add(Holder);
+			}
+		}
+		return Result;
+	}
+
+	TArray<TWeakPtr<FObjectHolder>> FObjectCollector::FindByOuter(const FString& Outer)
+	{
+		TArray<TWeakPtr<FObjectHolder>> Result;
+		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
+		{
+			TSharedPtr<FObjectHolder> Holder = It.Value();
+			//if (Holder->GetObjectInfo()->GetName() == Name)
+			//{
+			//	Result.Add(Holder);
+			//}
+		}
+		return Result;
+	}
+
 }
