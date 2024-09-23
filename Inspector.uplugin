@@ -16,12 +16,17 @@
 	"Installed": false,
 	"Modules": [
 		{
+			"Name": "UObjectCollector",
+			"Type": "Runtime",
+			"LoadingPhase": "EarliestPossible"
+		},
+		{
 			"Name": "Inspector",
 			"Type": "Runtime",
 			"LoadingPhase": "EarliestPossible"
 		},
 		{
-			"Name": "RuntimeDetails",
+			"Name": "DetailsViewer",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		},

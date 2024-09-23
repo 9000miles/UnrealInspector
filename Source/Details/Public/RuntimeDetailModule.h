@@ -5,12 +5,11 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FInspectorModule : public IModuleInterface
+class DETAILSVIEWER_API FDetailsViewerModule : public IModuleInterface
 {
 public:
 
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
-
 };
