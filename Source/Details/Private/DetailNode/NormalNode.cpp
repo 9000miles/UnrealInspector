@@ -2,8 +2,8 @@
 
 
 #include "DetailNode/NormalNode.h"
-#include "DetailCreater/CreaterBool.h"
-#include "DetailCreater/CreaterString.h"
+#include "DetailCreater/BoolCreater.h"
+#include "DetailCreater/StringCreater.h"
 
 namespace DetailsViewer
 {

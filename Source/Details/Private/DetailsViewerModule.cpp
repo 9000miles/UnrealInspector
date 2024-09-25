@@ -5,8 +5,8 @@
 #include "DetailCore/DetailViewer.h"
 #include "DetailTest/DetailTestObject.h"
 #include "DetailCore/DetailFactory.h"
-#include "DetailCreater/CreaterBool.h"
-#include "DetailCreater/CreaterString.h"
+#include "DetailCreater/BoolCreater.h"
+#include "DetailCreater/StringCreater.h"
 #include "DetailCore/DetailInfo.h"
 
 #define LOCTEXT_NAMESPACE "FPropertyInspectorModule"

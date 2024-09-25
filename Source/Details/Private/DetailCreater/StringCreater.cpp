@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DetailCreater/CreaterString.h"
+#include "DetailCreater/StringCreater.h"
 #include "DetailWidget/SPropertyWidget.h"
 
 namespace DetailsViewer
