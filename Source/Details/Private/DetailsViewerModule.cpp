@@ -1,13 +1,13 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "DetailsViewerModule.h"
-#include "DetailCore/DetialManger.h"
-#include "DetailCore/DetailViewer.h"
-#include "DetailTest/DetailTestObject.h"
-#include "DetailCore/DetailFactory.h"
-#include "DetailCreater/BoolCreater.h"
-#include "DetailCreater/StringCreater.h"
-#include "DetailCore/DetailInfo.h"
+#include "Core/DetialManger.h"
+#include "Core/DetailViewer.h"
+#include "Test/DetailTestObject.h"
+#include "Core/DetailFactory.h"
+#include "Creater/BoolCreater.h"
+#include "Creater/StringCreater.h"
+#include "Core/DetailInfo.h"
 
 #define LOCTEXT_NAMESPACE "FPropertyInspectorModule"
 
