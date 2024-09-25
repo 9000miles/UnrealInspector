@@ -1,14 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DetailWidget/SPropertyWidgetString.h"
+#include "DetailCreater/CreaterString.h"
+#include "DetailWidget/SPropertyWidget.h"
 
 namespace DetailsViewer
 {
 
-	void SPropertyWidgetString::Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyProxy)
+	void SPropertyWidgetString::Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder)
 	{
-		SPropertyWidget::Construct(InPropertyProxy);
+		SPropertyWidget::Construct(InPropertyHolder);
 
 		const FText Value = GetPropertyValue();
 		const FText HintText = GetHintText();
@@ -39,14 +40,14 @@ namespace DetailsViewer
 
 	FText SPropertyWidgetString::GetHintText()
 	{
-		UE_Property* Property = PropertyProxy->GetProperty();
+		UE_Property* Property = PropertyHolder->GetProperty();
 		return Property->GetMetaDataText(TEXT("HintText"));
 	}
 
 	FText SPropertyWidgetString::GetPropertyValue() const
 	{
-		UE_Property* Property = PropertyProxy->GetProperty();
-		UObject* Object = PropertyProxy->GetOutermost();
+		UE_Property* Property = PropertyHolder->GetProperty();
+		UObject* Object = PropertyHolder->GetOutermost();
 		if (Property->GetCPPType() == TEXT("FString"))
 		{
 			FStrProperty* PropertyField = CastField<FStrProperty>(Property);
@@ -71,8 +72,8 @@ namespace DetailsViewer
 
 	void SPropertyWidgetString::SetPropertyValue(FText Text)
 	{
-		UE_Property* Property = PropertyProxy->GetProperty();
-		UObject* Object = PropertyProxy->GetOutermost();
+		UE_Property* Property = PropertyHolder->GetProperty();
+		UObject* Object = PropertyHolder->GetOutermost();
 		if (Property->GetCPPType() == TEXT("FString"))
 		{
 			FStrProperty* PropertyField = CastField<FStrProperty>(Property);
@@ -90,6 +91,25 @@ namespace DetailsViewer
 			FTextProperty* PropertyField = CastField<FTextProperty>(Property);
 			PropertyField->SetPropertyValue_InContainer(Object, Text);
 		}
+	}
+
+	FWidgetCreaterString::FWidgetCreaterString()
+	{
+	}
+
+	TSharedPtr<SWidget> FWidgetCreaterString::MakeWidget()
+	{
+		return SNew(SPropertyWidgetString, PropertyHolder);
+	}
+
+	TArray<FString> FWidgetCreaterString::SupportTypes()
+	{
+		return { TEXT("FString") ,TEXT("string"), TEXT("FName"), TEXT("FText") };
+	}
+
+	FString FWidgetCreaterString::GetTypeName()
+	{
+		return FWidgetCreaterString::TypeName();
 	}
 
 }

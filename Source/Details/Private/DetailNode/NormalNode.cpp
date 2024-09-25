@@ -2,6 +2,8 @@
 
 
 #include "DetailNode/NormalNode.h"
+#include "DetailCreater/CreaterBool.h"
+#include "DetailCreater/CreaterString.h"
 
 namespace DetailsViewer
 {
@@ -14,5 +16,27 @@ namespace DetailsViewer
 	FNormalNode::~FNormalNode()
 	{
 	}
+
+
+	TSharedPtr<SWidget> FNormalNode::GetWidget()
+	{
+		if (PropertyHolder->IsA(FBoolProperty::StaticClass()))
+			return MakeWidget<FWidgetCreaterBool>(PropertyHolder);
+		//else if (PropertyHolder->IsA(FIntProperty::StaticClass()))
+		//	return FWidgetCreaterInt::CreateWidget(PropertyHolder);
+		//else if (PropertyHolder->IsA(FInt64Property::StaticClass()))
+		//	return FWidgetCreaterInt64::CreateWidget(PropertyHolder);
+		//else if (PropertyHolder->IsA(FFloatProperty::StaticClass()))
+		//	return FWidgetCreaterFloat::CreateWidget(PropertyHolder);
+		//else if (PropertyHolder->IsA(FDoubleProperty::StaticClass()))
+		//	return FWidgetCreaterDouble::CreateWidget(PropertyHolder);
+		else if (PropertyHolder->IsA(FStrProperty::StaticClass())
+			|| PropertyHolder->IsA(FNameProperty::StaticClass()))
+			return MakeWidget<FWidgetCreaterString>(PropertyHolder);
+
+
+		return FDetailTreeNode::GetWidget();
+	}
+
 
 }

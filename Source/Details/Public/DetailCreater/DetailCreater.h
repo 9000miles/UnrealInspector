@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "DetailWidget/SPropertyWidget.h"
 #include "DetailCore/PropertyHolder.h"
+#include "DetailCore/DetailInfo.h"
 
 namespace DetailsViewer
 {
@@ -13,10 +14,11 @@ namespace DetailsViewer
 	 * 细节面板创建器
 	 *	整个面板创建
 	 */
-	class IDetailWidgetCreater
+	class IDetailWidgetCreater :public ITypeName
 	{
 	public:
-		virtual TSharedPtr<SWidget> CreateWidget() = 0;
+		virtual ~IDetailWidgetCreater() {}
+		virtual TSharedPtr<SWidget> MakeWidget() = 0;
 		virtual TArray<FString> SupportTypes() = 0;
 	};
 
@@ -26,10 +28,11 @@ namespace DetailsViewer
 	class FRowWidgetCreater :public IDetailWidgetCreater
 	{
 	public:
+		virtual ~FRowWidgetCreater() {}
 		virtual TSharedPtr<SWidget> CreateRowWidget(TSharedPtr<FPropertyHolder> PropertyHolder);
 
 	private:
-		TSharedPtr<SWidget> CreateWidget() override;
+		TSharedPtr<SWidget> MakeWidget() override;
 		TArray<FString> SupportTypes() override;
 
 	};
@@ -39,16 +42,19 @@ namespace DetailsViewer
 	 */
 	class FPropertyWidgetCreater :public FRowWidgetCreater
 	{
+		friend class FNormalNode;
 	public:
-		TSharedPtr<SWidget> CreateRowWidget(TSharedPtr<FPropertyHolder> PropertyHolder) override;
+		virtual ~FPropertyWidgetCreater() {}
+	public:
 		virtual TArray<FString> SupportTypes() override;
 		virtual bool IsShowReset();
 		virtual bool OverrideRowWidget();
 
 
 	private:
-		TSharedPtr<SWidget> CreateWidget() override;
-
+		TSharedPtr<SWidget> MakeWidget() override;
+	protected:
+		TSharedPtr<FPropertyHolder> PropertyHolder;
 	};
 
 }

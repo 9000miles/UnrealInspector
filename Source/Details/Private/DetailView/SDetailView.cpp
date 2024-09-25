@@ -11,6 +11,11 @@
 #include "DetailCore/SWidgetHandle.h"
 #include "HAL/UnrealMemory.h"
 #include "DetailCore/DetailFactory.h"
+#include "DetailNode/MapNode.h"
+#include "DetailNode/ArrayNode.h"
+#include "DetailNode/SetNode.h"
+#include "DetailNode/StructNode.h"
+#include "DetailNode/NormalNode.h"
 
 namespace DetailsViewer
 {
@@ -86,7 +91,7 @@ namespace DetailsViewer
 	{
 		TSharedPtr<SWidget> RowWidget;
 
-		if (Node)
+		if (Node->GetNodeType() == EDetailNodeType::Category)
 		{
 			RowWidget = SNew(SDetailCategoryHeader);
 		}
@@ -172,8 +177,16 @@ namespace DetailsViewer
 
 	TSharedPtr<FDetailTreeNode> SDetailView::GenerateNode(UObject* Object, UE_Property* Property)
 	{
-		TSharedPtr<FDetailTreeNode> Node = MakeShareable(new FDetailTreeNode(EDetailNodeType::NormalProperty, Object, Property));
-		return Node;
+		if (Property->IsA(FArrayProperty::StaticClass()))
+			return MakeShareable(new FArrayNode(Object, Property));
+		else if (Property->IsA(FMapProperty::StaticClass()))
+			return MakeShareable(new FMapNode(Object, Property));
+		else if (Property->IsA(FSetProperty::StaticClass()))
+			return MakeShareable(new FSetNode(Object, Property));
+		else if (Property->IsA(FStructProperty::StaticClass()))
+			return MakeShareable(new FStructNode(Object, Property));
+
+		return MakeShareable(new FNormalNode(Object, Property));
 	}
 
 	void SDetailView::OnSplitterSlotResized(int32 Index, float Size)

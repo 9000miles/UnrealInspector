@@ -11,7 +11,7 @@ namespace DetailsViewer
 	static float SplitterSlotSize = 0.f;
 
 	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
-		void SDetailPropertyWidget::Construct(const FArguments& InArgs, TSharedPtr<FDetailTreeNode> DetailNode, bool bOverrideRowWidget, TSharedPtr<SWidget> Widget)
+		void SDetailPropertyWidget::Construct(const FArguments& InArgs, TSharedPtr<FDetailTreeNode> DetailNode, bool bOverrideRowWidget, TSharedPtr<SWidget> InWidget)
 	{
 		SDetailTreeItem::Construct(DetailNode);
 
@@ -25,7 +25,7 @@ namespace DetailsViewer
 		TSharedPtr<SBox> Box = SNew(SBox)
 			;
 
-		TSharedPtr<SWidget> CustomDetailRowWidget = Widget;
+		TSharedPtr<SWidget> CustomDetailRowWidget = InWidget;
 		if (CustomDetailRowWidget.IsValid() && bOverrideRowWidget)
 		{
 			Box->SetContent(CustomDetailRowWidget.ToSharedRef());
@@ -34,7 +34,7 @@ namespace DetailsViewer
 		{
 			//const bool bOverrideRowWidget = DetailNodePtr->OverrideRowWidget();
 
-			TSharedPtr<SWidget> PropertyWidget = Widget.IsValid() ? Widget : DetailNodePtr->GetWidget();
+			TSharedPtr<SWidget> PropertyWidget = InWidget.IsValid() ? InWidget : DetailNodePtr->GetWidget();
 			TSharedPtr<SPropertyName> PropertyName = SNew(SPropertyName, DetailNode);
 
 			TSharedPtr<SWidget> Widget = PropertyWidget;
@@ -107,7 +107,7 @@ namespace DetailsViewer
 		//
 		//TSharedPtr<SWidget> SDetailPropertyWidget::CreateCustomDetailRowWidget()
 		//{
-		//	TSharedPtr<FPropertyProxy> Proxy = DetailNodePtr->GetPropertyProxy();
+		//	TSharedPtr<FPropertyHolder> Proxy = DetailNodePtr->GetPropertyHolder();
 		//	__Property__* Property = Proxy->GetProperty();
 		//	const FString CustomPropertyBuilder = Property->GetMetaData(TEXT("PropertyBuilder"));
 		//	if (!CustomPropertyBuilder.IsEmpty())

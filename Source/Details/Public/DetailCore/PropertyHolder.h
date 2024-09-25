@@ -33,6 +33,7 @@ public:
 	const FString GetPropertyType();
 	UE_Property* GetProperty() { return MyProperty; }
 	UObject* GetOutermost() { return Outermost.Get(); }
+	const bool IsA(FFieldClass* InClass) { return MyProperty->IsA(InClass); }
 
 private:
 	UE_Property* MyProperty;

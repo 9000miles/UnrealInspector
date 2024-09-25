@@ -1,34 +1,37 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "RuntimeDetailModule.h"
+#include "DetailsViewerModule.h"
 #include "DetailCore/DetialManger.h"
 #include "DetailCore/DetailViewer.h"
 #include "DetailTest/DetailTestObject.h"
+#include "DetailCore/DetailFactory.h"
+#include "DetailCreater/CreaterBool.h"
+#include "DetailCreater/CreaterString.h"
+#include "DetailCore/DetailInfo.h"
 
 #define LOCTEXT_NAMESPACE "FPropertyInspectorModule"
 
+using namespace DetailsViewer;
+
 void FDetailsViewerModule::StartupModule()
 {
-	//if (IsRunningCommandlet()) return;
+	if (IsRunningCommandlet()) return;
 
-	//DetManager = UDetialManager::Get();
+	Factory::Register<FWidgetCreaterBool>();
+	Factory::Register<FWidgetCreaterString>();
 
-	//FDetailOptions Options;
-	//UDetailViewer* DetViewer = DetManager->CreateDetail(Options);
+	Factory::Register<FDetailMaker>();
+	Factory::Register<FCustomDetailMaker>();
 
-	//TestObject = TStrongObjectPtr<UDetailTestObject>(NewObject<UDetailTestObject>(DetViewer));
-	//DetViewer->SetObject(TestObject.Get());
-
-	//TSharedPtr<SWindow> WindowPtr = SNew(SWindow)
-	//	.ClientSize(FVector2D(800, 600))
-	//	.HasCloseButton(true)
-	//	.SupportsMaximize(true)
-	//	;
-	//TSharedPtr<SWidget> ViewWidget = DetViewer->GetViewWidget();
-	//WindowPtr->SetContent(ViewWidget.ToSharedRef());
-
-	//FSlateApplication::Get().AddWindow(WindowPtr.ToSharedRef());
+	DetailsViewerTest::FDetailsViewerTestModule::RunTest();
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+}
+
+template<typename T>
+void FDetailsViewerModule::RegisterCreater()
+{
+	TSharedPtr<T> Creater = MakeShared<T>();
+	DetailsViewer::FDetailFactory::Get().RegisterCreater(Creater.ToSharedRef());
 }
 
 void FDetailsViewerModule::ShutdownModule()

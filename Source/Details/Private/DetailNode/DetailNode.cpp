@@ -37,6 +37,6 @@ namespace DetailsViewer
 		TSharedPtr<IDetailWidgetCreater> PropertyBuilder = FDetailFactory::Get().FindCreater(PropertyType);
 		if (PropertyBuilder == nullptr) return nullptr;
 
-		return PropertyBuilder->CreateWidget();
+		return PropertyBuilder->MakeWidget();
 	}
 }

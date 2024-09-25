@@ -6,9 +6,9 @@
 namespace DetailsViewer
 {
 
-	void SPropertyWidget::Construct(TSharedPtr<FPropertyHolder> InPropertyProxy)
+	void SPropertyWidget::Construct(TSharedPtr<FPropertyHolder> InPropertyHolder)
 	{
-		PropertyProxy = InPropertyProxy;
+		PropertyHolder = InPropertyHolder;
 	}
 
 }

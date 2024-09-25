@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SPropertyWidget.h"
-#include "Widgets/Input/SEditableTextBox.h"
+#include "DetailCreater.h"
+#include "DetailCore/PropertyHolder.h"
 
+class SPropertyWidgetString;
 namespace DetailsViewer
 {
 	/**
@@ -19,7 +20,7 @@ namespace DetailsViewer
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyProxy);
+		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder);
 
 		void OnTextCommitted(const FText& Text, ETextCommit::Type Type);
 
@@ -32,5 +33,20 @@ namespace DetailsViewer
 	private:
 		TSharedPtr<SEditableTextBox> EditableTextBoxPtr;
 	};
+	/**
+	 *
+	 */
+	class DETAILSVIEWER_API FWidgetCreaterString : public FPropertyWidgetCreater
+	{
+	public:
+		FWidgetCreaterString();
+		TSharedPtr<SWidget> MakeWidget() override;
+		TArray<FString> SupportTypes() override;
+		static FString TypeName() { return TEXT("WidgetCreaterString"); }
 
-}
+		FString GetTypeName() override;
+
+	private:
+	};
+
+};

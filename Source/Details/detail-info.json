@@ -1,0 +1,126 @@
+{
+  "name": "object name",
+  "description": "description",
+  "executor": {
+    "Preprocess": "Preprocess",
+    "DetailCreater": "DetailCreater",
+    "Copy": "Copy",
+    "Paste": "Paste"
+  },
+  "categorys": [
+    {
+      "name": "category name",
+      "description": "category description",
+      "executor": {
+        "Copy": "Copy",
+        "Paste": "Paste"
+      },
+      "parameters": [
+        {
+          "name": "parameter name",
+          "description": "parameter description",
+          "type": "parameter type",
+          "category": "parameter category",
+          "Advanced": false,
+          "displayName": "parameter display name",
+          "executor": {
+            "extract": "parameter_extractor",
+            "Setter": "parameter_setter",
+            "Getter": "parameter_getter",
+            "editable": "parameter_editable",
+            "visible": "parameter_visible",
+            "DefaultGetter": "DefaultGetter",
+            "WidgetCreater": "",
+            "Copy": "Copy",
+            "Paste": "Paste"
+          },
+          "metadata": {
+            "min": 0,
+            "max": 1
+          }
+        },
+        {
+          "name": "age",
+          "description": "parameter description",
+          "type": "int",
+          "category": "分类1",
+          "Advanced": false,
+          "displayName": "年龄",
+          "metadata": {
+            "min": 0,
+            "max": 120
+          }
+        },
+        {
+          "name": "sex",
+          "description": "parameter description",
+          "type": "enum",
+          "category": "分类1",
+          "Advanced": false,
+          "displayName": "性别",
+          "metadata": {
+            "enumName": "ESex",
+            "extractor": "enum_extractor",
+            "setter": "enum_setter",
+            "getter": "enum_getter"
+          }
+        },
+        {
+          "name": "course",
+          "description": "parameter description",
+          "type": "array",
+          "category": "parameter category",
+          "Advanced": false,
+          "displayName": "parameter display name",
+          "executor": {
+            "extract": "parameter_extractor",
+            "Setter": "parameter_setter",
+            "Getter": "parameter_getter",
+            "editable": "parameter_editable",
+            "visible": "parameter_visible"
+          },
+          "metadata": {
+            "element-type": "FString"
+          }
+        },
+        {
+          "name": "course",
+          "description": "parameter description",
+          "type": "map",
+          "category": "parameter category",
+          "Advanced": false,
+          "displayName": "parameter display name",
+          "executor": {
+            "extract": "parameter_extractor",
+            "Setter": "parameter_setter",
+            "Getter": "parameter_getter",
+            "editable": "parameter_editable",
+            "visible": "parameter_visible"
+          },
+          "metadata": {
+            "key-type": "FString",
+            "value-type": "FVector"
+          }
+        },
+        {
+          "name": "course",
+          "description": "parameter description",
+          "type": "struct",
+          "category": "parameter category",
+          "Advanced": false,
+          "displayName": "parameter display name",
+          "executor": {
+            "extract": "parameter_extractor",
+            "Setter": "parameter_setter",
+            "Getter": "parameter_getter",
+            "editable": "parameter_editable",
+            "visible": "parameter_visible"
+          },
+          "metadata": {
+            "struct-name": "FStructDemo"
+          }
+        }
+      ]
+    }
+  ]
+}

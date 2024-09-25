@@ -23,17 +23,17 @@ namespace DetailsViewer
 	}
 
 
-	TSharedPtr<SWidget> FPropertyWidgetCreater::CreateWidget()
+	TSharedPtr<SWidget> FPropertyWidgetCreater::MakeWidget()
 	{
 		return SNullWidget::NullWidget;
 
 	}
 
-	TSharedPtr<SWidget> FPropertyWidgetCreater::CreateRowWidget(TSharedPtr<FPropertyHolder> PropertyHolder)
-	{
-		return SNullWidget::NullWidget;
+	//TSharedPtr<SWidget> FPropertyWidgetCreater::CreateRowWidget(TSharedPtr<FPropertyHolder> PropertyHolder)
+	//{
+	//	return SNullWidget::NullWidget;
 
-	}
+	//}
 
 	TSharedPtr<SWidget> FRowWidgetCreater::CreateRowWidget(TSharedPtr<FPropertyHolder> PropertyHolder)
 	{
@@ -42,7 +42,7 @@ namespace DetailsViewer
 
 
 
-	TSharedPtr<SWidget> FRowWidgetCreater::CreateWidget()
+	TSharedPtr<SWidget> FRowWidgetCreater::MakeWidget()
 	{
 		return SNullWidget::NullWidget;
 	}

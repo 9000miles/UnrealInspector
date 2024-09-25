@@ -23,8 +23,9 @@ namespace DetailsViewer
 
 		TSharedPtr<FPropertyHolder> GetPropertyHolder() { return PropertyHolder; }
 		TWeakObjectPtr<UObject> GetObject() { return ObjectPtr; }
+		EDetailNodeType GetNodeType() { return NodeType; }
 
-	private:
+	protected:
 		EDetailNodeType NodeType;
 		TWeakObjectPtr<UObject> ObjectPtr;
 		TSharedPtr<FPropertyHolder> PropertyHolder;

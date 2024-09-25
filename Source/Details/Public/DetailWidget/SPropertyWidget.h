@@ -20,10 +20,10 @@ namespace DetailsViewer
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(TSharedPtr<FPropertyHolder> InPropertyProxy);
+		void Construct(TSharedPtr<FPropertyHolder> InPropertyHolder);
 
 	protected:
-		TSharedPtr<FPropertyHolder> PropertyProxy;
+		TSharedPtr<FPropertyHolder> PropertyHolder;
 	};
 
 }

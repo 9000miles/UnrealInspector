@@ -3,9 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SPropertyWidget.h"
-#include "Widgets/Input/SEditableTextBox.h"
-#include "Widgets/Input/SCheckBox.h"
+#include "DetailCreater.h"
+#include "DetailWidget/SPropertyWidget.h"
 
 namespace DetailsViewer
 {
@@ -21,7 +20,7 @@ namespace DetailsViewer
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyProxy);
+		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder);
 		ECheckBoxState IsChecked()const;
 		void OnCheckStateChanged(ECheckBoxState State);
 
@@ -29,4 +28,14 @@ namespace DetailsViewer
 		TSharedPtr<SCheckBox> CheckBoxPtr;
 	};
 
-}
+	class DETAILSVIEWER_API FWidgetCreaterBool : public FPropertyWidgetCreater
+	{
+	public:
+		TSharedPtr<SWidget> MakeWidget() override;
+		TArray<FString> SupportTypes() override;
+
+		static FString TypeName() { return TEXT("WidgetCreaterBool"); }
+		FString GetTypeName() override;
+
+	};
+};
