@@ -22,8 +22,8 @@ namespace DETAILS_VIEWER
 
 	FDetailInfo::~FDetailInfo()
 	{
-		DetailExecutor.Reset();
-		DetailExecutor = nullptr;
+		Commander.Reset();
+		Commander = nullptr;
 
 		CategoryList.Reset();
 		CategoryList = nullptr;
@@ -37,8 +37,8 @@ namespace DETAILS_VIEWER
 
 		TSharedPtr<FJsonObject> ExecutorJson = JsonObject->GetObjectField(TEXT("DetailExecutor"));
 		FString ExecutorTypeName = ExecutorJson->GetStringField(TYPE_NAME);
-		DetailExecutor = Factory::Get<IDetailExecutor>(ExecutorTypeName);
-		DetailExecutor->FromJson(ExecutorJson);
+		Commander = Factory::Get<IDetailCommander>(ExecutorTypeName);
+		Commander->FromJson(ExecutorJson);
 
 		TArray<TSharedPtr<FJsonValue>> Array = JsonObject->GetArrayField(TEXT("CategoryList"));
 		for (TSharedPtr<FJsonValue> Value : Array)
@@ -56,7 +56,7 @@ namespace DETAILS_VIEWER
 		JsonObject->SetStringField(TEXT("Name"), Name);
 		JsonObject->SetStringField(TEXT("Description"), Description);
 		JsonObject->SetStringField(TEXT("DisplayName"), DisplayName);
-		JsonObject->SetObjectField(TEXT("DetailExecutor"), DetailExecutor->ToJson());
+		JsonObject->SetObjectField(TEXT("DetailExecutor"), Commander->ToJson());
 		JsonObject->SetObjectField(TEXT("CategoryList"), CategoryList->ToJson());
 
 		return JsonObject;
@@ -82,10 +82,10 @@ namespace DETAILS_VIEWER
 		return  TEXT("DetailMaker");
 	}
 
-	void IDetailExecutor::FromJson(TSharedPtr<FJsonObject> JsonObject)
+	void IDetailCommander::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 		FString Maker;
-		TSharedPtr<FJsonObject> DetailMakerJson = JsonObject->GetObjectField(IDetailExecutor::TypeName());
+		TSharedPtr<FJsonObject> DetailMakerJson = JsonObject->GetObjectField(IDetailCommander::TypeName());
 		if (DetailMakerJson->TryGetStringField(TYPE_NAME, Maker))
 		{
 			DetailMaker = Factory::Get<IDetailMaker>(Maker);
@@ -96,7 +96,7 @@ namespace DETAILS_VIEWER
 		}
 	}
 
-	TSharedPtr<FJsonObject> IDetailExecutor::ToJson()
+	TSharedPtr<FJsonObject> IDetailCommander::ToJson()
 	{
 		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 
@@ -106,9 +106,9 @@ namespace DETAILS_VIEWER
 		return JsonObject;
 	}
 
-	FString IDetailExecutor::GetTypeName()
+	FString IDetailCommander::GetTypeName()
 	{
-		return IDetailExecutor::TypeName();
+		return IDetailCommander::TypeName();
 	}
 
 	TMap<FString, TSharedPtr<ITypeName>> Factory::Map;

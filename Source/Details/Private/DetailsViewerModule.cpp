@@ -25,6 +25,7 @@ void FDetailsViewerModule::StartupModule()
 	Factory::Register<FCustomDetailMaker>();
 
 	Factory::Register<FUObjectDetail>();
+	Factory::Register<FUObjectDetailCommander>();
 
 	DETAILS_VIEWER_TEST::FDetailsViewerTestModule::RunTest();
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module

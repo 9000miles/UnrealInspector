@@ -111,8 +111,11 @@ namespace DETAILS_VIEWER
 		};
 	}
 
-	class FUObjectDetailExecutor : public IDetailExecutor
+	class FUObjectDetailCommander : public IDetailCommander
 	{
+	public:
+		~FUObjectDetailCommander() {}
+		static FString TypeName() { return TEXT("UObjectDetailCommander"); }
 	};
 
 	/**

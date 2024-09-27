@@ -110,7 +110,7 @@ namespace DETAILS_VIEWER
 		DetailInfo->Name = Object->GetName();
 		DetailInfo->DisplayName = Object->GetName();
 		DetailInfo->Description = Object->GetName();
-		DetailInfo->DetailExecutor = MakeShareable(new FUObjectDetailExecutor());
+		DetailInfo->Commander = MakeShareable(new FUObjectDetailCommander());
 
 		IteratorField(Object, DetailInfo->CategoryList);
 	}

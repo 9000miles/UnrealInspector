@@ -94,14 +94,14 @@ namespace DETAILS_VIEWER
 		virtual void Execute(const FString String) = 0;
 	};
 
-	class IDetailExecutor :public IJsonable, public ITypeName
+	class IDetailCommander :public IJsonable, public ITypeName
 	{
 	public:
-		virtual ~IDetailExecutor() {}
+		virtual ~IDetailCommander() {}
 		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
-		static FString TypeName() { return TEXT("DetailExecutor"); }
+		static FString TypeName() { return TEXT("DetailCommander"); }
 		FString GetTypeName() override;
 
 	public:
@@ -306,7 +306,7 @@ namespace DETAILS_VIEWER
 		FString Name;
 		FString Description;
 		FString DisplayName;
-		TSharedPtr<IDetailExecutor> DetailExecutor;
+		TSharedPtr<IDetailCommander> Commander;
 		TSharedPtr<FCategoryList> CategoryList;
 	};
 }
