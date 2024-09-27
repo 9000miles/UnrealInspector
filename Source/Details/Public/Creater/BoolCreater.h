@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "DetailCreater.h"
 #include "Widget/SPropertyWidget.h"
+#include "Core/DetailInfo.h"
 
 namespace DETAILS_VIEWER
 {
@@ -36,6 +37,11 @@ namespace DETAILS_VIEWER
 
 		static FString TypeName() { return TEXT("WidgetCreaterBool"); }
 		FString GetTypeName() override;
+		static bool IsSupport(TSharedPtr<FPropertyInfo> PropertyInfo)
+		{
+			const TArray<FString> Typies = Factory::Get<IDetailWidgetCreater>(FWidgetCreaterBool::TypeName())->SupportTypes();
+			return Typies.ContainsByPredicate([PropertyInfo](const FString& Type) { return Type == PropertyInfo->Type; });
+		}
 
 	};
 };

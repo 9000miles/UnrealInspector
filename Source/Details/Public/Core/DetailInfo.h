@@ -80,14 +80,14 @@ namespace DETAILS_VIEWER
 
 	};
 
-	class ICopier 
+	class ICopier
 	{
 	public:
 		virtual ~ICopier() {}
 		virtual const FString Execute() = 0;
 	};
 
-	class IPaster 
+	class IPaster
 	{
 	public:
 		virtual ~IPaster() {}
@@ -148,7 +148,7 @@ namespace DETAILS_VIEWER
 		class IWidgetMaker :public IJsonable
 		{
 		public:
-			virtual TSharedRef<SWidget> MakeWidget(const FString& Value) = 0;
+			virtual TSharedRef<SWidget> MakeWidget() = 0;
 		};
 
 		class IExecutor :public IJsonable
@@ -212,10 +212,10 @@ namespace DETAILS_VIEWER
 
 
 
-	class IParameterInfo :public IJsonable
+	class FPropertyInfo :public IJsonable
 	{
 	public:
-		virtual ~IParameterInfo()
+		virtual ~FPropertyInfo()
 		{
 		}
 		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
@@ -233,42 +233,46 @@ namespace DETAILS_VIEWER
 
 	};
 
-	class FParameterList :public IJsonable
+	class FPropertyList :public IJsonable
 	{
 	public:
-		virtual ~FParameterList()
+		virtual ~FPropertyList()
 		{
 		}
 		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
-		void Add(TSharedPtr<IParameterInfo> Parameter);
-		TSharedPtr<IParameterInfo> Find(const FString& Name);
+		void Add(TSharedPtr<FPropertyInfo> Parameter);
+		TSharedPtr<FPropertyInfo> Find(const FString& Name);
+
+		virtual void Sort();
+		void Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func);
 
 	private:
-		TArray<TSharedPtr<IParameterInfo>> Parameters;
+		TArray<TSharedPtr<FPropertyInfo>> Parameters;
 	};
 
-	class ICategoryInfo :public IJsonable
+	class FCategoryInfo :public IJsonable
 	{
 	public:
-		ICategoryInfo()
+		FCategoryInfo()
 		{
-			ParameterList = MakeShared<FParameterList>();
+			PropertyList = MakeShared<FPropertyList>();
 		}
-		virtual ~ICategoryInfo();
+		virtual ~FCategoryInfo();
 
 		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
-		void Add(TSharedPtr<IParameterInfo> Parameter);
+		void Add(TSharedPtr<FPropertyInfo> Parameter);
+		virtual void Sort();
 
 	public:
 		FString Name;
 		FString Description;
 		FString DisplayName;
 		TSharedPtr<ICategoryExecutor> CategoryExecutor;
-		TSharedPtr<FParameterList> ParameterList;
+		TSharedPtr<FPropertyList> PropertyList;
 	};
 
 	class FCategoryList :public IJsonable
@@ -280,11 +284,14 @@ namespace DETAILS_VIEWER
 		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
-		void Add(TSharedPtr<ICategoryInfo> Category);
-		TSharedPtr<ICategoryInfo> Find(const FString& Name);
+		void Add(TSharedPtr<FCategoryInfo> Category);
+		TSharedPtr<FCategoryInfo> Find(const FString& Name);
+
+		virtual void Sort();
+		void Enumerate(TFunction<void(TSharedPtr<FCategoryInfo>)> Func);
 
 	private:
-		TArray<TSharedPtr<ICategoryInfo>> Categories;
+		TArray<TSharedPtr<FCategoryInfo>> Categories;
 	};
 
 	/**
@@ -308,5 +315,13 @@ namespace DETAILS_VIEWER
 		FString DisplayName;
 		TSharedPtr<IDetailCommander> Commander;
 		TSharedPtr<FCategoryList> CategoryList;
+	};
+
+	class IDetailHolder :public ITypeName
+	{
+	public:
+		virtual void Init(TSharedPtr<FDetailOptions> Options) = 0;
+		virtual void SetDetailInfo(TSharedPtr<FDetailInfo> Info) = 0;
+		virtual TSharedPtr<SWidget> GetWidget() = 0;
 	};
 }

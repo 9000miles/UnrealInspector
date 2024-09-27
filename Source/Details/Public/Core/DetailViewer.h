@@ -25,7 +25,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	FGuid GetGuid() { return Guid; }
 
-	TSharedPtr<DETAILS_VIEWER::SDetailView> GetViewWidget() { return PropertyView; }
+	TSharedPtr<DETAILS_VIEWER::SDetailView> GetViewWidget() { return DetailView; }
 
 public:
 	UPROPERTY(BlueprintReadWrite)
@@ -35,5 +35,5 @@ public:
 
 private:
 	FGuid Guid;
-	TSharedPtr<DETAILS_VIEWER::SDetailView> PropertyView;
+	TSharedPtr<DETAILS_VIEWER::SDetailView> DetailView;
 };

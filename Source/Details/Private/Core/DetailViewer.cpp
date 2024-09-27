@@ -8,16 +8,16 @@ UDetailViewer::UDetailViewer()
 {
 	Guid = FGuid::NewGuid();
 
-	PropertyView = SNew(DETAILS_VIEWER::SDetailView)
+	DetailView = SNew(DETAILS_VIEWER::SDetailView)
 		;
 }
 
 void UDetailViewer::InitByOptions(FDetailOptions Options)
 {
-	PropertyView->InitByOptions(Options);
+	DetailView->InitByOptions(Options);
 }
 
 void UDetailViewer::SetObject(UObject* Object)
 {
-	PropertyView->SetObject(Object);
+	DetailView->SetObject(Object);
 }

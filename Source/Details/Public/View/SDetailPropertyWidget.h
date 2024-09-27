@@ -25,7 +25,7 @@ namespace DETAILS_VIEWER
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(const FArguments& InArgs, TSharedPtr<FDetailTreeNode> DetailNode, bool bOverrideRowWidget, TSharedPtr<SWidget> Widget);
+		void Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> DetailNode, bool bOverrideRowWidget, TSharedPtr<SWidget> Widget);
 		//TSharedPtr<SWidget> CreateCustomDetailRowWidget();
 		void SplitterSlotResized(float Size, int32 Index);
 		void SetSplitterSlotSize(int32 Index, float Size);
@@ -33,6 +33,8 @@ namespace DETAILS_VIEWER
 		float GetSlotSize() const;
 		FReply OnResetClicked();
 		virtual bool HasSplitter();
+
+		TSharedPtr<FPropertyTreeNode> GetPropertyNode() { return StaticCastSharedPtr<FPropertyTreeNode>(NodePtr); };
 
 
 

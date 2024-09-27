@@ -40,10 +40,10 @@ TStatId UDetailTestObject::GetStatId() const
 void UDetailTestObject::PrintPropertyValue()
 {
 
-	UE_LOG(LogTemp, Log, TEXT("%s"), _Bool_ ? TEXT("TRUE") : TEXT("FALSE"));
-	UE_LOG(LogTemp, Log, TEXT("%s"), *_String_);
-	UE_LOG(LogTemp, Log, TEXT("%s"), *_Text_.ToString());
-	UE_LOG(LogTemp, Log, TEXT("%s"), *_Name_.ToString());
+	UE_LOG(LogTemp, Log, TEXT("%s"), Bool_1 ? TEXT("TRUE") : TEXT("FALSE"));
+	UE_LOG(LogTemp, Log, TEXT("%s"), *String_1);
+	UE_LOG(LogTemp, Log, TEXT("%s"), *Text_1.ToString());
+	UE_LOG(LogTemp, Log, TEXT("%s"), *Name_1.ToString());
 
 }
 
@@ -51,10 +51,10 @@ void UDetailTestObject::TickChangeProperty()
 {
 	return;
 
-	_Bool_ = !_Bool_;
-	_String_ = FString::Printf(TEXT("String_%d"), FMath::Rand());
-	_Text_ = FText::FromString(FString::Printf(TEXT("Text_%d"), FMath::Rand()));
-	_Name_ = *FString::Printf(TEXT("Name_%d"), FMath::Rand());
+	Bool_1 = !Bool_1;
+	String_1 = FString::Printf(TEXT("String_%d"), FMath::Rand());
+	Text_1 = FText::FromString(FString::Printf(TEXT("Text_%d"), FMath::Rand()));
+	Name_1 = *FString::Printf(TEXT("Name_%d"), FMath::Rand());
 }
 
 

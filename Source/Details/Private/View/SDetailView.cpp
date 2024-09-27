@@ -22,8 +22,12 @@ namespace DETAILS_VIEWER
 
 	void SDetailView::Construct(const FArguments& InArgs)
 	{
-		TreeView = SNew(STreeView<TSharedPtr<FDetailTreeNode>>)
-			.TreeItemsSource(&PropertyNodes)
+		DetailInfo = InArgs._DetailInfo;
+
+		GenerateTreeNodes();
+
+		TreeView = SNew(STreeView<TSharedPtr<FTreeNode>>)
+			.TreeItemsSource(&TreeNodes)
 			.OnGenerateRow(this, &SDetailView::OnGenerateRow)
 			.OnGetChildren(this, &SDetailView::OnGetChildren)
 			.SelectionMode(ESelectionMode::SingleToggle)
@@ -34,7 +38,18 @@ namespace DETAILS_VIEWER
 
 		ChildSlot
 			[
-				DetailContentBoxPtr.ToSharedRef()
+				SNew(SBox)
+					[
+						SNew(SVerticalBox)
+							+ SVerticalBox::Slot()
+							[
+								SNew(STextBlock).Text(FText::FromString(DetailInfo->Name))
+							]
+							+ SVerticalBox::Slot()
+							[
+								TreeView.ToSharedRef()
+							]
+					]
 			];
 
 	}
@@ -44,54 +59,54 @@ namespace DETAILS_VIEWER
 
 	}
 
-	void SDetailView::SetObject(UObject* Object)
-	{
-		if (Object == nullptr)
-		{
-			return;
-		}
+	//void SDetailView::SetObject(UObject* Object)
+	//{
+	//	if (Object == nullptr)
+	//	{
+	//		return;
+	//	}
 
-		PropertyNodes.Empty();
+	//	TreeNodes.Empty();
 
-		UClass* Class = Object->GetClass();
-		const FString CustomDetail = Class->GetMetaData(TEXT("CustomDetail"));
-		if (CustomDetail.IsEmpty())
-		{
+	//	UClass* Class = Object->GetClass();
+	//	const FString CustomDetail = Class->GetMetaData(TEXT("CustomDetail"));
+	//	if (CustomDetail.IsEmpty())
+	//	{
 
-			for (TFieldIterator<UE_Property> PropertyIt(Class, EFieldIteratorFlags::IncludeSuper); PropertyIt; ++PropertyIt)
-			{
-				auto Property = *PropertyIt;
-				const FString PropertyName = Property->GetName();
-				const FString PropertyType = Property->GetCPPType();
-				const TSharedPtr<IDetailWidgetCreater> Builder = FDetailFactory::Get().FindCreater(PropertyType);
-				UE_LOG(LogTemp, Log, TEXT("%s: %s"), *PropertyName, *PropertyType);
-				//if (Builder == nullptr) continue;
+	//		for (TFieldIterator<UE_Property> PropertyIt(Class, EFieldIteratorFlags::IncludeSuper); PropertyIt; ++PropertyIt)
+	//		{
+	//			auto Property = *PropertyIt;
+	//			const FString PropertyName = Property->GetName();
+	//			const FString PropertyType = Property->GetCPPType();
+	//			const TSharedPtr<IDetailWidgetCreater> Builder = FDetailFactory::Get().FindCreater(PropertyType);
+	//			UE_LOG(LogTemp, Log, TEXT("%s: %s"), *PropertyName, *PropertyType);
+	//			//if (Builder == nullptr) continue;
 
-				UE_LOG(LogTemp, Log, TEXT("Builder> %s: %s"), *PropertyName, *PropertyType);
+	//			UE_LOG(LogTemp, Log, TEXT("Builder> %s: %s"), *PropertyName, *PropertyType);
 
-				TSharedPtr<FDetailTreeNode> Node = GenerateNode(Object, Property);
-				if (Node == nullptr)
-				{
-					UE_LOG(LogRuntimeDetail, Warning, TEXT("%s %s property generate node failed"), *Object->GetName(), *Property->GetName());
-					continue;
-				}
+	//			TSharedPtr<FTreeNode> Node = GenerateNode(Object, Property);
+	//			if (Node == nullptr)
+	//			{
+	//				UE_LOG(LogRuntimeDetail, Warning, TEXT("%s %s property generate node failed"), *Object->GetName(), *Property->GetName());
+	//				continue;
+	//			}
 
-				PropertyNodes.Add(Node);
-			}
+	//			TreeNodes.Add(Node);
+	//		}
 
-			TreeView->RequestTreeRefresh();
-			DetailContentBoxPtr->SetContent(TreeView.ToSharedRef());
-		}
-		else
-		{
-		}
-	}
+	//		TreeView->RequestTreeRefresh();
+	//		DetailContentBoxPtr->SetContent(TreeView.ToSharedRef());
+	//	}
+	//	else
+	//	{
+	//	}
+	//}
 
-	TSharedRef<class ITableRow> SDetailView::OnGenerateRow(TSharedPtr<FDetailTreeNode> Node, const TSharedRef<class STableViewBase>& OwnerTable)
+	TSharedRef<class ITableRow> SDetailView::OnGenerateRow(TSharedPtr<FTreeNode> Node, const TSharedRef<class STableViewBase>& OwnerTable)
 	{
 		TSharedPtr<SWidget> RowWidget;
 
-		if (Node->GetNodeType() == EDetailNodeType::Category)
+		if (Node->GetTypeName() == FCategoryTreeNode::TypeName())
 		{
 			RowWidget = SNew(SDetailCategoryHeader);
 		}
@@ -99,7 +114,7 @@ namespace DETAILS_VIEWER
 		{
 			FString OutCustomType;
 			bool bOverrideRowWidget = false;
-			TSharedPtr<SWidget> CustomRowWidget = CreateCustomDetailRowWidget(Node, OutCustomType, bOverrideRowWidget);
+			//TSharedPtr<SWidget> CustomRowWidget = CreateCustomDetailRowWidget(Node, OutCustomType, bOverrideRowWidget);
 
 			//if (CustomRowWidget.IsValid())
 			//{
@@ -107,7 +122,7 @@ namespace DETAILS_VIEWER
 			//}
 			//else
 			//{
-			TSharedPtr<SDetailPropertyWidget> PropertyWidget = SNew(SDetailPropertyWidget, Node, bOverrideRowWidget, CustomRowWidget)
+			TSharedPtr<SDetailPropertyWidget> PropertyWidget = SNew(SDetailPropertyWidget, Node, bOverrideRowWidget, nullptr)
 				.OnSplitterSlotResized(this, &SDetailView::OnSplitterSlotResized)
 				;
 
@@ -116,7 +131,7 @@ namespace DETAILS_VIEWER
 			//}
 		}
 
-		return SNew(STableRow<TSharedPtr<FDetailTreeNode>>, OwnerTable)
+		return SNew(STableRow<TSharedPtr<FTreeNode>>, OwnerTable)
 			[
 				RowWidget.ToSharedRef()
 			]
@@ -124,70 +139,87 @@ namespace DETAILS_VIEWER
 	}
 
 
-	TSharedPtr<SWidget> SDetailView::CreateCustomDetailRowWidget(TSharedPtr<FDetailTreeNode> Node, FString& OutCustomType, bool& bOutOverrideRowWidget)
+	//TSharedPtr<SWidget> SDetailView::CreateCustomDetailRowWidget(TSharedPtr<FTreeNode> Node, FString& OutCustomType, bool& bOutOverrideRowWidget)
+	//{
+	//	TSharedPtr<FPropertyHolder> Proxy = Node->GetPropertyHolder();
+	//	UE_Property* Property = Proxy->GetProperty();
+	//	const FString CustomPropertyBuilderPath = Property->GetMetaData(TEXT("PropertyBuilder"));
+	//	if (!CustomPropertyBuilderPath.IsEmpty())
+	//	{
+	//		//UClass* CustomPropertyBuilderClass = LoadClass<FPropertyWidgetCreater>(nullptr, *CustomPropertyBuilderPath);
+	//		//check(CustomPropertyBuilderClass != nullptr);
+
+	//		//TStrongObjectPtr<FPropertyWidgetCreater> CustomPropertyBuilder = TStrongObjectPtr<FPropertyWidgetCreater>(NewObject<FPropertyWidgetCreater>(GetTransientPackage(), CustomPropertyBuilderClass));
+	//		//bOutOverrideRowWidget = CustomPropertyBuilder->OverrideRowWidget();
+
+	//		//CutomPropertyBuilders.Add(CustomPropertyBuilder);
+	//		//return CustomPropertyBuilder->CreateWidget(Proxy);
+	//		return SNullWidget::NullWidget;
+	//	}
+
+	//	//const FString CustomFuncRowWidget = FString();
+	//	const FString CustomFuncRowWidget = Property->GetMetaData(TEXT("FuncPropertyRowWidget"));
+	//	if (!CustomFuncRowWidget.IsEmpty())
+	//	{
+	//		TWeakObjectPtr<UObject> Object = Node->GetObject();
+	//		UFunction* Function = Object->FindFunction(*CustomFuncRowWidget);
+	//		check(Function != nullptr);
+
+	//		struct
+	//		{
+	//			FPropertyHandle Handle;
+	//		}ParamsAddress;
+	//		ParamsAddress.Handle.Property = Property;
+
+	//		Object->ProcessEvent(Function, &ParamsAddress);
+
+	//		if (Function->ReturnValueOffset != MAX_uint16)
+	//		{
+	//			void* Value = &ParamsAddress + 1;
+	//			return *(TSharedPtr<SWidget>*)Value;
+	//		}
+
+	//		return nullptr;
+	//	}
+
+	//	return nullptr;
+	//}
+
+	void SDetailView::OnGetChildren(TSharedPtr<FTreeNode> Node, TArray<TSharedPtr<FTreeNode>>& Children)
 	{
-		TSharedPtr<FPropertyHolder> Proxy = Node->GetPropertyHolder();
-		UE_Property* Property = Proxy->GetProperty();
-		const FString CustomPropertyBuilderPath = Property->GetMetaData(TEXT("PropertyBuilder"));
-		if (!CustomPropertyBuilderPath.IsEmpty())
-		{
-			//UClass* CustomPropertyBuilderClass = LoadClass<FPropertyWidgetCreater>(nullptr, *CustomPropertyBuilderPath);
-			//check(CustomPropertyBuilderClass != nullptr);
+		Children = Node->GetChildren();
+	}
 
-			//TStrongObjectPtr<FPropertyWidgetCreater> CustomPropertyBuilder = TStrongObjectPtr<FPropertyWidgetCreater>(NewObject<FPropertyWidgetCreater>(GetTransientPackage(), CustomPropertyBuilderClass));
-			//bOutOverrideRowWidget = CustomPropertyBuilder->OverrideRowWidget();
 
-			//CutomPropertyBuilders.Add(CustomPropertyBuilder);
-			//return CustomPropertyBuilder->CreateWidget(Proxy);
-			return SNullWidget::NullWidget;
-		}
-
-		//const FString CustomFuncRowWidget = FString();
-		const FString CustomFuncRowWidget = Property->GetMetaData(TEXT("FuncPropertyRowWidget"));
-		if (!CustomFuncRowWidget.IsEmpty())
-		{
-			TWeakObjectPtr<UObject> Object = Node->GetObject();
-			UFunction* Function = Object->FindFunction(*CustomFuncRowWidget);
-			check(Function != nullptr);
-
-			struct
+	void SDetailView::GenerateTreeNodes()
+	{
+		DetailInfo->CategoryList->Enumerate([this](TSharedPtr<FCategoryInfo> CategoryInfo)
 			{
-				FPropertyHandle Handle;
-			}ParamsAddress;
-			ParamsAddress.Handle.Property = Property;
+				TSharedPtr<FCategoryTreeNode> CategoryNode = MakeShareable(new FCategoryTreeNode(CategoryInfo));
+				TreeNodes.Add(CategoryNode);
 
-			Object->ProcessEvent(Function, &ParamsAddress);
+				CategoryInfo->PropertyList->Enumerate([CategoryNode](TSharedPtr<FPropertyInfo> PropertyInfo)
+					{
+						TSharedPtr<FPropertyTreeNode> Node = MakeShareable(new FPropertyTreeNode(PropertyInfo));
+						CategoryNode->AddChild(Node);
+					});
 
-			if (Function->ReturnValueOffset != MAX_uint16)
-			{
-				void* Value = &ParamsAddress + 1;
-				return *(TSharedPtr<SWidget>*)Value;
-			}
-
-			return nullptr;
-		}
-
-		return nullptr;
+			});
 	}
 
-	void SDetailView::OnGetChildren(TSharedPtr<FDetailTreeNode> Node, TArray<TSharedPtr<FDetailTreeNode>>& Children)
-	{
-		Children = Node->GetChildNodes();
-	}
+	//TSharedPtr<FTreeNode> SDetailView::GenerateNode(UObject* Object, UE_Property* Property)
+	//{
+	//	if (Property->IsA(FArrayProperty::StaticClass()))
+	//		return MakeShareable(new FArrayNode(Object, Property));
+	//	else if (Property->IsA(FMapProperty::StaticClass()))
+	//		return MakeShareable(new FMapNode(Object, Property));
+	//	else if (Property->IsA(FSetProperty::StaticClass()))
+	//		return MakeShareable(new FSetNode(Object, Property));
+	//	else if (Property->IsA(FStructProperty::StaticClass()))
+	//		return MakeShareable(new FStructNode(Object, Property));
 
-	TSharedPtr<FDetailTreeNode> SDetailView::GenerateNode(UObject* Object, UE_Property* Property)
-	{
-		if (Property->IsA(FArrayProperty::StaticClass()))
-			return MakeShareable(new FArrayNode(Object, Property));
-		else if (Property->IsA(FMapProperty::StaticClass()))
-			return MakeShareable(new FMapNode(Object, Property));
-		else if (Property->IsA(FSetProperty::StaticClass()))
-			return MakeShareable(new FSetNode(Object, Property));
-		else if (Property->IsA(FStructProperty::StaticClass()))
-			return MakeShareable(new FStructNode(Object, Property));
-
-		return MakeShareable(new FNormalNode(Object, Property));
-	}
+	//	return MakeShareable(new FNormalNode(Object, Property));
+	//}
 
 	void SDetailView::OnSplitterSlotResized(int32 Index, float Size)
 	{

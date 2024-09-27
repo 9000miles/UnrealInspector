@@ -6,25 +6,33 @@
 #include "DetailDefine.h"
 #include "DetailViewer.h"
 #include "Creater/DetailCreater.h"
-#include "DetialManger.generated.h"
+#include "DetailInfo.h"
+
+using namespace DETAILS_VIEWER;
 
 /**
  *
  */
-UCLASS(BlueprintType)
-class DETAILSVIEWER_API UDetialManager :public UObject
+class DETAILSVIEWER_API FDetialManager 
 {
-	GENERATED_BODY()
 public:
-	UDetialManager();
-	~UDetialManager();
+	FDetialManager();
+	~FDetialManager();
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "GetDetailManger"))
-	static UDetialManager* Get();
+	static FDetialManager& Get();
 
-	UFUNCTION(BlueprintCallable)
-	UDetailViewer* CreateDetail(FDetailOptions Options);
-
-private:
-	static TStrongObjectPtr<UDetialManager> Instance;
+	template<typename T>
+	TSharedPtr<T> Create(TSharedPtr<FDetailOptions> Options);
 };
+
+template<typename T>
+TSharedPtr<T>
+FDetialManager::Create(TSharedPtr<FDetailOptions> Options)
+{
+	TSharedPtr<T> Instance = Factory::Get<T>(T::TypeName());
+	check(Instance.IsValid());
+
+	Instance->Init(Options);
+
+	return Instance;
+}

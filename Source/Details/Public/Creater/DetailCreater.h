@@ -50,6 +50,8 @@ namespace DETAILS_VIEWER
 		virtual bool IsShowReset();
 		virtual bool OverrideRowWidget();
 
+		//virtual bool IsSupport(TSharedPtr<FPropertyInfo> PropertyInfo);
+
 
 	private:
 		TSharedPtr<SWidget> MakeWidget() override;

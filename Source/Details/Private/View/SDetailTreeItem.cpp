@@ -10,9 +10,9 @@ namespace DETAILS_VIEWER
 
 
 	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
-		void SDetailTreeItem::Construct(TSharedPtr<FDetailTreeNode> DetailNode)
+		void SDetailTreeItem::Construct(TSharedPtr<FTreeNode> DetailNode)
 	{
-		DetailNodePtr = DetailNode;
+		NodePtr = DetailNode;
 	}
 
 	bool SDetailTreeItem::HasSplitter()

@@ -121,17 +121,25 @@ namespace DETAILS_VIEWER
 	/**
 	 * $Comment$
 	 */
-	class FUObjectDetail :public ITypeName
+	class FUObjectDetailHolder :public IDetailHolder
 	{
 	public:
-		FUObjectDetail();
-		virtual ~FUObjectDetail() {}
+		FUObjectDetailHolder();
+		virtual ~FUObjectDetailHolder() {}
 
 		void SetObject(TWeakObjectPtr<UObject> InObject);
+		void SetObject();
 		void IteratorField(TWeakObjectPtr<UObject> InObject, TSharedPtr<FCategoryList> CategoryList);
 
 		static FString TypeName() { return TEXT("UObjectDetail"); }
-		FString GetTypeName() override { return FUObjectDetail::TypeName(); }
+		FString GetTypeName() override { return FUObjectDetailHolder::TypeName(); }
+
+		void SetDetailInfo(TSharedPtr<FDetailInfo> Info) override;
+
+		TSharedPtr<SWidget> GetWidget() override;
+
+
+		void Init(TSharedPtr<FDetailOptions> Options) override;
 
 	private:
 		TWeakObjectPtr<UObject> Object;

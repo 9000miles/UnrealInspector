@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Detail/UObjectDetail.h"
 #include "JsonObjectConverter.h"
+#include "View/SDetailView.h"
+
 namespace DETAILS_VIEWER
 {
 	namespace PROPERTY
@@ -94,17 +96,21 @@ namespace DETAILS_VIEWER
 		}
 	}
 
-	FUObjectDetail::FUObjectDetail()
+	FUObjectDetailHolder::FUObjectDetailHolder()
 	{
 
 	}
 
-	void FUObjectDetail::SetObject(TWeakObjectPtr<UObject> InObject)
+	void FUObjectDetailHolder::SetObject(TWeakObjectPtr<UObject> InObject)
 	{
 		Object = InObject;
 
 		if (!Object.IsValid())
+		{
+			DetailInfo.Reset();
+			DetailInfo = nullptr;
 			return;
+		}
 
 		DetailInfo = MakeShareable(new FDetailInfo());
 		DetailInfo->Name = Object->GetName();
@@ -115,7 +121,12 @@ namespace DETAILS_VIEWER
 		IteratorField(Object, DetailInfo->CategoryList);
 	}
 
-	void FUObjectDetail::IteratorField(TWeakObjectPtr<UObject> InObject, TSharedPtr<FCategoryList> CategoryList)
+	void FUObjectDetailHolder::SetObject()
+	{
+		SetObject(nullptr);
+	}
+
+	void FUObjectDetailHolder::IteratorField(TWeakObjectPtr<UObject> InObject, TSharedPtr<FCategoryList> CategoryList)
 	{
 		check(InObject.IsValid());
 
@@ -128,15 +139,15 @@ namespace DETAILS_VIEWER
 			const FString Category = Property->GetMetaData(TEXT("Category"));
 			const FString DisplayName = Property->GetMetaData(TEXT("DisplayName"));
 
-			TSharedPtr<ICategoryInfo> ExistCategory = CategoryList->Find(Category);
+			TSharedPtr<FCategoryInfo> ExistCategory = CategoryList->Find(Category);
 			if (!ExistCategory.IsValid())
 			{
-				TSharedPtr<ICategoryInfo> CategoryInfo = MakeShareable(new ICategoryInfo());
+				TSharedPtr<FCategoryInfo> CategoryInfo = MakeShareable(new FCategoryInfo());
 				ExistCategory = CategoryInfo;
 				CategoryList->Add(CategoryInfo);
 			}
 
-			TSharedPtr<IParameterInfo> Parameter = MakeShareable(new IParameterInfo());
+			TSharedPtr<FPropertyInfo> Parameter = MakeShareable(new FPropertyInfo());
 
 			Parameter->Name = PropertyName;
 			Parameter->DisplayName = DisplayName;
@@ -149,5 +160,24 @@ namespace DETAILS_VIEWER
 
 			ExistCategory->Add(Parameter);
 		}
+
+		CategoryList->Sort();
 	}
+
+	void FUObjectDetailHolder::SetDetailInfo(TSharedPtr<FDetailInfo> Info)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	TSharedPtr<SWidget> FUObjectDetailHolder::GetWidget()
+	{
+		return SNew(SDetailView)
+			.DetailInfo(DetailInfo)
+			;
+	}
+
+	void FUObjectDetailHolder::Init(TSharedPtr<FDetailOptions> Options)
+	{
+	}
+
 }

@@ -19,11 +19,11 @@ namespace DETAILS_VIEWER
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(TSharedPtr<FDetailTreeNode> DetailNode);
+		void Construct(TSharedPtr<FTreeNode> DetailNode);
 		virtual bool HasSplitter();
 
 	protected:
-		TSharedPtr<FDetailTreeNode> DetailNodePtr;
+		TSharedPtr<FTreeNode> NodePtr;
 	};
 
 }

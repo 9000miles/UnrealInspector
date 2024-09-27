@@ -23,6 +23,12 @@ namespace DETAILS_VIEWER
 	}
 
 
+	//bool FPropertyWidgetCreater::IsSupport(TSharedPtr<FPropertyInfo> PropertyInfo)
+	//{
+	//	const TArray<FString> Typies = SupportTypes();
+	//	return Typies.ContainsByPredicate([PropertyInfo](const FString& Type) { return Type == PropertyInfo->Type; });
+	//}
+
 	TSharedPtr<SWidget> FPropertyWidgetCreater::MakeWidget()
 	{
 		return SNullWidget::NullWidget;

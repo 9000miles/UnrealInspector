@@ -24,7 +24,7 @@ void FDetailsViewerModule::StartupModule()
 	Factory::Register<FDetailMaker>();
 	Factory::Register<FCustomDetailMaker>();
 
-	Factory::Register<FUObjectDetail>();
+	Factory::Register<FUObjectDetailHolder>();
 	Factory::Register<FUObjectDetailCommander>();
 
 	DETAILS_VIEWER_TEST::FDetailsViewerTestModule::RunTest();

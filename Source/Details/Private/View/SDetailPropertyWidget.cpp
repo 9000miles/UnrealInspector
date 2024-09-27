@@ -11,9 +11,9 @@ namespace DETAILS_VIEWER
 	static float SplitterSlotSize = 0.f;
 
 	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
-		void SDetailPropertyWidget::Construct(const FArguments& InArgs, TSharedPtr<FDetailTreeNode> DetailNode, bool bOverrideRowWidget, TSharedPtr<SWidget> InWidget)
+		void SDetailPropertyWidget::Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> Node, bool bOverrideRowWidget, TSharedPtr<SWidget> InWidget)
 	{
-		SDetailTreeItem::Construct(DetailNode);
+		SDetailTreeItem::Construct(Node);
 
 		OnSplitterSlotResized = InArgs._OnSplitterSlotResized;
 
@@ -34,13 +34,13 @@ namespace DETAILS_VIEWER
 		{
 			//const bool bOverrideRowWidget = DetailNodePtr->OverrideRowWidget();
 
-			TSharedPtr<SWidget> PropertyWidget = InWidget.IsValid() ? InWidget : DetailNodePtr->GetWidget();
-			TSharedPtr<SPropertyName> PropertyName = SNew(SPropertyName, DetailNode);
+			TSharedPtr<SWidget> PropertyWidget = InWidget.IsValid() ? InWidget : GetPropertyNode()->PropertyInfo->Executor->WidgetMaker->MakeWidget();
+			TSharedPtr<SPropertyName> PropertyName = SNew(SPropertyName, Node);
 
 			TSharedPtr<SWidget> Widget = PropertyWidget;
 			if (!PropertyWidget)
 			{
-				FText Text = FText::FromString(FString::Printf(TEXT("%s Not Implemented"), *DetailNodePtr->GetPropertyHolder()->GetPropertyType()));
+				FText Text = FText::FromString(FString::Printf(TEXT("%s Not Implemented"), *GetPropertyNode()->PropertyInfo->Type));
 				TSharedRef<STextBlock> NotImplementd = SNew(STextBlock)
 					.Text(Text)
 					;

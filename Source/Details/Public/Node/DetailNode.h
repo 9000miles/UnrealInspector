@@ -32,4 +32,61 @@ namespace DETAILS_VIEWER
 		TSharedPtr<FDetailTreeNode> ParentNode;
 		TArray<TSharedPtr<FDetailTreeNode>> ChildNodes;
 	};
+
+	class FTreeNode :public ITypeName
+	{
+	public:
+		virtual FString GetName() { return TEXT("TreeNode"); };
+		virtual TSharedPtr<SWidget> GetWidget();
+
+		TArray<TSharedPtr<FTreeNode>> GetChildren() { return Children; }
+		TSharedPtr<FTreeNode> GetParent() { return Parent; }
+		void AddChild(TSharedPtr<FTreeNode> Node);
+
+	protected:
+		TSharedPtr<FTreeNode> Parent;
+		TArray<TSharedPtr<FTreeNode>> Children;
+	public:
+		FString GetTypeName() override;
+
+	};
+
+	class FCategoryTreeNode :public FTreeNode
+	{
+	public:
+		FCategoryTreeNode(TSharedPtr<FCategoryInfo> Item) :CategoryInfo(Item)
+		{
+		}
+
+	public:
+		static FString TypeName() { return TEXT("CategoryTreeNode"); }
+		FString GetTypeName() override { return FCategoryTreeNode::TypeName(); }
+
+		TSharedPtr<FCategoryInfo> CategoryInfo;
+
+		FString GetName() override;
+
+
+		TSharedPtr<SWidget> GetWidget() override;
+	};
+
+	class FPropertyTreeNode :public FTreeNode
+	{
+	public:
+		FPropertyTreeNode(TSharedPtr<FPropertyInfo> Item) :PropertyInfo(Item)
+		{
+		}
+
+	public:
+		static FString TypeName() { return TEXT("PropertyTreeNode"); }
+		FString GetTypeName() override { return FPropertyTreeNode::TypeName(); }
+
+		TSharedPtr<FPropertyInfo> PropertyInfo;
+
+		FString GetName() override;
+
+
+		TSharedPtr<SWidget> GetWidget() override;
+
+	};
 }

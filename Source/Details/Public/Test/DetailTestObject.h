@@ -9,6 +9,7 @@
 #include "Core/SWidgetHandle.h"
 #include "Core/DetailDefine.h"
 #include "Core/DetialManger.h"
+#include "Detail/UObjectDetail.h"
 #include "DetailTestObject.generated.h"
 
 /**
@@ -35,13 +36,13 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "AAA", meta = (DisplayName = "窝窝屎"))
-	bool _Bool_;
+	bool Bool_1;
 	UPROPERTY(EditAnywhere, meta = (HintText = "This is FString Property"))
-	FString _String_;
+	FString String_1;
 	UPROPERTY(EditAnywhere)
-	FText _Text_;
+	FText Text_1;
 	UPROPERTY()
-	FName _Name_;
+	FName Name_1;
 	//UPROPERTY(meta = (UIMin = 0, UIMax = 100))
 	//int32 _int32_;
 
@@ -102,23 +103,44 @@ namespace DETAILS_VIEWER_TEST
 		static void RunTest()
 		{
 
-			static UDetialManager* DetManager = UDetialManager::Get();
+			FDetialManager& Manager = FDetialManager::Get();
 
-			FDetailOptions Options;
-			UDetailViewer* DetViewer = DetManager->CreateDetail(Options);
+			TSharedPtr<FDetailOptions> Options = MakeShared<FDetailOptions>();
+			TSharedPtr<FUObjectDetailHolder> DetailHolder = Manager.Create<FUObjectDetailHolder>(Options);
 
-			static TStrongObjectPtr<UDetailTestObject> TestObject = TStrongObjectPtr<UDetailTestObject>(NewObject<UDetailTestObject>(DetViewer));
-			DetViewer->SetObject(TestObject.Get());
+			static TStrongObjectPtr<UDetailTestObject> TestObject = TStrongObjectPtr<UDetailTestObject>(NewObject<UDetailTestObject>());
+			DetailHolder->SetObject(TestObject.Get());
 
 			TSharedPtr<SWindow> WindowPtr = SNew(SWindow)
 				.ClientSize(FVector2D(800, 600))
 				.HasCloseButton(true)
 				.SupportsMaximize(true)
 				;
-			TSharedPtr<SWidget> ViewWidget = DetViewer->GetViewWidget();
+			TSharedPtr<SWidget> ViewWidget = DetailHolder->GetWidget();
 			WindowPtr->SetContent(ViewWidget.ToSharedRef());
 
 			FSlateApplication::Get().AddWindow(WindowPtr.ToSharedRef());
+		}
+		static void RunTest1()
+		{
+
+			//static FDetialManager* DetManager = FDetialManager::Get();
+
+			//FDetailOptions Options;
+			//UDetailViewer* DetViewer = DetManager->CreateDetail(Options);
+
+			//static TStrongObjectPtr<UDetailTestObject> TestObject = TStrongObjectPtr<UDetailTestObject>(NewObject<UDetailTestObject>(DetViewer));
+			//DetViewer->SetObject(TestObject.Get());
+
+			//TSharedPtr<SWindow> WindowPtr = SNew(SWindow)
+			//	.ClientSize(FVector2D(800, 600))
+			//	.HasCloseButton(true)
+			//	.SupportsMaximize(true)
+			//	;
+			//TSharedPtr<SWidget> ViewWidget = DetViewer->GetViewWidget();
+			//WindowPtr->SetContent(ViewWidget.ToSharedRef());
+
+			//FSlateApplication::Get().AddWindow(WindowPtr.ToSharedRef());
 		}
 	};
 

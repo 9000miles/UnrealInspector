@@ -10,6 +10,7 @@
 #include "Node/DetailNode.h"
 #include "SDetailTreeItem.h"
 #include "SDetailPropertyWidget.h"
+#include "Core/DetailInfo.h"
 
 
 namespace DETAILS_VIEWER
@@ -23,27 +24,32 @@ namespace DETAILS_VIEWER
 	public:
 		SLATE_BEGIN_ARGS(SDetailView)
 			{}
+			SLATE_ARGUMENT(FDetailOptions, Options)
+			SLATE_ARGUMENT(TSharedPtr<FDetailInfo>, DetailInfo)
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
 		void Construct(const FArguments& InArgs);
 
 		void InitByOptions(FDetailOptions Options);
-		void SetObject(UObject* Object);
+		//void SetObject(UObject* Object);
 
 	private:
-		TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<FDetailTreeNode> Node, const TSharedRef<class STableViewBase>& TableView);
-		TSharedPtr<SWidget> CreateCustomDetailRowWidget(TSharedPtr<FDetailTreeNode> Node, FString& OutCustomType, bool& bOutOverrideRowWidget);
-		void OnGetChildren(TSharedPtr<FDetailTreeNode> Node, TArray<TSharedPtr<FDetailTreeNode>>& Children);
+		void GenerateTreeNodes();
+		TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<FTreeNode> Node, const TSharedRef<class STableViewBase>& TableView);
+		//TSharedPtr<SWidget> CreateCustomDetailRowWidget(TSharedPtr<FTreeNode> Node, FString& OutCustomType, bool& bOutOverrideRowWidget);
+		void OnGetChildren(TSharedPtr<FTreeNode> Node, TArray<TSharedPtr<FTreeNode>>& Children);
 
 	private:
-		TSharedPtr<FDetailTreeNode> GenerateNode(UObject* Object, UE_Property* Property);
+		//TSharedPtr<FTreeNode> GenerateNode(UObject* Object, UE_Property* Property);
 		void OnSplitterSlotResized(int32 Index, float Size);
 
 	private:
+		TSharedPtr<FDetailInfo> DetailInfo;
+
 		TSharedPtr<SBox> DetailContentBoxPtr;
-		TSharedPtr<STreeView<TSharedPtr<FDetailTreeNode>>> TreeView;
-		TArray<TSharedPtr<FDetailTreeNode>> PropertyNodes;
+		TSharedPtr<STreeView<TSharedPtr<FTreeNode>>> TreeView;
+		TArray<TSharedPtr<FTreeNode>> TreeNodes;
 
 		TArray<TSharedPtr<SDetailPropertyWidget>> HasSplitterWidgets;
 	};

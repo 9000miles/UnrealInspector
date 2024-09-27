@@ -1,6 +1,7 @@
 #include "Node/DetailNode.h"
 #include "Core/DetailDefine.h"
 #include "Core/DetailFactory.h"
+#include "Creater/BoolCreater.h"
 
 namespace DETAILS_VIEWER
 {
@@ -39,4 +40,68 @@ namespace DETAILS_VIEWER
 
 		return PropertyBuilder->MakeWidget();
 	}
+
+	FString FCategoryTreeNode::GetName()
+	{
+		return CategoryInfo->Name;
+	}
+
+
+	TSharedPtr<SWidget> FCategoryTreeNode::GetWidget()
+	{
+		return /*SNew(SExpandableArea)
+			.InitiallyCollapsed(false)
+			.HeaderContent()
+			[*/
+			SNew(STextBlock)
+			.Text(FText::FromString(CategoryInfo->Name))
+			/*]
+			.BodyContent()
+			[
+			]*/
+			;
+	}
+
+	FString FPropertyTreeNode::GetName()
+	{
+		return PropertyInfo->Name;
+	}
+
+
+	TSharedPtr<SWidget> FPropertyTreeNode::GetWidget()
+	{
+		//return SNew(SDetailPropertyWidget)
+		if (FWidgetCreaterBool::IsSupport(PropertyInfo))
+			return MakeWidget<FWidgetCreaterBool>(PropertyHolder);
+		//else if (PropertyHolder->IsA(FIntProperty::StaticClass()))
+		//	return FWidgetCreaterInt::CreateWidget(PropertyHolder);
+		//else if (PropertyHolder->IsA(FInt64Property::StaticClass()))
+		//	return FWidgetCreaterInt64::CreateWidget(PropertyHolder);
+		//else if (PropertyHolder->IsA(FFloatProperty::StaticClass()))
+		//	return FWidgetCreaterFloat::CreateWidget(PropertyHolder);
+		//else if (PropertyHolder->IsA(FDoubleProperty::StaticClass()))
+		//	return FWidgetCreaterDouble::CreateWidget(PropertyHolder);
+		else if (PropertyHolder->IsA(FStrProperty::StaticClass())
+			|| PropertyHolder->IsA(FNameProperty::StaticClass()))
+			return MakeWidget<FWidgetCreaterString>(PropertyHolder);
+
+		return SNullWidget::NullWidget;
+
+	}
+
+	TSharedPtr<SWidget> FTreeNode::GetWidget()
+	{
+		return SNullWidget::NullWidget;
+	}
+
+	FString FTreeNode::GetTypeName()
+	{
+		return TEXT("TreeNode");
+	}
+
+	void FTreeNode::AddChild(TSharedPtr<FTreeNode> Node)
+	{
+		Children.Add(Node);
+	}
+
 }

@@ -43,7 +43,7 @@ namespace DETAILS_VIEWER
 		TArray<TSharedPtr<FJsonValue>> Array = JsonObject->GetArrayField(TEXT("CategoryList"));
 		for (TSharedPtr<FJsonValue> Value : Array)
 		{
-			TSharedPtr<ICategoryInfo> CategoryInfo = MakeShared<ICategoryInfo>();
+			TSharedPtr<FCategoryInfo> CategoryInfo = MakeShared<FCategoryInfo>();
 			CategoryInfo->FromJson(Value->AsObject());
 			CategoryList->Add(CategoryInfo);
 		}
@@ -113,41 +113,46 @@ namespace DETAILS_VIEWER
 
 	TMap<FString, TSharedPtr<ITypeName>> Factory::Map;
 
-	ICategoryInfo::~ICategoryInfo()
+	FCategoryInfo::~FCategoryInfo()
 	{
 		CategoryExecutor.Reset();
 		CategoryExecutor = nullptr;
 
-		ParameterList.Reset();
-		ParameterList = nullptr;
+		PropertyList.Reset();
+		PropertyList = nullptr;
 	}
 
-	void ICategoryInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
+	void FCategoryInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 	}
 
-	TSharedPtr<FJsonObject> ICategoryInfo::ToJson()
+	TSharedPtr<FJsonObject> FCategoryInfo::ToJson()
 	{
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 		JsonObject->SetStringField(TEXT("Name"), Name);
 		JsonObject->SetStringField(TEXT("Description"), Description);
 		JsonObject->SetStringField(TEXT("DisplayName"), DisplayName);
 		JsonObject->SetObjectField(TEXT("CategoryExecutor"), CategoryExecutor->ToJson());
-		JsonObject->SetObjectField(TEXT("ParameterList"), ParameterList->ToJson());
+		JsonObject->SetObjectField(TEXT("ParameterList"), PropertyList->ToJson());
 
 		return JsonObject;
 	}
 
-	void ICategoryInfo::Add(TSharedPtr<IParameterInfo> Parameter)
+	void FCategoryInfo::Add(TSharedPtr<FPropertyInfo> Parameter)
 	{
-		ParameterList->Add(Parameter);
+		PropertyList->Add(Parameter);
 	}
 
-	void IParameterInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
+	void FCategoryInfo::Sort()
+	{
+		PropertyList->Sort();
+	}
+
+	void FPropertyInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 	}
 
-	TSharedPtr<FJsonObject> IParameterInfo::ToJson()
+	TSharedPtr<FJsonObject> FPropertyInfo::ToJson()
 	{
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 
@@ -201,7 +206,7 @@ namespace DETAILS_VIEWER
 		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 
 		TArray<TSharedPtr<FJsonValue>> Array;
-		for (TSharedPtr<ICategoryInfo> Category : Categories)
+		for (TSharedPtr<FCategoryInfo> Category : Categories)
 			Array.Add(MakeShareable(new FJsonValueObject(Category->ToJson())));
 
 		JsonObject->SetArrayField(TEXT("Categories"), Array);
@@ -209,17 +214,17 @@ namespace DETAILS_VIEWER
 		return JsonObject;
 	}
 
-	void FCategoryList::Add(TSharedPtr<ICategoryInfo> Category)
+	void FCategoryList::Add(TSharedPtr<FCategoryInfo> Category)
 	{
 		Categories.Add(Category);
 	}
 
 
 
-	TSharedPtr<ICategoryInfo> FCategoryList::Find(const FString& Name)
+	TSharedPtr<FCategoryInfo> FCategoryList::Find(const FString& Name)
 	{
-		TSharedPtr<ICategoryInfo>* Found = Categories.FindByPredicate(
-			[Name](TSharedPtr<ICategoryInfo> Item)
+		TSharedPtr<FCategoryInfo>* Found = Categories.FindByPredicate(
+			[Name](TSharedPtr<FCategoryInfo> Item)
 			{
 				return Item->Name == Name;
 			});
@@ -227,17 +232,38 @@ namespace DETAILS_VIEWER
 		return Found ? *Found : nullptr;
 	}
 
-	void FParameterList::FromJson(TSharedPtr<FJsonObject> JsonObject)
+	void FCategoryList::Sort()
+	{
+		Categories.Sort([](TSharedPtr<FCategoryInfo> ItemA, TSharedPtr<FCategoryInfo> ItemB)
+			{
+				return ItemA->Name < ItemB->Name;
+			});
+
+		for (TSharedPtr<FCategoryInfo> Category : Categories)
+		{
+			Category->Sort();
+		}
+	}
+
+	void FCategoryList::Enumerate(TFunction<void(TSharedPtr<FCategoryInfo>)> Func)
+	{
+		for (auto Item : Categories)
+		{
+			Func(Item);
+		}
+	}
+
+	void FPropertyList::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 
 	}
 
-	TSharedPtr<FJsonObject> FParameterList::ToJson()
+	TSharedPtr<FJsonObject> FPropertyList::ToJson()
 	{
 		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 
 		TArray<TSharedPtr<FJsonValue>> Array;
-		for (TSharedPtr<IParameterInfo> Parameter : Parameters)
+		for (TSharedPtr<FPropertyInfo> Parameter : Parameters)
 			Array.Add(MakeShareable(new FJsonValueObject(Parameter->ToJson())));
 
 		JsonObject->SetArrayField(TEXT("Categories"), Array);
@@ -245,19 +271,36 @@ namespace DETAILS_VIEWER
 		return JsonObject;
 	}
 
-	void FParameterList::Add(TSharedPtr<IParameterInfo> Parameter)
+	void FPropertyList::Add(TSharedPtr<FPropertyInfo> Parameter)
 	{
 
 	}
 
-	TSharedPtr<IParameterInfo> FParameterList::Find(const FString& Name)
+	TSharedPtr<FPropertyInfo> FPropertyList::Find(const FString& Name)
 	{
-		TSharedPtr<IParameterInfo>* Found = Parameters.FindByPredicate(
-			[Name](TSharedPtr<IParameterInfo> Item)
+		TSharedPtr<FPropertyInfo>* Found = Parameters.FindByPredicate(
+			[Name](TSharedPtr<FPropertyInfo> Item)
 			{
 				return Item->Name == Name;
 			});
 
 		return Found ? *Found : nullptr;
 	}
+
+	void FPropertyList::Sort()
+	{
+		Parameters.Sort([](TSharedPtr<FPropertyInfo> ItemA, TSharedPtr<FPropertyInfo> ItemB)
+			{
+				return ItemA->Name < ItemB->Name;
+			});
+	}
+
+	void FPropertyList::Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func)
+	{
+		for (auto Item : Parameters)
+		{
+			Func(Item);
+		}
+	}
+
 }

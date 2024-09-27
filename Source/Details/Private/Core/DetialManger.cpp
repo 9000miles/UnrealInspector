@@ -3,30 +3,19 @@
 
 #include "Core/DetialManger.h"
 #include "Creater/DetailCreater.h"
+#include "Core/DetailInfo.h"
+#include "Misc/LazySingleton.h"
 
-UDetialManager::UDetialManager()
+FDetialManager::FDetialManager()
 {
 }
 
-UDetialManager::~UDetialManager()
+FDetialManager::~FDetialManager()
 {
 }
 
-UDetialManager* UDetialManager::Get()
+FDetialManager& FDetialManager::Get()
 {
-	if (!Instance.IsValid())
-	{
-		Instance = TStrongObjectPtr<UDetialManager>(NewObject<UDetialManager>());
-	}
-
-	return Instance.Get();
+	return TLazySingleton<FDetialManager>::Get();
 }
 
-UDetailViewer* UDetialManager::CreateDetail(FDetailOptions Options)
-{
-	UDetailViewer* DetailViewer = NewObject<UDetailViewer>(this);
-	DetailViewer->InitByOptions(Options);
-	return DetailViewer;
-}
-
-TStrongObjectPtr<UDetialManager> UDetialManager::Instance = nullptr;
