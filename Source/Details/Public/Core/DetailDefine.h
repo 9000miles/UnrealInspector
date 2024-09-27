@@ -26,7 +26,7 @@ public:
 };
 
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	enum EDetailNodeType

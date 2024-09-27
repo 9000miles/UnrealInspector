@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Core/DetailInfo.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
-
+#define TYPE_NAME TEXT("TYPE_NAME")
 
 	TSharedPtr<SWidget> FCustomDetailMaker::MakeWidget()
 	{
@@ -15,37 +15,61 @@ namespace DetailsViewer
 		return  TEXT("CustomDetailMaker");
 	}
 
-	void IDetailInfo::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	FDetailInfo::FDetailInfo()
+	{
+		CategoryList = MakeShared<FCategoryList>();
+	}
+
+	FDetailInfo::~FDetailInfo()
+	{
+		DetailExecutor.Reset();
+		DetailExecutor = nullptr;
+
+		CategoryList.Reset();
+		CategoryList = nullptr;
+	}
+
+	void FDetailInfo::FromJSON(TSharedPtr<FJsonObject> JsonObject)
 	{
 		Name = JsonObject->GetStringField(TEXT("Name"));
 		Description = JsonObject->GetStringField(TEXT("Description"));
 		DisplayName = JsonObject->GetStringField(TEXT("DisplayName"));
-		DetailExecutor->FromJSON(JsonObject->GetObjectField(TEXT("DetailExecutor")));
+
+		TSharedPtr<FJsonObject> ExecutorJson = JsonObject->GetObjectField(TEXT("DetailExecutor"));
+		FString ExecutorTypeName = ExecutorJson->GetStringField(TYPE_NAME);
+		DetailExecutor = Factory::Get<IDetailExecutor>(ExecutorTypeName);
+		DetailExecutor->FromJSON(ExecutorJson);
 
 		TArray<TSharedPtr<FJsonValue>> Array = JsonObject->GetArrayField(TEXT("CategoryList"));
 		for (TSharedPtr<FJsonValue> Value : Array)
 		{
 			TSharedPtr<ICategoryInfo> CategoryInfo = MakeShared<ICategoryInfo>();
 			CategoryInfo->FromJSON(Value->AsObject());
-			CategoryList.Add(CategoryInfo);
+			CategoryList->Add(CategoryInfo);
 		}
 
 	}
 
-	TSharedPtr<FJsonObject> IDetailInfo::ToJson()
+	TSharedPtr<FJsonObject> FDetailInfo::ToJson()
 	{
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 		JsonObject->SetStringField(TEXT("Name"), Name);
 		JsonObject->SetStringField(TEXT("Description"), Description);
 		JsonObject->SetStringField(TEXT("DisplayName"), DisplayName);
 		JsonObject->SetObjectField(TEXT("DetailExecutor"), DetailExecutor->ToJson());
-
-		TArray<TSharedPtr<FJsonValue>> Array;
-		for (TSharedPtr<ICategoryInfo> Category : CategoryList)
-			Array.Add(MakeShareable(new FJsonValueObject(Category->ToJson())));
-		JsonObject->SetArrayField(TEXT("CategoryList"), Array);
+		JsonObject->SetObjectField(TEXT("CategoryList"), CategoryList->ToJson());
 
 		return JsonObject;
+	}
+
+	void FDetailInfo::Merge(TSharedPtr<FDetailInfo> Other)
+	{
+
+	}
+
+	void FDetailInfo::Merge(TArray<TSharedPtr<FDetailInfo>> Others)
+	{
+
 	}
 
 	TSharedPtr<SWidget> FDetailMaker::MakeWidget()
@@ -61,7 +85,8 @@ namespace DetailsViewer
 	void IDetailExecutor::FromJSON(TSharedPtr<FJsonObject> JsonObject)
 	{
 		FString Maker;
-		if (JsonObject->TryGetStringField(TEXT("DetailMaker"), Maker))
+		TSharedPtr<FJsonObject> DetailMakerJson = JsonObject->GetObjectField(IDetailExecutor::TypeName());
+		if (DetailMakerJson->TryGetStringField(TYPE_NAME, Maker))
 		{
 			DetailMaker = Factory::Get<IDetailMaker>(Maker);
 		}
@@ -73,8 +98,167 @@ namespace DetailsViewer
 
 	TSharedPtr<FJsonObject> IDetailExecutor::ToJson()
 	{
-		return MakeShared<FJsonObject>();
+		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
+
+		JsonObject->SetStringField(TYPE_NAME, GetTypeName());
+		JsonObject->SetObjectField(TEXT("DetailMaker"), DetailMaker->ToJson());
+
+		return JsonObject;
+	}
+
+	FString IDetailExecutor::GetTypeName()
+	{
+		return IDetailExecutor::TypeName();
 	}
 
 	TMap<FString, TSharedPtr<ITypeName>> Factory::Map;
+
+	ICategoryInfo::~ICategoryInfo()
+	{
+		CategoryExecutor.Reset();
+		CategoryExecutor = nullptr;
+
+		ParameterList.Reset();
+		ParameterList = nullptr;
+	}
+
+	void ICategoryInfo::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	{
+	}
+
+	TSharedPtr<FJsonObject> ICategoryInfo::ToJson()
+	{
+		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+		JsonObject->SetStringField(TEXT("Name"), Name);
+		JsonObject->SetStringField(TEXT("Description"), Description);
+		JsonObject->SetStringField(TEXT("DisplayName"), DisplayName);
+		JsonObject->SetObjectField(TEXT("CategoryExecutor"), CategoryExecutor->ToJson());
+		JsonObject->SetObjectField(TEXT("ParameterList"), ParameterList->ToJson());
+
+		return JsonObject;
+	}
+
+	void ICategoryInfo::Add(TSharedPtr<IParameterInfo> Parameter)
+	{
+		ParameterList->Add(Parameter);
+	}
+
+	void IParameterInfo::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	{
+	}
+
+	TSharedPtr<FJsonObject> IParameterInfo::ToJson()
+	{
+		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+
+		JsonObject->SetStringField(TEXT("Name"), Name);
+		JsonObject->SetStringField(TEXT("Description"), Description);
+		JsonObject->SetStringField(TEXT("DisplayName"), DisplayName);
+		JsonObject->SetStringField(TEXT("Type"), Type);
+		JsonObject->SetStringField(TEXT("Category"), Category);
+		JsonObject->SetBoolField(TEXT("Advanced"), Advanced);
+		JsonObject->SetObjectField(TEXT("Executor"), Executor->ToJson());
+		JsonObject->SetObjectField(TEXT("Metadata"), Metadata->ToJson());
+
+		return JsonObject;
+	}
+
+	void PARAMETER::IExecutor::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	{
+	}
+
+	TSharedPtr<FJsonObject> PARAMETER::IExecutor::ToJson()
+	{
+		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
+
+		JsonObject->SetObjectField(TEXT("Setter"), Setter->ToJson());
+		JsonObject->SetObjectField(TEXT("Getter"), Getter->ToJson());
+		JsonObject->SetObjectField(TEXT("Editable"), Editable->ToJson());
+		JsonObject->SetObjectField(TEXT("Visible"), Visible->ToJson());
+		JsonObject->SetObjectField(TEXT("DefaultGetter"), DefaultGetter->ToJson());
+		JsonObject->SetObjectField(TEXT("WidgetMaker"), WidgetMaker->ToJson());
+
+		return JsonObject;
+	}
+
+	void PARAMETER::FMetadata::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	{
+		Metadata = JsonObject;
+	}
+
+	TSharedPtr<FJsonObject> PARAMETER::FMetadata::ToJson()
+	{
+		return Metadata;
+	}
+
+	void FCategoryList::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	{
+
+	}
+
+	TSharedPtr<FJsonObject> FCategoryList::ToJson()
+	{
+		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
+
+		TArray<TSharedPtr<FJsonValue>> Array;
+		for (TSharedPtr<ICategoryInfo> Category : Categories)
+			Array.Add(MakeShareable(new FJsonValueObject(Category->ToJson())));
+
+		JsonObject->SetArrayField(TEXT("Categories"), Array);
+
+		return JsonObject;
+	}
+
+	void FCategoryList::Add(TSharedPtr<ICategoryInfo> Category)
+	{
+		Categories.Add(Category);
+	}
+
+
+
+	TSharedPtr<ICategoryInfo> FCategoryList::Find(const FString& Name)
+	{
+		TSharedPtr<ICategoryInfo>* Found = Categories.FindByPredicate(
+			[Name](TSharedPtr<ICategoryInfo> Item)
+			{
+				return Item->Name == Name;
+			});
+
+		return Found ? *Found : nullptr;
+	}
+
+	void FParameterList::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	{
+
+	}
+
+	TSharedPtr<FJsonObject> FParameterList::ToJson()
+	{
+		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
+
+		TArray<TSharedPtr<FJsonValue>> Array;
+		for (TSharedPtr<IParameterInfo> Parameter : Parameters)
+			Array.Add(MakeShareable(new FJsonValueObject(Parameter->ToJson())));
+
+		JsonObject->SetArrayField(TEXT("Categories"), Array);
+
+		return JsonObject;
+	}
+
+	void FParameterList::Add(TSharedPtr<IParameterInfo> Parameter)
+	{
+
+	}
+
+	TSharedPtr<IParameterInfo> FParameterList::Find(const FString& Name)
+	{
+		TSharedPtr<IParameterInfo>* Found = Parameters.FindByPredicate(
+			[Name](TSharedPtr<IParameterInfo> Item)
+			{
+				return Item->Name == Name;
+			});
+
+		return Found ? *Found : nullptr;
+	}
+
 }

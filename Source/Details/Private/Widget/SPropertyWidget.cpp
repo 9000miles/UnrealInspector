@@ -3,7 +3,7 @@
 
 #include "Widget/SPropertyWidget.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	void SPropertyWidget::Construct(TSharedPtr<FPropertyHolder> InPropertyHolder)

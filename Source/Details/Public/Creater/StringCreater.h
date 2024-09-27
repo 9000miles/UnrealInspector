@@ -7,7 +7,7 @@
 #include "Core/PropertyHolder.h"
 
 class SPropertyWidgetString;
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 	/**
 	 *

@@ -12,7 +12,7 @@
 #include "SDetailPropertyWidget.h"
 
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	/**

@@ -3,7 +3,7 @@
 
 #include "Node/SetElementNode.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	FSetElementNode::FSetElementNode(UObject* Object, UE_Property* Property)

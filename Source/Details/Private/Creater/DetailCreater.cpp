@@ -2,7 +2,7 @@
 
 
 #include "Creater/DetailCreater.h"
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 

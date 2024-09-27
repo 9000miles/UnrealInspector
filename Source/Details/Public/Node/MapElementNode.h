@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "DetailNode.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 	/**
 	 *

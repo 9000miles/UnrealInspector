@@ -6,7 +6,7 @@
 #include "View/SPropertyName.h"
 #include "Creater/DetailCreater.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 	static float SplitterSlotSize = 0.f;
 

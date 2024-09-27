@@ -6,7 +6,7 @@
 #include "DetailCreater.h"
 #include "Widget/SPropertyWidget.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	/**

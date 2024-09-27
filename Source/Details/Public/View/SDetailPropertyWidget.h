@@ -10,7 +10,7 @@
 
 DECLARE_DELEGATE_TwoParams(FOnPropertySpiltterSlotResized, int32, float);
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	/**

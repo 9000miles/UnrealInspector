@@ -6,7 +6,7 @@
 #include "Core/PropertyHolder.h"
 
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	class FDetailTreeNode :public TSharedFromThis<FDetailTreeNode>

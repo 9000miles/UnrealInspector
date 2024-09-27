@@ -4,7 +4,7 @@
 #include "Node/CategoryNode.h"
 #include "Core/DetailDefine.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	FCategoryNode::FCategoryNode(UObject* Object, UE_Property* Property)

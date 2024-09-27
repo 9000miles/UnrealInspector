@@ -2,7 +2,7 @@
 
 
 #include "Node/ArrayNode.h"
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	FArrayNode::FArrayNode(UObject* Object, UE_Property* Property)

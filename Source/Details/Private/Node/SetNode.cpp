@@ -3,7 +3,7 @@
 
 #include "Node/SetNode.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 

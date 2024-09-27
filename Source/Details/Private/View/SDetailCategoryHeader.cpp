@@ -4,7 +4,7 @@
 #include "View/SDetailCategoryHeader.h"
 #include "SlateOptMacros.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION

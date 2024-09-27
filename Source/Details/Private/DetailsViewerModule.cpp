@@ -8,10 +8,11 @@
 #include "Creater/BoolCreater.h"
 #include "Creater/StringCreater.h"
 #include "Core/DetailInfo.h"
+#include "Detail/UObjectDetail.h"
 
 #define LOCTEXT_NAMESPACE "FPropertyInspectorModule"
 
-using namespace DetailsViewer;
+using namespace DETAILS_VIEWER;
 
 void FDetailsViewerModule::StartupModule()
 {
@@ -23,15 +24,10 @@ void FDetailsViewerModule::StartupModule()
 	Factory::Register<FDetailMaker>();
 	Factory::Register<FCustomDetailMaker>();
 
-	DetailsViewerTest::FDetailsViewerTestModule::RunTest();
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-}
+	Factory::Register<FUObjectDetail>();
 
-template<typename T>
-void FDetailsViewerModule::RegisterCreater()
-{
-	TSharedPtr<T> Creater = MakeShared<T>();
-	DetailsViewer::FDetailFactory::Get().RegisterCreater(Creater.ToSharedRef());
+	DETAILS_VIEWER_TEST::FDetailsViewerTestModule::RunTest();
+	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
 void FDetailsViewerModule::ShutdownModule()

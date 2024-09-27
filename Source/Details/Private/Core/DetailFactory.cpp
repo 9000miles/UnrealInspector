@@ -4,7 +4,7 @@
 #include "Creater/DetailCreater.h"
 #include "Misc/LazySingleton.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	FDetailFactory& FDetailFactory::Get()

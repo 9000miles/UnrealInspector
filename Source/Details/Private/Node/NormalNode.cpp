@@ -5,7 +5,7 @@
 #include "Creater/BoolCreater.h"
 #include "Creater/StringCreater.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 	FNormalNode::FNormalNode(UObject* Object, UE_Property* Property)
 		:FDetailTreeNode(EDetailNodeType::NormalProperty, Object, Property)

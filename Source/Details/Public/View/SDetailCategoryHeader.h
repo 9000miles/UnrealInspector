@@ -6,7 +6,7 @@
 #include "Widgets/SCompoundWidget.h"
 #include "SDetailTreeItem.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	/**

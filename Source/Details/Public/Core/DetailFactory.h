@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Creater/DetailCreater.h"
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	class FDetailFactory

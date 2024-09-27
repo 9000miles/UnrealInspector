@@ -3,7 +3,7 @@
 
 #include "Node/MapElementNode.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	FMapElementNode::FMapElementNode(UObject* Object, UE_Property* Property)

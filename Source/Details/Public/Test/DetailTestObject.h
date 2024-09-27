@@ -34,7 +34,7 @@ public:
 	FSWidgetHandle Property_FuncPropertyRow_RowWidget(FPropertyHandle Property);
 
 public:
-	UPROPERTY(meta = (DisplayName = "窝窝屎"))
+	UPROPERTY(EditAnywhere, Category = "AAA", meta = (DisplayName = "窝窝屎"))
 	bool _Bool_;
 	UPROPERTY(EditAnywhere, meta = (HintText = "This is FString Property"))
 	FString _String_;
@@ -94,7 +94,7 @@ private:
 //};
 
 
-namespace DetailsViewerTest
+namespace DETAILS_VIEWER_TEST
 {
 	class FDetailsViewerTestModule
 	{

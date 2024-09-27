@@ -17,7 +17,7 @@
 #include "Node/StructNode.h"
 #include "Node/NormalNode.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	void SDetailView::Construct(const FArguments& InArgs)

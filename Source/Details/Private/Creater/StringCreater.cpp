@@ -4,7 +4,7 @@
 #include "Creater/StringCreater.h"
 #include "Widget/SPropertyWidget.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	void SPropertyWidgetString::Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder)

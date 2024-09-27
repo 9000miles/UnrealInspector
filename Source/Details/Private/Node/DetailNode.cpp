@@ -2,7 +2,7 @@
 #include "Core/DetailDefine.h"
 #include "Core/DetailFactory.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 

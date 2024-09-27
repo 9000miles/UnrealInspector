@@ -6,7 +6,7 @@
 #include "Widgets/SCompoundWidget.h"
 #include "Core/PropertyHolder.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	/**

@@ -3,7 +3,7 @@
 
 #include "View/SPropertyName.h"
 #include "SlateOptMacros.h"
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 		void SPropertyName::Construct(const FArguments& InArgs, TSharedPtr<FDetailTreeNode> DetailNode)

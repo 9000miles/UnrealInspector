@@ -3,7 +3,7 @@
 
 #include "Node/StructNode.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 

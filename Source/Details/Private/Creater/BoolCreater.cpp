@@ -2,7 +2,7 @@
 
 #include "Creater/BoolCreater.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 	void SPropertyWidgetBool::Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder)

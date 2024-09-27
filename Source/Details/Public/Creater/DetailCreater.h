@@ -8,7 +8,7 @@
 #include "Core/PropertyHolder.h"
 #include "Core/DetailInfo.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 	/**
 	 * 细节面板创建器

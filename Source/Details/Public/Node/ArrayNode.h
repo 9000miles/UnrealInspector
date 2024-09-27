@@ -6,7 +6,7 @@
 #include "DetailNode.h"
 
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 	/**
 	 *

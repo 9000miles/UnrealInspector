@@ -3,7 +3,7 @@
 
 #include "Node/MapNode.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 	FMapNode::FMapNode(UObject* Object, UE_Property* Property)
 		:FDetailTreeNode(EDetailNodeType::Map, Object, Property)

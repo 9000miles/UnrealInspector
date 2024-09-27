@@ -8,7 +8,7 @@ UDetailViewer::UDetailViewer()
 {
 	Guid = FGuid::NewGuid();
 
-	PropertyView = SNew(DetailsViewer::SDetailView)
+	PropertyView = SNew(DETAILS_VIEWER::SDetailView)
 		;
 }
 

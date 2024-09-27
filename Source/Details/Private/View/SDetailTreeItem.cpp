@@ -5,7 +5,7 @@
 #include "SlateOptMacros.h"
 #include "View/SPropertyName.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
 
 

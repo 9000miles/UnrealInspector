@@ -4,44 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Dom/JsonObject.h"
+#include "Interface/ITypeName.h"
+#include "Interface/IJsonable.h"
 
-namespace DetailsViewer
+namespace DETAILS_VIEWER
 {
-	class IJsonable
-	{
-	public:
-		virtual void FromJSON(TSharedPtr<FJsonObject> JsonObject)
-		{
-		}
-
-		void FromJsonString(const FString& JsonString)
-		{
-			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
-			TSharedPtr<FJsonObject> JsonObject;
-			if (FJsonSerializer::Deserialize(Reader, JsonObject))
-				FromJSON(JsonObject);
-		}
-		virtual TSharedPtr<FJsonObject> ToJson()
-		{
-			return MakeShared<FJsonObject>();
-		}
-
-		FString ToJsonString()
-		{
-			TSharedPtr<FJsonObject> JsonObject = ToJson();
-			FString JsonString;
-			TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
-			FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
-			return JsonString;
-		}
-	};
-
-	class ITypeName
-	{
-	public:
-		virtual FString GetTypeName() = 0;
-	};
-
 	class IExecutorData
 	{
 	};
@@ -86,7 +53,7 @@ namespace DetailsViewer
 	/**
 	 * 细节面板构建器
 	 */
-	class IDetailMaker :public ITypeName
+	class IDetailMaker :public IJsonable, public ITypeName
 	{
 	public:
 		virtual ~IDetailMaker() {}
@@ -127,62 +94,75 @@ namespace DetailsViewer
 		virtual void Execute() = 0;
 	};
 
-	class IDetailExecutor :public IJsonable
+	class IDetailExecutor :public IJsonable, public ITypeName
 	{
 	public:
 		virtual ~IDetailExecutor() {}
 		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
+		static FString TypeName() { return TEXT("DetailExecutor"); }
+		FString GetTypeName() override;
+
 	public:
 		TSharedPtr<IDetailMaker> DetailMaker;
 		TSharedPtr<ICopyExecutor> CopyExecutor;
 		TSharedPtr<IPasteExecutor> PasteExecutor;
-
-
 	};
 
-	class ICategoryExecutor
+	class ICategoryExecutor :public IJsonable
 	{
 	public:
 		virtual void Execute() = 0;
 	};
 
-	namespace Parameter
+	namespace PARAMETER
 	{
-		class ISetter
+		class ISetter :public IJsonable
 		{
 		public:
-			virtual void Set(FString Value) = 0;
+			template<typename T>
+			void Set(T Value) {};
 		};
-		class IGetter
+		class IGetter :public IJsonable
 		{
 		public:
-			virtual FString Get() = 0;
+			template<typename T>
+			T Get() {}
 		};
-		class IEditable
+		class IEditable :public IJsonable
 		{
 		public:
 			virtual bool CanEdit() = 0;
 		};
-		class IVisible
+		class IVisible :public IJsonable
 		{
 		public:
 			virtual bool CanVisible() = 0;
 		};
-		class IDefaultGetter
+		class IDefaultGetter :public IGetter
 		{
 		public:
 			virtual FString GetDefault() = 0;
 		};
-		class IWidgetMaker
+		class IWidgetMaker :public IJsonable
 		{
 		public:
 			virtual TSharedRef<SWidget> MakeWidget(const FString& Value) = 0;
 		};
 
-		class IExecutor
+		class IExecutor :public IJsonable
 		{
+		public:
+			IExecutor()
+			{
+			}
+			virtual ~IExecutor()
+			{
+			}
+			void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+			TSharedPtr<FJsonObject> ToJson() override;
+
 		public:
 			TSharedPtr<ISetter> Setter;
 			TSharedPtr<IGetter> Getter;
@@ -194,10 +174,18 @@ namespace DetailsViewer
 			TSharedPtr<IPasteExecutor> PasteExecutor;
 		};
 
-		class IMetadata
+		class FMetadata :public IJsonable
 		{
+		public:
+			virtual ~FMetadata()
+			{
+			}
+			void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+			TSharedPtr<FJsonObject> ToJson() override;
+
 		protected:
 			TSharedPtr<FJsonObject> Metadata;
+
 		};
 
 		class FArrayMetadata
@@ -224,51 +212,12 @@ namespace DetailsViewer
 
 
 
-	class IParameterInfo
+	class IParameterInfo :public IJsonable
 	{
 	public:
-		FString Name;
-		FString Description;
-		FString DisplayName;
-		FString Type;
-		FString Category;
-		bool Advanced;
-		TSharedPtr<Parameter::IExecutor> ParameterExecutor;
-		TSharedPtr<Parameter::IMetadata> ParameterMetadata;
-	};
-
-	class ICategoryInfo :public IJsonable
-	{
-	public:
-		virtual ~ICategoryInfo()
+		virtual ~IParameterInfo()
 		{
-			CategoryExecutor.Reset();
-			CategoryExecutor = nullptr;
-
-			Parameters.Empty();
 		}
-	public:
-		FString Name;
-		FString Description;
-		FString DisplayName;
-		TSharedPtr<ICategoryExecutor> CategoryExecutor;
-		TArray<IParameterInfo> Parameters;
-	};
-
-	/**
-	 * $Comment$
-	 */
-	class IDetailInfo :public IJsonable
-	{
-	public:
-		virtual ~IDetailInfo()
-		{
-			DetailExecutor.Reset();
-			DetailExecutor = nullptr;
-
-			CategoryList.Empty();
-		}
-
 		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
@@ -276,9 +225,88 @@ namespace DetailsViewer
 		FString Name;
 		FString Description;
 		FString DisplayName;
+		FString Type;
+		FString Category;
+		bool Advanced;
+		TSharedPtr<PARAMETER::IExecutor> Executor;
+		TSharedPtr<PARAMETER::FMetadata> Metadata;
+
+	};
+
+	class FParameterList :public IJsonable
+	{
+	public:
+		virtual ~FParameterList()
+		{
+		}
+		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		TSharedPtr<FJsonObject> ToJson() override;
+
+		void Add(TSharedPtr<IParameterInfo> Parameter);
+		TSharedPtr<IParameterInfo> Find(const FString& Name);
+
+	private:
+		TArray<TSharedPtr<IParameterInfo>> Parameters;
+	};
+
+	class ICategoryInfo :public IJsonable
+	{
+	public:
+		ICategoryInfo()
+		{
+			ParameterList = MakeShared<FParameterList>();
+		}
+		virtual ~ICategoryInfo();
+
+		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		TSharedPtr<FJsonObject> ToJson() override;
+
+		void Add(TSharedPtr<IParameterInfo> Parameter);
+
+	public:
+		FString Name;
+		FString Description;
+		FString DisplayName;
+		TSharedPtr<ICategoryExecutor> CategoryExecutor;
+		TSharedPtr<FParameterList> ParameterList;
+	};
+
+	class FCategoryList :public IJsonable
+	{
+	public:
+		virtual ~FCategoryList()
+		{
+		}
+		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		TSharedPtr<FJsonObject> ToJson() override;
+
+		void Add(TSharedPtr<ICategoryInfo> Category);
+		TSharedPtr<ICategoryInfo> Find(const FString& Name);
+
+	private:
+		TArray<TSharedPtr<ICategoryInfo>> Categories;
+	};
+
+	/**
+	 * $Comment$
+	 */
+	class FDetailInfo :public IJsonable
+	{
+	public:
+		FDetailInfo();
+		virtual ~FDetailInfo();
+
+		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		TSharedPtr<FJsonObject> ToJson() override;
+
+		void Merge(TArray<TSharedPtr<FDetailInfo>> Others);
+		void Merge(TSharedPtr<FDetailInfo> Other);
+
+	public:
+		FString Name;
+		FString Description;
+		FString DisplayName;
 		TSharedPtr<IDetailExecutor> DetailExecutor;
-		TArray<TSharedPtr<ICategoryInfo>> CategoryList;
-
-
+		TSharedPtr<FCategoryList> CategoryList;
 	};
 }
