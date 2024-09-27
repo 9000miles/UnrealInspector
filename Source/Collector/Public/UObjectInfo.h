@@ -25,7 +25,7 @@ namespace UObjectCollector
 
 		FString ToString();
 		TSharedPtr<FJsonObject> ToJSON();
-		void FromJSON(TSharedPtr<FJsonObject> JsonObject);
+		void FromJson(TSharedPtr<FJsonObject> JsonObject);
 
 	private:
 		FString Name;

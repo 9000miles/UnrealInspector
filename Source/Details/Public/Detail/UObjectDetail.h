@@ -9,7 +9,7 @@
 
 namespace DETAILS_VIEWER
 {
-	namespace PARAMETER
+	namespace PROPERTY
 	{
 		class FUEPropertySetter :public ISetter
 		{
@@ -58,20 +58,24 @@ namespace DETAILS_VIEWER
 
 		};
 
-		class FUEPropertyCopyExecutor :public ICopyExecutor
+		class FUEPropertyCopier :public ICopier
 		{
-
 		public:
-			void Execute() override;
+			const FString Execute() override;
 
+		private:
+			void* ContainerPtr;
+			UE_Property* Property;
 		};
 
-		class FUEPropertyPasteExecutor :public IPasteExecutor
+		class FUEPropertyPaster :public IPaster
 		{
-
 		public:
-			void Execute() override;
+			void Execute(const FString String) override;
 
+		private:
+			void* ContainerPtr;
+			UE_Property* Property;
 		};
 
 		class FUObjectParameterExecutor :public IExecutor
@@ -79,14 +83,14 @@ namespace DETAILS_VIEWER
 		public:
 			FUObjectParameterExecutor()
 			{
-				Setter = MakeShareable(new PARAMETER::FUEPropertySetter());
-				Getter = MakeShareable(new PARAMETER::FUEPropertyGetter());
-				Editable = MakeShareable(new PARAMETER::FUEPropertyEditable());
-				Visible = MakeShareable(new PARAMETER::FUEPropertyVisible());
-				DefaultGetter = MakeShareable(new PARAMETER::FUEPropertyDefaultGetter());
-				WidgetMaker = MakeShareable(new PARAMETER::FUEPropertyWidgetMaker());
-				CopyExecutor = MakeShareable(new PARAMETER::FUEPropertyCopyExecutor());
-				PasteExecutor = MakeShareable(new PARAMETER::FUEPropertyPasteExecutor());
+				Setter = MakeShareable(new PROPERTY::FUEPropertySetter());
+				Getter = MakeShareable(new PROPERTY::FUEPropertyGetter());
+				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable());
+				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible());
+				DefaultGetter = MakeShareable(new PROPERTY::FUEPropertyDefaultGetter());
+				WidgetMaker = MakeShareable(new PROPERTY::FUEPropertyWidgetMaker());
+				CopyExecutor = MakeShareable(new PROPERTY::FUEPropertyCopier());
+				PasteExecutor = MakeShareable(new PROPERTY::FUEPropertyPaster());
 			}
 			virtual ~FUObjectParameterExecutor()
 			{
@@ -94,6 +98,17 @@ namespace DETAILS_VIEWER
 			}
 		};
 
+
+		class FUEPropertyHelper
+		{
+		public:
+			static FString PropertyToJson(void* ContainerPtr, UE_Property* Property);
+			static void JsonToProperty(void* ContainerPtr, UE_Property* Property, FString Json);
+
+			static FString JsonValueToString(TSharedPtr<FJsonValue> JsonValue);
+			static TSharedPtr<FJsonValue> StringToJsonValue(const FString& JsonString);
+
+		};
 	}
 
 	class FUObjectDetailExecutor : public IDetailExecutor

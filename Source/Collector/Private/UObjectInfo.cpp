@@ -67,7 +67,7 @@ namespace UObjectCollector
 		return Result;
 	}
 
-	void FUObjectInfo::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void FUObjectInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 		Name = JsonObject->GetStringField(TEXT("Name"));
 		ObjectIndex = JsonObject->GetNumberField(TEXT("ObjectIndex"));

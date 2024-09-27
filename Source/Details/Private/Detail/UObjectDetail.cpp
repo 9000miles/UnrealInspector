@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Detail/UObjectDetail.h"
+#include "JsonObjectConverter.h"
 namespace DETAILS_VIEWER
 {
-	namespace PARAMETER
+	namespace PROPERTY
 	{
 
 		bool FUEPropertyEditable::CanEdit()
@@ -25,14 +26,71 @@ namespace DETAILS_VIEWER
 			return SNullWidget::NullWidget;
 		}
 
-		void FUEPropertyCopyExecutor::Execute()
+		const FString FUEPropertyCopier::Execute()
 		{
-			throw std::logic_error("The method or operation is not implemented.");
+			return FUEPropertyHelper::PropertyToJson(ContainerPtr, Property);
 		}
 
-		void FUEPropertyPasteExecutor::Execute()
+		void FUEPropertyPaster::Execute(const FString String)
 		{
-			throw std::logic_error("The method or operation is not implemented.");
+			FUEPropertyHelper::JsonToProperty(ContainerPtr, Property, String);
+		}
+
+#define JSON_KEY FString(TEXT("Key"))
+
+		FString FUEPropertyHelper::PropertyToJson(void* ContainerPtr, UE_Property* Property)
+		{
+			void* ValuePtr = Property->ContainerPtrToValuePtr<void>(ContainerPtr);
+
+			TSharedPtr<FJsonValue> JsonValue = FJsonObjectConverter::UPropertyToJsonValue(Property, ValuePtr);
+			if (JsonValue.IsValid())
+				return JsonValueToString(JsonValue);
+
+			return FString();
+		}
+
+		void FUEPropertyHelper::JsonToProperty(void* ContainerPtr, UE_Property* Property, FString Json)
+		{
+			void* ValuePtr = Property->ContainerPtrToValuePtr<void>(ContainerPtr);
+
+			TSharedPtr<FJsonValue> JsonValue = StringToJsonValue(Json);
+			FText OutReason;
+			if (!FJsonObjectConverter::JsonValueToUProperty(JsonValue, Property, ValuePtr, 0, 0, false, &OutReason))
+			{
+				UE_LOG(LogTemp, Error, TEXT("JsonToProperty: %s"), *OutReason.ToString());
+			}
+		}
+
+		FString FUEPropertyHelper::JsonValueToString(TSharedPtr<FJsonValue> JsonValue)
+		{
+			TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
+			JsonObject->SetField(JSON_KEY, JsonValue);
+
+			FString JsonString;
+			TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonString, /*Indent=*/0);
+
+			if (FJsonSerializer::Serialize(JsonObject.ToSharedRef(), JsonWriter))
+			{
+				const int SN = 4;
+				const int EN = JSON_KEY.Len() + SN + 1;
+				return JsonString.Mid(JSON_KEY.Len() + SN, JsonString.Len() - EN);
+			}
+
+			return JsonString;
+		}
+
+		TSharedPtr<FJsonValue> FUEPropertyHelper::StringToJsonValue(const FString& String)
+		{
+			FString JsonString = FString::Printf(TEXT("{\"%s\":%s}"), *JSON_KEY, *String);
+			TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonString);
+			TSharedPtr<FJsonValue> JsonValue;
+			if (FJsonSerializer::Deserialize(JsonReader, JsonValue))
+			{
+				return JsonValue->AsObject()->TryGetField(JSON_KEY);
+				return JsonValue;
+			}
+
+			return MakeShareable(new FJsonValueNull());
 		}
 	}
 
@@ -86,8 +144,8 @@ namespace DETAILS_VIEWER
 			Parameter->Type = Property->GetCPPType();
 			Parameter->Category = Category;
 			Parameter->Advanced = Property->HasMetaData(TEXT("AdvancedDisplay"));
-			Parameter->Executor = MakeShareable(new PARAMETER::FUObjectParameterExecutor());
-			Parameter->Metadata = MakeShareable(new PARAMETER::FMetadata());
+			Parameter->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor());
+			Parameter->Metadata = MakeShareable(new PROPERTY::FMetadata());
 
 			ExistCategory->Add(Parameter);
 		}

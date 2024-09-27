@@ -29,7 +29,7 @@ namespace DETAILS_VIEWER
 		CategoryList = nullptr;
 	}
 
-	void FDetailInfo::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void FDetailInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 		Name = JsonObject->GetStringField(TEXT("Name"));
 		Description = JsonObject->GetStringField(TEXT("Description"));
@@ -38,13 +38,13 @@ namespace DETAILS_VIEWER
 		TSharedPtr<FJsonObject> ExecutorJson = JsonObject->GetObjectField(TEXT("DetailExecutor"));
 		FString ExecutorTypeName = ExecutorJson->GetStringField(TYPE_NAME);
 		DetailExecutor = Factory::Get<IDetailExecutor>(ExecutorTypeName);
-		DetailExecutor->FromJSON(ExecutorJson);
+		DetailExecutor->FromJson(ExecutorJson);
 
 		TArray<TSharedPtr<FJsonValue>> Array = JsonObject->GetArrayField(TEXT("CategoryList"));
 		for (TSharedPtr<FJsonValue> Value : Array)
 		{
 			TSharedPtr<ICategoryInfo> CategoryInfo = MakeShared<ICategoryInfo>();
-			CategoryInfo->FromJSON(Value->AsObject());
+			CategoryInfo->FromJson(Value->AsObject());
 			CategoryList->Add(CategoryInfo);
 		}
 
@@ -82,7 +82,7 @@ namespace DETAILS_VIEWER
 		return  TEXT("DetailMaker");
 	}
 
-	void IDetailExecutor::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void IDetailExecutor::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 		FString Maker;
 		TSharedPtr<FJsonObject> DetailMakerJson = JsonObject->GetObjectField(IDetailExecutor::TypeName());
@@ -122,7 +122,7 @@ namespace DETAILS_VIEWER
 		ParameterList = nullptr;
 	}
 
-	void ICategoryInfo::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void ICategoryInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 	}
 
@@ -143,7 +143,7 @@ namespace DETAILS_VIEWER
 		ParameterList->Add(Parameter);
 	}
 
-	void IParameterInfo::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void IParameterInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 	}
 
@@ -163,11 +163,11 @@ namespace DETAILS_VIEWER
 		return JsonObject;
 	}
 
-	void PARAMETER::IExecutor::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void PROPERTY::IExecutor::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 	}
 
-	TSharedPtr<FJsonObject> PARAMETER::IExecutor::ToJson()
+	TSharedPtr<FJsonObject> PROPERTY::IExecutor::ToJson()
 	{
 		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 
@@ -181,17 +181,17 @@ namespace DETAILS_VIEWER
 		return JsonObject;
 	}
 
-	void PARAMETER::FMetadata::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void PROPERTY::FMetadata::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 		Metadata = JsonObject;
 	}
 
-	TSharedPtr<FJsonObject> PARAMETER::FMetadata::ToJson()
+	TSharedPtr<FJsonObject> PROPERTY::FMetadata::ToJson()
 	{
 		return Metadata;
 	}
 
-	void FCategoryList::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void FCategoryList::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 
 	}
@@ -227,7 +227,7 @@ namespace DETAILS_VIEWER
 		return Found ? *Found : nullptr;
 	}
 
-	void FParameterList::FromJSON(TSharedPtr<FJsonObject> JsonObject)
+	void FParameterList::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 
 	}
@@ -260,5 +260,4 @@ namespace DETAILS_VIEWER
 
 		return Found ? *Found : nullptr;
 	}
-
 }

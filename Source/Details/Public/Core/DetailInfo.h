@@ -80,25 +80,25 @@ namespace DETAILS_VIEWER
 
 	};
 
-	class ICopyExecutor : public IExecutor
+	class ICopier 
 	{
 	public:
-		virtual ~ICopyExecutor() {}
-		virtual void Execute() = 0;
+		virtual ~ICopier() {}
+		virtual const FString Execute() = 0;
 	};
 
-	class IPasteExecutor : public IExecutor
+	class IPaster 
 	{
 	public:
-		virtual ~IPasteExecutor() {}
-		virtual void Execute() = 0;
+		virtual ~IPaster() {}
+		virtual void Execute(const FString String) = 0;
 	};
 
 	class IDetailExecutor :public IJsonable, public ITypeName
 	{
 	public:
 		virtual ~IDetailExecutor() {}
-		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
 		static FString TypeName() { return TEXT("DetailExecutor"); }
@@ -106,8 +106,8 @@ namespace DETAILS_VIEWER
 
 	public:
 		TSharedPtr<IDetailMaker> DetailMaker;
-		TSharedPtr<ICopyExecutor> CopyExecutor;
-		TSharedPtr<IPasteExecutor> PasteExecutor;
+		TSharedPtr<ICopier> CopyExecutor;
+		TSharedPtr<IPaster> PasteExecutor;
 	};
 
 	class ICategoryExecutor :public IJsonable
@@ -116,7 +116,7 @@ namespace DETAILS_VIEWER
 		virtual void Execute() = 0;
 	};
 
-	namespace PARAMETER
+	namespace PROPERTY
 	{
 		class ISetter :public IJsonable
 		{
@@ -160,7 +160,7 @@ namespace DETAILS_VIEWER
 			virtual ~IExecutor()
 			{
 			}
-			void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+			void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 			TSharedPtr<FJsonObject> ToJson() override;
 
 		public:
@@ -170,8 +170,8 @@ namespace DETAILS_VIEWER
 			TSharedPtr<IVisible> Visible;
 			TSharedPtr<IDefaultGetter> DefaultGetter;
 			TSharedPtr<IWidgetMaker> WidgetMaker;
-			TSharedPtr<ICopyExecutor> CopyExecutor;
-			TSharedPtr<IPasteExecutor> PasteExecutor;
+			TSharedPtr<ICopier> CopyExecutor;
+			TSharedPtr<IPaster> PasteExecutor;
 		};
 
 		class FMetadata :public IJsonable
@@ -180,7 +180,7 @@ namespace DETAILS_VIEWER
 			virtual ~FMetadata()
 			{
 			}
-			void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+			void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 			TSharedPtr<FJsonObject> ToJson() override;
 
 		protected:
@@ -218,7 +218,7 @@ namespace DETAILS_VIEWER
 		virtual ~IParameterInfo()
 		{
 		}
-		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
 	public:
@@ -228,8 +228,8 @@ namespace DETAILS_VIEWER
 		FString Type;
 		FString Category;
 		bool Advanced;
-		TSharedPtr<PARAMETER::IExecutor> Executor;
-		TSharedPtr<PARAMETER::FMetadata> Metadata;
+		TSharedPtr<PROPERTY::IExecutor> Executor;
+		TSharedPtr<PROPERTY::FMetadata> Metadata;
 
 	};
 
@@ -239,7 +239,7 @@ namespace DETAILS_VIEWER
 		virtual ~FParameterList()
 		{
 		}
-		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
 		void Add(TSharedPtr<IParameterInfo> Parameter);
@@ -258,7 +258,7 @@ namespace DETAILS_VIEWER
 		}
 		virtual ~ICategoryInfo();
 
-		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
 		void Add(TSharedPtr<IParameterInfo> Parameter);
@@ -277,7 +277,7 @@ namespace DETAILS_VIEWER
 		virtual ~FCategoryList()
 		{
 		}
-		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
 		void Add(TSharedPtr<ICategoryInfo> Category);
@@ -296,7 +296,7 @@ namespace DETAILS_VIEWER
 		FDetailInfo();
 		virtual ~FDetailInfo();
 
-		void FromJSON(TSharedPtr<FJsonObject> JsonObject) override;
+		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
 		void Merge(TArray<TSharedPtr<FDetailInfo>> Others);

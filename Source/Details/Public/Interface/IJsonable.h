@@ -3,7 +3,7 @@ namespace DETAILS_VIEWER
 	class IJsonable
 	{
 	public:
-		virtual void FromJSON(TSharedPtr<FJsonObject> JsonObject)
+		virtual void FromJson(TSharedPtr<FJsonObject> JsonObject)
 		{
 		}
 
@@ -12,7 +12,7 @@ namespace DETAILS_VIEWER
 			TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
 			TSharedPtr<FJsonObject> JsonObject;
 			if (FJsonSerializer::Deserialize(Reader, JsonObject))
-				FromJSON(JsonObject);
+				FromJson(JsonObject);
 		}
 		virtual TSharedPtr<FJsonObject> ToJson()
 		{
