@@ -218,68 +218,50 @@ namespace DETAILS_VIEWER
 				if (Metadata->TryGetArrayField(Key, JsonArray)) {
 					for (const TSharedPtr<FJsonValue>& Value : *JsonArray) {
 						T Element;
-						if constexpr (std::is_same_v<T, FString>) {
+						if constexpr (std::is_same_v<T, FString>)
 							Element = Value->AsString();
-						}
-						else if constexpr (std::is_same_v<T, bool>) {
+						else if constexpr (std::is_same_v<T, bool>)
 							Element = Value->AsBool();
-						}
-						else {
+						else
 							Value->TryGetNumber(Element);
-						}
 						ResultArray.Add(Element);
 					}
 				}
+
 				return ResultArray;
 			}
-
 
 		public:
 			template<typename T>
-			T Get(const FString& Key) {
-				return GetNumberValue<T>(Key);
-			}
+			T Get(const FString& Key) { return GetNumberValue<T>(Key); }
 
 			template<>
-			FString Get(const FString& Key) {
-				return GetValue<FString>(Key);
-			}
+			FString Get(const FString& Key) { return GetValue<FString>(Key); }
 
 			template<>
-			bool Get(const FString& Key) {
-				return GetValue<bool>(Key);
-			}
+			bool Get(const FString& Key) { return GetValue<bool>(Key); }
 
 			template<>
-			TArray<FString> Get(const FString& Key) {
-				return GetArray<FString>(Key);
-			}
+			TArray<FString> Get(const FString& Key) { return GetArray<FString>(Key); }
+
+			template<>
+			TSharedPtr<FJsonObject> Get(const FString& Key) { return Metadata->GetObjectField(Key); }
 
 			template<>
 			TArray<TSharedPtr<FJsonValue>> Get(const FString& Key) {
-				TArray<TSharedPtr<FJsonValue>> ResultArray;
+				TArray<TSharedPtr<FJsonValue>> Result;
 				const TArray<TSharedPtr<FJsonValue>>* JsonArray;
 
-				if (Metadata->TryGetArrayField(Key, JsonArray))
-				{
-					for (const TSharedPtr<FJsonValue>& Value : *JsonArray)
-					{
-						ResultArray.Add(Value);
-					}
-				}
+				if (!Metadata->TryGetArrayField(Key, JsonArray))
+					return Result;
 
-				return ResultArray;
+				for (const TSharedPtr<FJsonValue>& Value : *JsonArray)
+					Result.Add(Value);
+
+				return Result;
 			}
 
-			template<>
-			TSharedPtr<FJsonObject> Get(const FString& Key) {
-				return Metadata->GetObjectField(Key);
-			}
-
-			TSharedPtr<FJsonObject> GetMetadata()
-			{
-				return Metadata;
-			}
+			TSharedPtr<FJsonObject> GetMetadata() { return Metadata; }
 
 		protected:
 			TSharedPtr<FJsonObject> Metadata;
