@@ -10,6 +10,7 @@
 #include "Core/DetailDefine.h"
 #include "Core/DetialManger.h"
 #include "Detail/UObjectDetail.h"
+#include "Core/DetailInfo.h"
 #include "DetailTestObject.generated.h"
 
 /**
@@ -102,6 +103,7 @@ namespace DETAILS_VIEWER_TEST
 	public:
 		static void RunTest()
 		{
+			TestJsonMetadata();
 
 			FDetialManager& Manager = FDetialManager::Get();
 
@@ -121,6 +123,30 @@ namespace DETAILS_VIEWER_TEST
 
 			FSlateApplication::Get().AddWindow(WindowPtr.ToSharedRef());
 		}
+
+		static void TestJsonMetadata()
+		{
+			const FString File = FPaths::Combine(FPaths::ProjectPluginsDir(), TEXT("Inspector/Source/Details/detail-info.json"));
+			TSharedPtr<FJsonObject> JsonObject = LoadJsonFile(File);
+			TSharedPtr<DETAILS_VIEWER::PROPERTY::FMetadata> Metadata = MakeShared<DETAILS_VIEWER::PROPERTY::FMetadata>();
+			Metadata->FromJson(JsonObject);
+			FString ff = Metadata->Get<FString>(FString(TEXT("name")));
+		}
+
+		static TSharedPtr<FJsonObject> LoadJsonFile(const FString& InFileName)
+		{
+			TSharedPtr<FJsonObject> JsonObject;
+
+			FString JsonContents;
+			if (FFileHelper::LoadFileToString(JsonContents, *InFileName))
+			{
+				TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContents);
+				FJsonSerializer::Deserialize(Reader, JsonObject);
+			}
+
+			return JsonObject;
+		}
+
 		static void RunTest1()
 		{
 

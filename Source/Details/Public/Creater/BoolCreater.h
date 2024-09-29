@@ -21,7 +21,7 @@ namespace DETAILS_VIEWER
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder);
+		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyInfo> InPropertyInfo);
 		ECheckBoxState IsChecked()const;
 		void OnCheckStateChanged(ECheckBoxState State);
 

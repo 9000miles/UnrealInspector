@@ -7,9 +7,9 @@
 namespace DETAILS_VIEWER
 {
 
-	void SPropertyWidgetString::Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder)
+	void SPropertyWidgetString::Construct(const FArguments& InArgs, TSharedPtr<FPropertyInfo> InPropertyInfo)
 	{
-		SPropertyWidget::Construct(InPropertyHolder);
+		SPropertyWidget::Construct(InPropertyInfo);
 
 		const FText Value = GetPropertyValue();
 		const FText HintText = GetHintText();
@@ -40,6 +40,8 @@ namespace DETAILS_VIEWER
 
 	FText SPropertyWidgetString::GetHintText()
 	{
+		PropertyInfo->Metadata->;
+
 		UE_Property* Property = PropertyHolder->GetProperty();
 		return Property->GetMetaDataText(TEXT("HintText"));
 	}

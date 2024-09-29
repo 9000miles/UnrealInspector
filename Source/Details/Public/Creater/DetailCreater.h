@@ -56,7 +56,7 @@ namespace DETAILS_VIEWER
 	private:
 		TSharedPtr<SWidget> MakeWidget() override;
 	protected:
-		TSharedPtr<FPropertyHolder> PropertyHolder;
+		TSharedPtr<PROPERTY::IExecutor> Executor;
 	};
 
 }

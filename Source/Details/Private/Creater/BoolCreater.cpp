@@ -5,14 +5,14 @@
 namespace DETAILS_VIEWER
 {
 
-	void SPropertyWidgetBool::Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder)
+	void SPropertyWidgetBool::Construct(const FArguments& InArgs, TSharedPtr<FPropertyInfo> InPropertyInfo)
 	{
-		SPropertyWidget::Construct(InPropertyHolder);
+		SPropertyWidget::Construct(InPropertyInfo);
 
-		UE_Property* Property = PropertyHolder->GetProperty();
-		FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
-		UObject* Object = PropertyHolder->GetOutermost();
-		const bool Value = PropertyField->GetPropertyValue_InContainer(Object);
+		//UE_Property* Property = PropertyHolder->GetProperty();
+		//FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
+		//UObject* Object = PropertyHolder->GetOutermost();
+		//const bool Value = PropertyField->GetPropertyValue_InContainer(Object);
 
 		CheckBoxPtr = SNew(SCheckBox)
 			.IsChecked(this, &SPropertyWidgetBool::IsChecked)
@@ -27,25 +27,30 @@ namespace DETAILS_VIEWER
 
 	ECheckBoxState SPropertyWidgetBool::IsChecked() const
 	{
-		UE_Property* Property = PropertyHolder->GetProperty();
-		FBoolProperty* BoolProperty = CastField<FBoolProperty>(Property);
-		UObject* Object = PropertyHolder->GetOutermost();
-		const bool Value = BoolProperty->GetPropertyValue_InContainer(Object);
+		//UE_Property* Property = PropertyHolder->GetProperty();
+		//FBoolProperty* BoolProperty = CastField<FBoolProperty>(Property);
+		//UObject* Object = PropertyHolder->GetOutermost();
+		//const bool Value = BoolProperty->GetPropertyValue_InContainer(Object);
+
+		const bool Value = PropertyInfo->Executor->Getter->Get<bool>();
 		return Value ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
 	}
 
 	void SPropertyWidgetBool::OnCheckStateChanged(ECheckBoxState State)
 	{
-		UE_Property* Property = PropertyHolder->GetProperty();
-		FBoolProperty* BoolProperty = CastField<FBoolProperty>(Property);
-		UObject* Owner = PropertyHolder->GetOutermost();
+		//UE_Property* Property = PropertyHolder->GetProperty();
+		//FBoolProperty* BoolProperty = CastField<FBoolProperty>(Property);
+		//UObject* Owner = PropertyHolder->GetOutermost();
+		//const bool Value = State == ECheckBoxState::Checked;
+		//BoolProperty->SetPropertyValue_InContainer(Owner, Value);
+
 		const bool Value = State == ECheckBoxState::Checked;
-		BoolProperty->SetPropertyValue_InContainer(Owner, Value);
+		PropertyInfo->Executor->Setter->Set(Value);
 	}
 
 	TSharedPtr<SWidget> FWidgetCreaterBool::MakeWidget()
 	{
-		return SNew(SPropertyWidgetBool, PropertyHolder);
+		return SNew(SPropertyWidgetBool, Executor);
 	}
 
 	TArray<FString> FWidgetCreaterBool::SupportTypes()

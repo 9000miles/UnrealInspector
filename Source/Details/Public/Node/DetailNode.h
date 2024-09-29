@@ -49,6 +49,8 @@ namespace DETAILS_VIEWER
 	public:
 		FString GetTypeName() override;
 
+	protected:
+		TSharedPtr<PROPERTY::IExecutor> Executor;
 	};
 
 	class FCategoryTreeNode :public FTreeNode
@@ -61,13 +63,11 @@ namespace DETAILS_VIEWER
 	public:
 		static FString TypeName() { return TEXT("CategoryTreeNode"); }
 		FString GetTypeName() override { return FCategoryTreeNode::TypeName(); }
-
-		TSharedPtr<FCategoryInfo> CategoryInfo;
-
 		FString GetName() override;
-
-
 		TSharedPtr<SWidget> GetWidget() override;
+
+	protected:
+		TSharedPtr<FCategoryInfo> CategoryInfo;
 	};
 
 	class FPropertyTreeNode :public FTreeNode
@@ -80,13 +80,10 @@ namespace DETAILS_VIEWER
 	public:
 		static FString TypeName() { return TEXT("PropertyTreeNode"); }
 		FString GetTypeName() override { return FPropertyTreeNode::TypeName(); }
-
-		TSharedPtr<FPropertyInfo> PropertyInfo;
-
 		FString GetName() override;
-
-
 		TSharedPtr<SWidget> GetWidget() override;
 
+	protected:
+		TSharedPtr<FPropertyInfo> PropertyInfo;
 	};
 }

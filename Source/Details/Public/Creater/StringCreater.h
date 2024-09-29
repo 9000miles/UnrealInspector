@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "DetailCreater.h"
 #include "Core/PropertyHolder.h"
+#include "Core/DetailInfo.h"
 
 class SPropertyWidgetString;
 namespace DETAILS_VIEWER
@@ -20,7 +21,7 @@ namespace DETAILS_VIEWER
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyHolder> InPropertyHolder);
+		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyInfo> InPropertyInfo);
 
 		void OnTextCommitted(const FText& Text, ETextCommit::Type Type);
 

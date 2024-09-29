@@ -6,9 +6,9 @@
 namespace DETAILS_VIEWER
 {
 
-	void SPropertyWidget::Construct(TSharedPtr<FPropertyHolder> InPropertyHolder)
+	void SPropertyWidget::Construct(TSharedPtr<FPropertyInfo> InPropertyInfo)
 	{
-		PropertyHolder = InPropertyHolder;
+		PropertyInfo = InPropertyInfo;
 	}
 
 }

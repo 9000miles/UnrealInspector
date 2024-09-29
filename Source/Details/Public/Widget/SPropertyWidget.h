@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Widgets/SCompoundWidget.h"
 #include "Core/PropertyHolder.h"
+#include "Core/DetailInfo.h"
 
 namespace DETAILS_VIEWER
 {
@@ -20,10 +21,10 @@ namespace DETAILS_VIEWER
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(TSharedPtr<FPropertyHolder> InPropertyHolder);
+		void Construct(TSharedPtr<FPropertyInfo> InPropertyInfo);
 
 	protected:
-		TSharedPtr<FPropertyHolder> PropertyHolder;
+		TSharedPtr<FPropertyInfo> PropertyInfo;
 	};
 
 }

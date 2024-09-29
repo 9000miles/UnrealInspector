@@ -51,7 +51,7 @@ namespace DETAILS_VIEWER
 	};
 
 	/**
-	 * Ï¸½ÚÃæ°å¹¹½¨Æ÷
+	 * Ï¸ï¿½ï¿½ï¿½ï¿½å¹¹ï¿½ï¿½ï¿½ï¿½
 	 */
 	class IDetailMaker :public IJsonable, public ITypeName
 	{
@@ -179,13 +179,110 @@ namespace DETAILS_VIEWER
 		public:
 			virtual ~FMetadata()
 			{
+				Metadata.Reset();
+				Metadata = nullptr;
 			}
-			void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
-			TSharedPtr<FJsonObject> ToJson() override;
+			void FromJson(TSharedPtr<FJsonObject> JsonObject) override { Metadata = JsonObject; }
+			TSharedPtr<FJsonObject> ToJson() override { return Metadata; }
+
+		private:
+			template<typename T>
+			T GetValue(const FString& Key);
+
+			template<>
+			bool GetValue<bool>(const FString& Key) {
+				bool Result;
+				Metadata->TryGetBoolField(Key, Result);
+				return Result;
+			}
+
+			template<>
+			FString GetValue<FString>(const FString& Key) {
+				FString Result;
+				Metadata->TryGetStringField(Key, Result);
+				return Result;
+			}
+
+			template<typename T>
+			T GetNumberValue(const FString& Key) {
+				T Result;
+				Metadata->TryGetNumberField(Key, Result);
+				return Result;
+			}
+
+			template<typename T>
+			TArray<T> GetArray(const FString& Key) {
+				TArray<T> ResultArray;
+				const TArray<TSharedPtr<FJsonValue>>* JsonArray;
+
+				if (Metadata->TryGetArrayField(Key, JsonArray)) {
+					for (const TSharedPtr<FJsonValue>& Value : *JsonArray) {
+						T Element;
+						if constexpr (std::is_same_v<T, FString>) {
+							Element = Value->AsString();
+						}
+						else if constexpr (std::is_same_v<T, bool>) {
+							Element = Value->AsBool();
+						}
+						else {
+							Value->TryGetNumber(Element);
+						}
+						ResultArray.Add(Element);
+					}
+				}
+				return ResultArray;
+			}
+
+
+		public:
+			template<typename T>
+			T Get(const FString& Key) {
+				return GetNumberValue<T>(Key);
+			}
+
+			template<>
+			FString Get(const FString& Key) {
+				return GetValue<FString>(Key);
+			}
+
+			template<>
+			bool Get(const FString& Key) {
+				return GetValue<bool>(Key);
+			}
+
+			template<>
+			TArray<FString> Get(const FString& Key) {
+				return GetArray<FString>(Key);
+			}
+
+			template<>
+			TArray<TSharedPtr<FJsonValue>> Get(const FString& Key) {
+				TArray<TSharedPtr<FJsonValue>> ResultArray;
+				const TArray<TSharedPtr<FJsonValue>>* JsonArray;
+
+				if (Metadata->TryGetArrayField(Key, JsonArray))
+				{
+					for (const TSharedPtr<FJsonValue>& Value : *JsonArray)
+					{
+						ResultArray.Add(Value);
+					}
+				}
+
+				return ResultArray;
+			}
+
+			template<>
+			TSharedPtr<FJsonObject> Get(const FString& Key) {
+				return Metadata->GetObjectField(Key);
+			}
+
+			TSharedPtr<FJsonObject> GetMetadata()
+			{
+				return Metadata;
+			}
 
 		protected:
 			TSharedPtr<FJsonObject> Metadata;
-
 		};
 
 		class FArrayMetadata
