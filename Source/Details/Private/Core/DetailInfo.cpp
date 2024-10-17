@@ -186,16 +186,6 @@ namespace DETAILS_VIEWER
 		return JsonObject;
 	}
 
-	void PROPERTY::FMetadata::FromJson(TSharedPtr<FJsonObject> JsonObject)
-	{
-		Metadata = JsonObject;
-	}
-
-	TSharedPtr<FJsonObject> PROPERTY::FMetadata::ToJson()
-	{
-		return Metadata;
-	}
-
 	void FCategoryList::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 

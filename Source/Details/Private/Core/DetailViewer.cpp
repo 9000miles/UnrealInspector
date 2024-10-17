@@ -19,5 +19,5 @@ void UDetailViewer::InitByOptions(FDetailOptions Options)
 
 void UDetailViewer::SetObject(UObject* Object)
 {
-	DetailView->SetObject(Object);
+	//DetailView->SetObject(Object);
 }

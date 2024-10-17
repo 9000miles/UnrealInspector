@@ -23,7 +23,7 @@ namespace DETAILS_VIEWER
 			return TEXT("");
 		}
 
-		TSharedRef<SWidget> FUEPropertyWidgetMaker::MakeWidget(const FString& Value)
+		TSharedRef<SWidget> FUEPropertyWidgetMaker::MakeWidget()
 		{
 			return SNullWidget::NullWidget;
 		}

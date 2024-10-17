@@ -40,7 +40,7 @@ namespace DETAILS_VIEWER
 
 	FText SPropertyWidgetString::GetHintText()
 	{
-		PropertyInfo->Metadata->;
+		//PropertyInfo->Metadata->;
 
 		UE_Property* Property = PropertyHolder->GetProperty();
 		return Property->GetMetaDataText(TEXT("HintText"));

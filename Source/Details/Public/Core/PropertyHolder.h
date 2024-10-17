@@ -22,20 +22,20 @@ public:
 /**
  *
  */
-class DETAILSVIEWER_API FPropertyHolder
-{
-public:
-	FPropertyHolder(TWeakObjectPtr<UObject> Object, UE_Property* Property);
-	~FPropertyHolder();
-
-	const FString GetName();
-	const FText GetDisplayName();
-	const FString GetPropertyType();
-	UE_Property* GetProperty() { return MyProperty; }
-	UObject* GetOutermost() { return Outermost.Get(); }
-	const bool IsA(FFieldClass* InClass) { return MyProperty->IsA(InClass); }
-
-private:
-	UE_Property* MyProperty;
-	TWeakObjectPtr<UObject> Outermost;
-};
+//class DETAILSVIEWER_API FPropertyHolder
+//{
+//public:
+//	FPropertyHolder(TWeakObjectPtr<UObject> Object, UE_Property* Property);
+//	~FPropertyHolder();
+//
+//	const FString GetName();
+//	const FText GetDisplayName();
+//	const FString GetPropertyType();
+//	UE_Property* GetProperty() { return MyProperty; }
+//	UObject* GetOutermost() { return Outermost.Get(); }
+//	const bool IsA(FFieldClass* InClass) { return MyProperty->IsA(InClass); }
+//
+//private:
+//	UE_Property* MyProperty;
+//	TWeakObjectPtr<UObject> Outermost;
+//};

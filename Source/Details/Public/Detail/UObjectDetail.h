@@ -54,7 +54,7 @@ namespace DETAILS_VIEWER
 		{
 
 		public:
-			TSharedRef<SWidget> MakeWidget(const FString& Value) override;
+			TSharedRef<SWidget> MakeWidget() override;
 
 		};
 

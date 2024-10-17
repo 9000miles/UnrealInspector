@@ -21,14 +21,13 @@ namespace DETAILS_VIEWER
 		TArray<TSharedPtr<FDetailTreeNode>> GetChildNodes() { return ChildNodes; }
 		TSharedPtr<FDetailTreeNode> GetParentNode() { return ParentNode; }
 
-		TSharedPtr<FPropertyHolder> GetPropertyHolder() { return PropertyHolder; }
+		//TSharedPtr<FPropertyHolder> GetPropertyHolder() { return PropertyHolder; }
 		TWeakObjectPtr<UObject> GetObject() { return ObjectPtr; }
 		EDetailNodeType GetNodeType() { return NodeType; }
 
 	protected:
 		EDetailNodeType NodeType;
 		TWeakObjectPtr<UObject> ObjectPtr;
-		TSharedPtr<FPropertyHolder> PropertyHolder;
 		TSharedPtr<FDetailTreeNode> ParentNode;
 		TArray<TSharedPtr<FDetailTreeNode>> ChildNodes;
 	};
@@ -73,7 +72,7 @@ namespace DETAILS_VIEWER
 	class FPropertyTreeNode :public FTreeNode
 	{
 	public:
-		FPropertyTreeNode(TSharedPtr<FPropertyInfo> Item) :PropertyInfo(Item)
+		FPropertyTreeNode(TSharedPtr<FPropertyInfo> InPropertyInfo) :PropertyInfo(InPropertyInfo)
 		{
 		}
 
