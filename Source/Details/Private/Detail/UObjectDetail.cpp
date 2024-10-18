@@ -155,8 +155,8 @@ namespace DETAILS_VIEWER
 			Parameter->Type = Property->GetCPPType();
 			Parameter->Category = Category;
 			Parameter->Advanced = Property->HasMetaData(TEXT("AdvancedDisplay"));
-			Parameter->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor());
-			Parameter->Metadata = MakeShareable(new PROPERTY::FMetadata());
+			Parameter->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(InObject, Property));
+			Parameter->Metadata = MakeShareable(new PROPERTY::FUEPropertyMetadata(Property));
 
 			ExistCategory->Add(Parameter);
 		}

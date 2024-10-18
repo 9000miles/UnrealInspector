@@ -40,58 +40,63 @@ namespace DETAILS_VIEWER
 
 	FText SPropertyWidgetString::GetHintText()
 	{
-		//PropertyInfo->Metadata->;
+		return PropertyInfo->Metadata->Get<FText>(TEXT("HintText"));
 
-		UE_Property* Property = PropertyHolder->GetProperty();
-		return Property->GetMetaDataText(TEXT("HintText"));
+		//UE_Property* Property = PropertyHolder->GetProperty();
+		//return Property->GetMetaDataText(TEXT("HintText"));
 	}
 
 	FText SPropertyWidgetString::GetPropertyValue() const
 	{
-		UE_Property* Property = PropertyHolder->GetProperty();
-		UObject* Object = PropertyHolder->GetOutermost();
-		if (Property->GetCPPType() == TEXT("FString"))
-		{
-			FStrProperty* PropertyField = CastField<FStrProperty>(Property);
-			const FString Value = PropertyField->GetPropertyValue_InContainer(Object);
-			return FText::FromString(Value);
-		}
-		else if (Property->GetCPPType() == TEXT("FName"))
-		{
-			FNameProperty* PropertyField = CastField<FNameProperty>(Property);
-			const FName Value = PropertyField->GetPropertyValue_InContainer(Object);
-			return FText::FromName(Value);
-		}
-		else if (Property->GetCPPType() == TEXT("FText"))
-		{
-			FTextProperty* PropertyField = CastField<FTextProperty>(Property);
-			const FText Value = PropertyField->GetPropertyValue_InContainer(Object);
-			return Value;
-		}
+		return PropertyInfo->Executor->Getter->Get<FText>();
 
-		return FText();
+		//UE_Property* Property = PropertyHolder->GetProperty();
+		//UObject* Object = PropertyHolder->GetOutermost();
+		//if (Property->GetCPPType() == TEXT("FString"))
+		//{
+		//	FStrProperty* PropertyField = CastField<FStrProperty>(Property);
+		//	const FString Value = PropertyField->GetPropertyValue_InContainer(Object);
+		//	return FText::FromString(Value);
+		//}
+		//else if (Property->GetCPPType() == TEXT("FName"))
+		//{
+		//	FNameProperty* PropertyField = CastField<FNameProperty>(Property);
+		//	const FName Value = PropertyField->GetPropertyValue_InContainer(Object);
+		//	return FText::FromName(Value);
+		//}
+		//else if (Property->GetCPPType() == TEXT("FText"))
+		//{
+		//	FTextProperty* PropertyField = CastField<FTextProperty>(Property);
+		//	const FText Value = PropertyField->GetPropertyValue_InContainer(Object);
+		//	return Value;
+		//}
+
+		//return FText();
 	}
 
 	void SPropertyWidgetString::SetPropertyValue(FText Text)
 	{
-		UE_Property* Property = PropertyHolder->GetProperty();
-		UObject* Object = PropertyHolder->GetOutermost();
-		if (Property->GetCPPType() == TEXT("FString"))
+		const FString Type = PropertyInfo->Type;
+		if (Type == TEXT("FString"))
 		{
-			FStrProperty* PropertyField = CastField<FStrProperty>(Property);
-			FString Value = Text.ToString();
-			PropertyField->SetPropertyValue_InContainer(Object, Value);
+			PropertyInfo->Executor->Setter->Set(Text.ToString());
+
+			//FStrProperty* PropertyField = CastField<FStrProperty>(Property);
+			//FString Value = Text.ToString();
+			//PropertyField->SetPropertyValue_InContainer(Object, Value);
 		}
-		else if (Property->GetCPPType() == TEXT("FName"))
+		else if (Type == TEXT("FName"))
 		{
-			FNameProperty* PropertyField = CastField<FNameProperty>(Property);
-			FName Value = FName(*Text.ToString());
-			PropertyField->SetPropertyValue_InContainer(Object, Value);
+			PropertyInfo->Executor->Setter->Set(FName(*Text.ToString()));
+			//FNameProperty* PropertyField = CastField<FNameProperty>(Property);
+			//FName Value = FName(*Text.ToString());
+			//PropertyField->SetPropertyValue_InContainer(Object, Value);
 		}
-		else if (Property->GetCPPType() == TEXT("FText"))
+		else if (Type == TEXT("FText"))
 		{
-			FTextProperty* PropertyField = CastField<FTextProperty>(Property);
-			PropertyField->SetPropertyValue_InContainer(Object, Text);
+			PropertyInfo->Executor->Setter->Set(Text);
+			//FTextProperty* PropertyField = CastField<FTextProperty>(Property);
+			//PropertyField->SetPropertyValue_InContainer(Object, Text);
 		}
 	}
 
@@ -99,9 +104,9 @@ namespace DETAILS_VIEWER
 	{
 	}
 
-	TSharedPtr<SWidget> FWidgetCreaterString::MakeWidget()
+	TSharedPtr<SWidget> FWidgetCreaterString::MakeWidget(TSharedPtr<FPropertyInfo> PropertyInfo)
 	{
-		return SNew(SPropertyWidgetString, PropertyHolder);
+		return SNew(SPropertyWidgetString, PropertyInfo);
 	}
 
 	TArray<FString> FWidgetCreaterString::SupportTypes()

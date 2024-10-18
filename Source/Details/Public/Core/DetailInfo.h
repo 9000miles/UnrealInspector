@@ -239,6 +239,9 @@ namespace DETAILS_VIEWER
 			FString Get(const FString& Key) { return GetValue<FString>(Key); }
 
 			template<>
+			FText Get(const FString& Key) { return FText::FromString(GetValue<FString>(Key)); }
+
+			template<>
 			bool Get(const FString& Key) { return GetValue<bool>(Key); }
 
 			template<>

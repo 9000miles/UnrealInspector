@@ -14,6 +14,12 @@ namespace DETAILS_VIEWER
 		class FUEPropertySetter :public ISetter
 		{
 		public:
+			FUEPropertySetter(UE_Property* InProperty)
+				:Property(InProperty)
+			{
+
+			}
+			virtual ~FUEPropertySetter() {}
 			void Set(FString Value) {}
 			void Set(int32 Value) {}
 
@@ -23,79 +29,158 @@ namespace DETAILS_VIEWER
 
 		class FUEPropertyGetter :public IGetter
 		{
+		public:
+			FUEPropertyGetter(UE_Property* InProperty)
+				:Property(InProperty)
+			{
 
+			}
+			virtual ~FUEPropertyGetter() {}
+
+			template<typename T>
+			T Get()
+			{
+				return *(T*)Property->ContainerPtrToValuePtr<void>(Object.Get());
+			}
+
+		private:
+			UE_Property* Property;
 		};
 
 		class FUEPropertyEditable :public IEditable
 		{
-
 		public:
+			FUEPropertyEditable(UE_Property* InProperty)
+				:Property(InProperty)
+			{
+
+			}
+			virtual ~FUEPropertyEditable() {}
 			bool CanEdit() override;
 
+		private:
+			UE_Property* Property;
 		};
 
 		class FUEPropertyVisible :public IVisible
 		{
-
 		public:
+			FUEPropertyVisible(UE_Property* InProperty)
+				:Property(InProperty)
+			{
+
+			}
+			virtual ~FUEPropertyVisible() {}
 			bool CanVisible() override;
 
+		private:
+			UE_Property* Property;
 		};
 
 		class FUEPropertyDefaultGetter :public IDefaultGetter
 		{
-
 		public:
+			FUEPropertyDefaultGetter(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+				:Property(InProperty),
+				Object(InObject)
+			{
+			}
+			virtual ~FUEPropertyDefaultGetter() {}
+
 			FString GetDefault() override;
 
+			UE_Property* Property;
+			TWeakObjectPtr<UObject> Object;
 		};
 
 		class FUEPropertyWidgetMaker :public IWidgetMaker
 		{
-
 		public:
+			FUEPropertyWidgetMaker(UE_Property* InProperty)
+				:Property(InProperty)
+			{
+
+			}
+			virtual ~FUEPropertyWidgetMaker() {}
+
 			TSharedRef<SWidget> MakeWidget() override;
 
+		private:
+			UE_Property* Property;
 		};
 
 		class FUEPropertyCopier :public ICopier
 		{
 		public:
+			FUEPropertyCopier(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+				:Property(InProperty),
+				Object(InObject)
+			{
+
+			}
+			virtual ~FUEPropertyCopier(){}
 			const FString Execute() override;
 
 		private:
 			void* ContainerPtr;
 			UE_Property* Property;
+			TWeakObjectPtr<UObject> Object;
 		};
 
 		class FUEPropertyPaster :public IPaster
 		{
 		public:
+			FUEPropertyPaster(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+				:Property(InProperty),
+				Object(InObject)
+			{
+			}
+			virtual ~FUEPropertyPaster() {}
 			void Execute(const FString String) override;
 
 		private:
 			void* ContainerPtr;
+			UE_Property* Property;
+			TWeakObjectPtr<UObject> Object;
+		};
+
+		class FUEPropertyMetadata :public FMetadata
+		{
+		public:
+			FUEPropertyMetadata(UE_Property* InProperty)
+				:Property(InProperty)
+			{
+				Metadata = MakeShared<FJsonObject>();
+			}
+
+		private:
 			UE_Property* Property;
 		};
 
 		class FUObjectParameterExecutor :public IExecutor
 		{
 		public:
-			FUObjectParameterExecutor()
+			FUObjectParameterExecutor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+				:Property(InProperty),
+				Object(InObject)
 			{
-				Setter = MakeShareable(new PROPERTY::FUEPropertySetter());
-				Getter = MakeShareable(new PROPERTY::FUEPropertyGetter());
-				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable());
-				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible());
-				DefaultGetter = MakeShareable(new PROPERTY::FUEPropertyDefaultGetter());
-				WidgetMaker = MakeShareable(new PROPERTY::FUEPropertyWidgetMaker());
-				CopyExecutor = MakeShareable(new PROPERTY::FUEPropertyCopier());
-				PasteExecutor = MakeShareable(new PROPERTY::FUEPropertyPaster());
+				Setter = MakeShareable(new PROPERTY::FUEPropertySetter(Property));
+				Getter = MakeShareable(new PROPERTY::FUEPropertyGetter(Property));
+				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable(Property));
+				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible(Property));
+				DefaultGetter = MakeShareable(new PROPERTY::FUEPropertyDefaultGetter(Object, Property));
+				WidgetMaker = MakeShareable(new PROPERTY::FUEPropertyWidgetMaker(Property));
+				CopyExecutor = MakeShareable(new PROPERTY::FUEPropertyCopier(Object, Property));
+				PasteExecutor = MakeShareable(new PROPERTY::FUEPropertyPaster(Object, Property));
 			}
 			virtual ~FUObjectParameterExecutor()
 			{
 
 			}
+
+		protected:
+			UE_Property* Property;
+			TWeakObjectPtr<UObject> Object;
 		};
 
 
