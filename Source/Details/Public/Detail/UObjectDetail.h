@@ -14,37 +14,93 @@ namespace DETAILS_VIEWER
 		class FUEPropertySetter :public ISetter
 		{
 		public:
-			FUEPropertySetter(UE_Property* InProperty)
-				:Property(InProperty)
+			FUEPropertySetter(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+				:Property(InProperty),
+				Object(InObject)
 			{
 
 			}
 			virtual ~FUEPropertySetter() {}
-			void Set(FString Value) {}
-			void Set(int32 Value) {}
+
+			template<typename T>
+			void Set(T Value) { }
+			template<>
+			void Set<FString>(FString Value)
+			{
+				if (!Object.IsValid()) return;
+				if (Property == nullptr) return;
+
+				FStrProperty* PropertyField = CastField<FStrProperty>(Property);
+				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
+			}
+			template<>
+			void Set<bool>(bool Value)
+			{
+				if (!Object.IsValid()) return;
+				if (Property == nullptr) return;
+
+				FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
+				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
+			}
+			template<>
+			void Set<int32>(int32 Value)
+			{
+				if (!Object.IsValid()) return;
+				if (Property == nullptr) return;
+
+				FIntProperty* PropertyField = CastField<FIntProperty>(Property);
+				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
+			}
+			template<>
+			void Set<float>(float Value)
+			{
+				if (!Object.IsValid()) return;
+				if (Property == nullptr) return;
+
+				FFloatProperty* PropertyField = CastField<FFloatProperty>(Property);
+				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
+			}
+			template<>
+			void Set<FName>(FName Value)
+			{
+				if (!Object.IsValid()) return;
+				if (Property == nullptr) return;
+
+				FNameProperty* PropertyField = CastField<FNameProperty>(Property);
+				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
+			}
 
 		private:
 			UE_Property* Property;
+			TWeakObjectPtr<UObject> Object;
 		};
 
 		class FUEPropertyGetter :public IGetter
 		{
 		public:
-			FUEPropertyGetter(UE_Property* InProperty)
-				:Property(InProperty)
+			FUEPropertyGetter(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+				:Property(InProperty),
+				Object(InObject)
 			{
 
 			}
 			virtual ~FUEPropertyGetter() {}
 
 			template<typename T>
-			T Get()
+			T Get() { }
+			template<>
+			bool Get<bool>()
 			{
-				return *(T*)Property->ContainerPtrToValuePtr<void>(Object.Get());
+				if (!Object.IsValid()) return false;
+				if (Property == nullptr) return false;
+
+				FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
+				return PropertyField->GetPropertyValue_InContainer(Object.Get());
 			}
 
 		private:
 			UE_Property* Property;
+			TWeakObjectPtr<UObject> Object;
 		};
 
 		class FUEPropertyEditable :public IEditable
@@ -118,7 +174,7 @@ namespace DETAILS_VIEWER
 			{
 
 			}
-			virtual ~FUEPropertyCopier(){}
+			virtual ~FUEPropertyCopier() {}
 			const FString Execute() override;
 
 		private:
@@ -164,8 +220,8 @@ namespace DETAILS_VIEWER
 				:Property(InProperty),
 				Object(InObject)
 			{
-				Setter = MakeShareable(new PROPERTY::FUEPropertySetter(Property));
-				Getter = MakeShareable(new PROPERTY::FUEPropertyGetter(Property));
+				Setter = MakeShareable(new PROPERTY::FUEPropertySetter(Object, Property));
+				Getter = MakeShareable(new PROPERTY::FUEPropertyGetter(Object, Property));
 				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable(Property));
 				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible(Property));
 				DefaultGetter = MakeShareable(new PROPERTY::FUEPropertyDefaultGetter(Object, Property));

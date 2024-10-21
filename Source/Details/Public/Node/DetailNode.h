@@ -82,7 +82,7 @@ namespace DETAILS_VIEWER
 		FString GetName() override;
 		TSharedPtr<SWidget> GetWidget() override;
 
-	protected:
+	public:
 		TSharedPtr<FPropertyInfo> PropertyInfo;
 	};
 }

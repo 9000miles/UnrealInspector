@@ -11,7 +11,8 @@ namespace DETAILS_VIEWER
 		: NodeType(InNodeType)
 	{
 		ObjectPtr = Object;
-		PropertyHolder = MakeShareable(new FPropertyHolder(ObjectPtr, Property));
+		//PropertyHolder = MakeShareable(new FPropertyHolder(ObjectPtr, Property));
+
 	}
 
 
@@ -22,23 +23,25 @@ namespace DETAILS_VIEWER
 
 	FString FDetailTreeNode::GetName()
 	{
-		const FText DisplayName = PropertyHolder->GetDisplayName();
-		if (DisplayName.IsEmpty())
-		{
-			const FString Name = PropertyHolder->GetName();
-			return Name;
-		}
+		//const FText DisplayName = PropertyHolder->GetDisplayName();
+		//if (DisplayName.IsEmpty())
+		//{
+		//	const FString Name = PropertyHolder->GetName();
+		//	return Name;
+		//}
 
-		return DisplayName.ToString();
+		//return DisplayName.ToString();
+		return FString();
 	}
 
 	TSharedPtr<SWidget> FDetailTreeNode::GetWidget()
 	{
-		const FString PropertyType = PropertyHolder->GetPropertyType();
-		TSharedPtr<IDetailWidgetCreater> PropertyBuilder = FDetailFactory::Get().FindCreater(PropertyType);
-		if (PropertyBuilder == nullptr) return nullptr;
+		//const FString PropertyType = PropertyHolder->GetPropertyType();
+		//TSharedPtr<IDetailWidgetCreater> PropertyBuilder = FDetailFactory::Get().FindCreater(PropertyType);
+		//if (PropertyBuilder == nullptr) return nullptr;
 
-		return PropertyBuilder->MakeWidget();
+		//return PropertyBuilder->MakeWidget();
+		return SNullWidget::NullWidget;
 	}
 
 	FString FCategoryTreeNode::GetName()
@@ -70,20 +73,20 @@ namespace DETAILS_VIEWER
 
 	TSharedPtr<SWidget> FPropertyTreeNode::GetWidget()
 	{
-		//return SNew(SDetailPropertyWidget)
-		if (FWidgetCreaterBool::IsSupport(PropertyInfo))
-			return MakeWidget<FWidgetCreaterBool>(PropertyHolder);
-		//else if (PropertyHolder->IsA(FIntProperty::StaticClass()))
-		//	return FWidgetCreaterInt::CreateWidget(PropertyHolder);
-		//else if (PropertyHolder->IsA(FInt64Property::StaticClass()))
-		//	return FWidgetCreaterInt64::CreateWidget(PropertyHolder);
-		//else if (PropertyHolder->IsA(FFloatProperty::StaticClass()))
-		//	return FWidgetCreaterFloat::CreateWidget(PropertyHolder);
-		//else if (PropertyHolder->IsA(FDoubleProperty::StaticClass()))
-		//	return FWidgetCreaterDouble::CreateWidget(PropertyHolder);
-		else if (PropertyHolder->IsA(FStrProperty::StaticClass())
-			|| PropertyHolder->IsA(FNameProperty::StaticClass()))
-			return MakeWidget<FWidgetCreaterString>(PropertyHolder);
+		////return SNew(SDetailPropertyWidget)
+		//if (FWidgetCreaterBool::IsSupport(PropertyInfo))
+		//	return MakeWidget<FWidgetCreaterBool>(PropertyHolder);
+		////else if (PropertyHolder->IsA(FIntProperty::StaticClass()))
+		////	return FWidgetCreaterInt::CreateWidget(PropertyHolder);
+		////else if (PropertyHolder->IsA(FInt64Property::StaticClass()))
+		////	return FWidgetCreaterInt64::CreateWidget(PropertyHolder);
+		////else if (PropertyHolder->IsA(FFloatProperty::StaticClass()))
+		////	return FWidgetCreaterFloat::CreateWidget(PropertyHolder);
+		////else if (PropertyHolder->IsA(FDoubleProperty::StaticClass()))
+		////	return FWidgetCreaterDouble::CreateWidget(PropertyHolder);
+		//else if (PropertyHolder->IsA(FStrProperty::StaticClass())
+		//	|| PropertyHolder->IsA(FNameProperty::StaticClass()))
+		//	return MakeWidget<FWidgetCreaterString>(PropertyHolder);
 
 		return SNullWidget::NullWidget;
 

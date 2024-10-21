@@ -7,6 +7,7 @@
 #include "Widget/SPropertyWidget.h"
 #include "Core/PropertyHolder.h"
 #include "Core/DetailInfo.h"
+#include <Node\DetailNode.h>
 
 namespace DETAILS_VIEWER
 {
@@ -18,7 +19,7 @@ namespace DETAILS_VIEWER
 	{
 	public:
 		virtual ~IDetailWidgetCreater() {}
-		virtual TSharedPtr<SWidget> MakeWidget() = 0;
+		virtual TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) = 0;
 		virtual TArray<FString> SupportTypes() = 0;
 	};
 
@@ -29,10 +30,10 @@ namespace DETAILS_VIEWER
 	{
 	public:
 		virtual ~FRowWidgetCreater() {}
-		virtual TSharedPtr<SWidget> CreateRowWidget(TSharedPtr<FPropertyHolder> PropertyHolder);
+		virtual TSharedPtr<SWidget> CreateRowWidget(TSharedPtr<FTreeNode> TreeNode);
 
 	private:
-		TSharedPtr<SWidget> MakeWidget() override;
+		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
 		TArray<FString> SupportTypes() override;
 
 	};
@@ -54,7 +55,7 @@ namespace DETAILS_VIEWER
 
 
 	private:
-		TSharedPtr<SWidget> MakeWidget() override;
+		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
 	protected:
 		TSharedPtr<PROPERTY::IExecutor> Executor;
 	};

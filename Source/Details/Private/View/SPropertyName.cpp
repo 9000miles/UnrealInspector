@@ -6,9 +6,9 @@
 namespace DETAILS_VIEWER
 {
 	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
-		void SPropertyName::Construct(const FArguments& InArgs, TSharedPtr<FDetailTreeNode> DetailNode)
+		void SPropertyName::Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> TreeNode)
 	{
-		const FString Name = DetailNode->GetName();
+		const FString Name = TreeNode->GetName();
 
 		ChildSlot
 			[

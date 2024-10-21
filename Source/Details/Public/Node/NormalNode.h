@@ -18,18 +18,17 @@ namespace DETAILS_VIEWER
 		virtual ~FNormalNode();
 
 		template<typename T>
-		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FPropertyHolder> PropertyHolder);
+		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode);
 
 		TSharedPtr<SWidget> GetWidget() override;
 
 	};
 
 	template<typename T>
-	TSharedPtr<SWidget> FNormalNode::MakeWidget(TSharedPtr<FPropertyHolder> PropertyHolder)
+	TSharedPtr<SWidget> FNormalNode::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
 	{
 		const TSharedPtr<T> Creater = Factory::Get<T>(T::TypeName());
 		TSharedPtr<FPropertyWidgetCreater> CreaterPtr = StaticCastSharedPtr<FPropertyWidgetCreater>(Creater);
-		CreaterPtr->PropertyHolder = PropertyHolder;
 		return CreaterPtr->MakeWidget();
 	}
 

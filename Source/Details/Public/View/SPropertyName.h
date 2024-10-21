@@ -20,6 +20,6 @@ namespace DETAILS_VIEWER
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(const FArguments& InArgs, TSharedPtr<FDetailTreeNode> DetailNode);
+		void Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> TreeNode);
 	};
 }

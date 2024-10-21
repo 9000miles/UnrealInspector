@@ -29,7 +29,7 @@ namespace DETAILS_VIEWER
 	//	return Typies.ContainsByPredicate([PropertyInfo](const FString& Type) { return Type == PropertyInfo->Type; });
 	//}
 
-	TSharedPtr<SWidget> FPropertyWidgetCreater::MakeWidget()
+	TSharedPtr<SWidget> FPropertyWidgetCreater::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
 	{
 		return SNullWidget::NullWidget;
 
@@ -41,14 +41,14 @@ namespace DETAILS_VIEWER
 
 	//}
 
-	TSharedPtr<SWidget> FRowWidgetCreater::CreateRowWidget(TSharedPtr<FPropertyHolder> PropertyHolder)
+	TSharedPtr<SWidget> FRowWidgetCreater::CreateRowWidget(TSharedPtr<FTreeNode> TreeNode)
 	{
 		return SNullWidget::NullWidget;
 	}
 
 
 
-	TSharedPtr<SWidget> FRowWidgetCreater::MakeWidget()
+	TSharedPtr<SWidget> FRowWidgetCreater::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
 	{
 		return SNullWidget::NullWidget;
 	}

@@ -32,7 +32,7 @@ namespace DETAILS_VIEWER
 		//UObject* Object = PropertyHolder->GetOutermost();
 		//const bool Value = BoolProperty->GetPropertyValue_InContainer(Object);
 
-		const bool Value = PropertyInfo->Executor->Getter->Get<bool>();
+		bool Value = PropertyInfo->Executor->Getter->Get<bool>();
 		return Value ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
 	}
 
@@ -48,9 +48,11 @@ namespace DETAILS_VIEWER
 		PropertyInfo->Executor->Setter->Set(Value);
 	}
 
-	TSharedPtr<SWidget> FWidgetCreaterBool::MakeWidget()
+	TSharedPtr<SWidget> FWidgetCreaterBool::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
 	{
-		return SNew(SPropertyWidgetBool, Executor);
+		TSharedPtr<FPropertyTreeNode> PropertyTreeNode = StaticCastSharedPtr<FPropertyTreeNode>(TreeNode);
+		return SNew(SPropertyWidgetBool, PropertyTreeNode->PropertyInfo);
+
 	}
 
 	TArray<FString> FWidgetCreaterBool::SupportTypes()

@@ -32,7 +32,7 @@ namespace DETAILS_VIEWER
 	class DETAILSVIEWER_API FWidgetCreaterBool : public FPropertyWidgetCreater
 	{
 	public:
-		TSharedPtr<SWidget> MakeWidget() override;
+		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
 		TArray<FString> SupportTypes() override;
 
 		static FString TypeName() { return TEXT("WidgetCreaterBool"); }

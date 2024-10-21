@@ -41,7 +41,7 @@ namespace DETAILS_VIEWER
 	{
 	public:
 		FWidgetCreaterString();
-		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FPropertyInfo> PropertyInfo) override;
+		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
 		TArray<FString> SupportTypes() override;
 		static FString TypeName() { return TEXT("WidgetCreaterString"); }
 

@@ -104,9 +104,10 @@ namespace DETAILS_VIEWER
 	{
 	}
 
-	TSharedPtr<SWidget> FWidgetCreaterString::MakeWidget(TSharedPtr<FPropertyInfo> PropertyInfo)
+	TSharedPtr<SWidget> FWidgetCreaterString::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
 	{
-		return SNew(SPropertyWidgetString, PropertyInfo);
+		TSharedPtr<FPropertyTreeNode> PropertyTreeNode = StaticCastSharedPtr<FPropertyTreeNode>(TreeNode);
+		return SNew(SPropertyWidgetString, PropertyTreeNode->PropertyInfo);
 	}
 
 	TArray<FString> FWidgetCreaterString::SupportTypes()
