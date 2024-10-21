@@ -56,7 +56,7 @@ namespace DETAILS_VIEWER
 	class FCategoryTreeNode :public FTreeNode
 	{
 	public:
-		FCategoryTreeNode(TSharedPtr<FCategoryInfo> Item) :FTreeNode(ENodeType::General), CategoryInfo(Item)
+		FCategoryTreeNode(TSharedPtr<FCategoryInfo> Item) :FTreeNode(ENodeType::Category), CategoryInfo(Item)
 		{
 		}
 

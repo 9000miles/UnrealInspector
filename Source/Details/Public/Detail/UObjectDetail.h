@@ -22,54 +22,68 @@ namespace DETAILS_VIEWER
 			}
 			virtual ~FUEPropertySetter() {}
 
-			template<typename T>
-			void Set(T Value) { }
-			template<>
-			void Set<FString>(FString Value)
+			// 定义一个宏来帮助生成重载函数
+#define DEFINE_SET_FUNC(Type, PropType) \
+void Set(Type value) { \
+    if (!Object.IsValid() || Property == nullptr) return; \
+    PropType* Ptr = CastField<PropType>(Property); \
+    if (Ptr) { \
+        Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
+    } \
+}
+			DEFINE_SET_FUNC(FString, FStrProperty);
+			DEFINE_SET_FUNC(FName, FNameProperty);
+			DEFINE_SET_FUNC(FText, FTextProperty);
+
+
+			DEFINE_SET_FUNC(uint16, FUInt16Property);
+			DEFINE_SET_FUNC(uint32, FUInt32Property);
+			DEFINE_SET_FUNC(uint64, FUInt64Property);
+
+			DEFINE_SET_FUNC(int8, FInt8Property);
+			DEFINE_SET_FUNC(int16, FInt16Property);
+			DEFINE_SET_FUNC(int32, FIntProperty);
+			DEFINE_SET_FUNC(int64, FInt64Property);
+
+			DEFINE_SET_FUNC(bool, FBoolProperty);
+			DEFINE_SET_FUNC(uint8, FByteProperty);
+			DEFINE_SET_FUNC(float, FFloatProperty);
+			DEFINE_SET_FUNC(double, FDoubleProperty);
+
+
+			//DEFINE_SET_FUNC(TSet<T>, FInterfaceProperty);
+			DEFINE_SET_FUNC(UObject*, FObjectProperty);
+			DEFINE_SET_FUNC(UClass*, FClassProperty);
+
+#define DEFINE_SET_FUNC_CONTAINER(Type, PropType) \
+template<typename T> \
+void Set(const Type<T>& value) { \
+    if (!Object.IsValid() || Property == nullptr) return; \
+    PropType* Ptr = CastField<PropType>(Property); \
+    if (Ptr) { \
+        Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
+    } \
+}
+			DEFINE_SET_FUNC_CONTAINER(TArray, FArrayProperty);
+			DEFINE_SET_FUNC_CONTAINER(TSet, FSetProperty);
+
+			// 宏定义 Map 类型
+#define DEFINE_SET_FUNC_MAP(PropType) \
+template<typename K, typename V> \
+void Set(const TMap<K, V>& value) { \
+    if (!Object.IsValid() || Property == nullptr) return; \
+    PropType* Ptr = CastField<PropType>(Property); \
+    if (Ptr) { \
+        Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
+    } \
+}
+			DEFINE_SET_FUNC_MAP(FMapProperty);
+
+			// 定义一个默认的 Set 函数，什么也不做
+			void Set(void* object, const void* value)
 			{
-				if (!Object.IsValid()) return;
-				if (Property == nullptr) return;
-
-				FStrProperty* PropertyField = CastField<FStrProperty>(Property);
-				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
+				// 这个默认函数什么也不做，主要用于避免编译错误
 			}
-			template<>
-			void Set<bool>(bool Value)
-			{
-				if (!Object.IsValid()) return;
-				if (Property == nullptr) return;
-
-				FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
-				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
-			}
-			template<>
-			void Set<int32>(int32 Value)
-			{
-				if (!Object.IsValid()) return;
-				if (Property == nullptr) return;
-
-				FIntProperty* PropertyField = CastField<FIntProperty>(Property);
-				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
-			}
-			template<>
-			void Set<float>(float Value)
-			{
-				if (!Object.IsValid()) return;
-				if (Property == nullptr) return;
-
-				FFloatProperty* PropertyField = CastField<FFloatProperty>(Property);
-				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
-			}
-			template<>
-			void Set<FName>(FName Value)
-			{
-				if (!Object.IsValid()) return;
-				if (Property == nullptr) return;
-
-				FNameProperty* PropertyField = CastField<FNameProperty>(Property);
-				PropertyField->SetPropertyValue_InContainer(Object.Get(), Value);
-			}
-
 		private:
 			UE_Property* Property;
 			TWeakObjectPtr<UObject> Object;
