@@ -9,28 +9,28 @@
 namespace DETAILS_VIEWER
 {
 
-	class FDetailTreeNode :public TSharedFromThis<FDetailTreeNode>
-	{
-	public:
-		FDetailTreeNode(ENodeType InNodeType, UObject* Object, UE_Property* Property);
-		virtual ~FDetailTreeNode();
+	//class FDetailTreeNode :public TSharedFromThis<FDetailTreeNode>
+	//{
+	//public:
+	//	FDetailTreeNode(ENodeType InNodeType, UObject* Object, UE_Property* Property);
+	//	virtual ~FDetailTreeNode();
 
-		virtual FString GetName();
-		virtual TSharedPtr<SWidget> GetWidget();
+	//	virtual FString GetName();
+	//	virtual TSharedPtr<SWidget> GetWidget();
 
-		TArray<TSharedPtr<FDetailTreeNode>> GetChildNodes() { return ChildNodes; }
-		TSharedPtr<FDetailTreeNode> GetParentNode() { return ParentNode; }
+	//	TArray<TSharedPtr<FDetailTreeNode>> GetChildNodes() { return ChildNodes; }
+	//	TSharedPtr<FDetailTreeNode> GetParentNode() { return ParentNode; }
 
-		//TSharedPtr<FPropertyHolder> GetPropertyHolder() { return PropertyHolder; }
-		TWeakObjectPtr<UObject> GetObject() { return ObjectPtr; }
-		ENodeType GetNodeType() { return NodeType; }
+	//	//TSharedPtr<FPropertyHolder> GetPropertyHolder() { return PropertyHolder; }
+	//	TWeakObjectPtr<UObject> GetObject() { return ObjectPtr; }
+	//	ENodeType GetNodeType() { return NodeType; }
 
-	protected:
-		ENodeType NodeType;
-		TWeakObjectPtr<UObject> ObjectPtr;
-		TSharedPtr<FDetailTreeNode> ParentNode;
-		TArray<TSharedPtr<FDetailTreeNode>> ChildNodes;
-	};
+	//protected:
+	//	ENodeType NodeType;
+	//	TWeakObjectPtr<UObject> ObjectPtr;
+	//	TSharedPtr<FDetailTreeNode> ParentNode;
+	//	TArray<TSharedPtr<FDetailTreeNode>> ChildNodes;
+	//};
 
 	class FTreeNode :public ITypeName
 	{

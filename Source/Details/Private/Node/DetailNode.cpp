@@ -7,42 +7,42 @@ namespace DETAILS_VIEWER
 {
 
 
-	FDetailTreeNode::FDetailTreeNode(ENodeType InNodeType, UObject* Object, UE_Property* Property)
-		: NodeType(InNodeType)
-	{
-		ObjectPtr = Object;
-		//PropertyHolder = MakeShareable(new FPropertyHolder(ObjectPtr, Property));
+	//FDetailTreeNode::FDetailTreeNode(ENodeType InNodeType, UObject* Object, UE_Property* Property)
+	//	: NodeType(InNodeType)
+	//{
+	//	ObjectPtr = Object;
+	//	//PropertyHolder = MakeShareable(new FPropertyHolder(ObjectPtr, Property));
 
-	}
+	//}
 
 
-	FDetailTreeNode::~FDetailTreeNode()
-	{
+	//FDetailTreeNode::~FDetailTreeNode()
+	//{
 
-	}
+	//}
 
-	FString FDetailTreeNode::GetName()
-	{
-		//const FText DisplayName = PropertyHolder->GetDisplayName();
-		//if (DisplayName.IsEmpty())
-		//{
-		//	const FString Name = PropertyHolder->GetName();
-		//	return Name;
-		//}
+	//FString FDetailTreeNode::GetName()
+	//{
+	//	//const FText DisplayName = PropertyHolder->GetDisplayName();
+	//	//if (DisplayName.IsEmpty())
+	//	//{
+	//	//	const FString Name = PropertyHolder->GetName();
+	//	//	return Name;
+	//	//}
 
-		//return DisplayName.ToString();
-		return FString();
-	}
+	//	//return DisplayName.ToString();
+	//	return FString();
+	//}
 
-	TSharedPtr<SWidget> FDetailTreeNode::GetWidget()
-	{
-		//const FString PropertyType = PropertyHolder->GetPropertyType();
-		//TSharedPtr<IDetailWidgetCreater> PropertyBuilder = FDetailFactory::Get().FindCreater(PropertyType);
-		//if (PropertyBuilder == nullptr) return nullptr;
+	//TSharedPtr<SWidget> FDetailTreeNode::GetWidget()
+	//{
+	//	//const FString PropertyType = PropertyHolder->GetPropertyType();
+	//	//TSharedPtr<IDetailWidgetCreater> PropertyBuilder = FDetailFactory::Get().FindCreater(PropertyType);
+	//	//if (PropertyBuilder == nullptr) return nullptr;
 
-		//return PropertyBuilder->MakeWidget();
-		return SNullWidget::NullWidget;
-	}
+	//	//return PropertyBuilder->MakeWidget();
+	//	return SNullWidget::NullWidget;
+	//}
 
 	FString FCategoryTreeNode::GetName()
 	{
