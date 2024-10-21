@@ -135,7 +135,7 @@ namespace DETAILS_VIEWER
 		{
 		public:
 			template<typename T>
-			T Get() { return {}; }
+			void Get(T& Out) { }
 		};
 		class IEditable :public IJsonable
 		{

@@ -32,7 +32,8 @@ namespace DETAILS_VIEWER
 		//UObject* Object = PropertyHolder->GetOutermost();
 		//const bool Value = BoolProperty->GetPropertyValue_InContainer(Object);
 
-		bool Value = PropertyInfo->Executor->Getter->Get<bool>();
+		bool Value = false;
+		PropertyInfo->Executor->Getter->Get<bool>(Value);
 		return Value ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
 	}
 

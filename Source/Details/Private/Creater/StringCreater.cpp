@@ -48,7 +48,9 @@ namespace DETAILS_VIEWER
 
 	FText SPropertyWidgetString::GetPropertyValue() const
 	{
-		return PropertyInfo->Executor->Getter->Get<FText>();
+		FText Result;
+		PropertyInfo->Executor->Getter->Get<FText>(Result);
+		return Result;
 
 		//UE_Property* Property = PropertyHolder->GetProperty();
 		//UObject* Object = PropertyHolder->GetOutermost();

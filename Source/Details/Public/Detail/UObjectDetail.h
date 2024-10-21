@@ -95,16 +95,14 @@ void Set(const TMap<K, V>& value) { \
 			}
 			virtual ~FUEPropertyGetter() {}
 
-			template<typename T>
-			T Get() { }
-			template<>
-			bool Get<bool>()
+
+			void Get(bool& Out)
 			{
-				if (!Object.IsValid()) return false;
-				if (Property == nullptr) return false;
+				if (!Object.IsValid()) return;
+				if (Property == nullptr) return;
 
 				FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
-				return PropertyField->GetPropertyValue_InContainer(Object.Get());
+				Out = PropertyField->GetPropertyValue_InContainer(Object.Get());
 			}
 
 		private:
