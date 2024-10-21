@@ -15,7 +15,7 @@
 #include "Node/ArrayNode.h"
 #include "Node/SetNode.h"
 #include "Node/StructNode.h"
-#include "Node/NormalNode.h"
+#include "Node/GeneralNode.h"
 
 namespace DETAILS_VIEWER
 {

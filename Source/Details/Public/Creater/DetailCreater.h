@@ -43,7 +43,7 @@ namespace DETAILS_VIEWER
 	 */
 	class FPropertyWidgetCreater :public FRowWidgetCreater
 	{
-		friend class FNormalNode;
+		friend class FGeneralNode;
 	public:
 		virtual ~FPropertyWidgetCreater() {}
 	public:

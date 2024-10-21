@@ -11,7 +11,7 @@ namespace DETAILS_VIEWER
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API FStructNode :public FDetailTreeNode
+	class DETAILSVIEWER_API FStructNode :public FTreeNode
 	{
 	public:
 		FStructNode(UObject* Object, UE_Property* Property);

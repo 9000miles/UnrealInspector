@@ -10,7 +10,7 @@ namespace DETAILS_VIEWER
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API FMapElementNode :public FDetailTreeNode
+	class DETAILSVIEWER_API FMapElementNode :public FTreeNode
 	{
 	public:
 		FMapElementNode(UObject* Object, UE_Property* Property);

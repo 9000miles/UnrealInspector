@@ -7,7 +7,7 @@ namespace DETAILS_VIEWER
 {
 
 	FArrayEelementNode::FArrayEelementNode(UObject* Object, UE_Property* Property)
-		:FDetailTreeNode(EDetailNodeType::ArrayElement, Object, Property)
+		:FTreeNode(ENodeType::ArrayElement)
 	{
 
 	}

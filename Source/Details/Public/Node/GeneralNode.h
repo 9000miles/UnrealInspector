@@ -11,21 +11,24 @@ namespace DETAILS_VIEWER
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API FNormalNode :public FDetailTreeNode
+	class DETAILSVIEWER_API FGeneralNode :public FTreeNode
 	{
 	public:
-		FNormalNode(UObject* Object, UE_Property* Property);
-		virtual ~FNormalNode();
+		FGeneralNode(UObject* InObject, UE_Property* InProperty);
+		virtual ~FGeneralNode();
 
 		template<typename T>
 		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode);
 
 		TSharedPtr<SWidget> GetWidget() override;
 
+	public:
+		TWeakObjectPtr<UObject> Object;
+		UE_Property* Property;
 	};
 
 	template<typename T>
-	TSharedPtr<SWidget> FNormalNode::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
+	TSharedPtr<SWidget> FGeneralNode::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
 	{
 		const TSharedPtr<T> Creater = Factory::Get<T>(T::TypeName());
 		TSharedPtr<FPropertyWidgetCreater> CreaterPtr = StaticCastSharedPtr<FPropertyWidgetCreater>(Creater);

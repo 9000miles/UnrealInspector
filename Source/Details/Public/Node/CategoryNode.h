@@ -11,12 +11,14 @@ namespace DETAILS_VIEWER
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API FCategoryNode :public FDetailTreeNode
+	class DETAILSVIEWER_API FCategoryNode :public FTreeNode
 	{
 	public:
-		FCategoryNode(UObject* Object, UE_Property* Property);
+		FCategoryNode(TSharedPtr<FCategoryInfo> InCategoryInfo);
 		virtual ~FCategoryNode();
 
+	public:
+		TSharedPtr<FCategoryInfo> CategoryInfo;
 	};
 
 }

@@ -7,7 +7,7 @@ namespace DETAILS_VIEWER
 {
 
 
-	FDetailTreeNode::FDetailTreeNode(EDetailNodeType InNodeType, UObject* Object, UE_Property* Property)
+	FDetailTreeNode::FDetailTreeNode(ENodeType InNodeType, UObject* Object, UE_Property* Property)
 		: NodeType(InNodeType)
 	{
 		ObjectPtr = Object;

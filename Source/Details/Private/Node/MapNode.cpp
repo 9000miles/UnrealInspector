@@ -6,7 +6,7 @@
 namespace DETAILS_VIEWER
 {
 	FMapNode::FMapNode(UObject* Object, UE_Property* Property)
-		:FDetailTreeNode(EDetailNodeType::Map, Object, Property)
+		:FTreeNode(ENodeType::Map)
 	{
 
 	}

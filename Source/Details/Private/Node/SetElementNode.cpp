@@ -7,7 +7,7 @@ namespace DETAILS_VIEWER
 {
 
 	FSetElementNode::FSetElementNode(UObject* Object, UE_Property* Property)
-		:FDetailTreeNode(EDetailNodeType::SetElement, Object, Property)
+		:FTreeNode(ENodeType::SetElement)
 	{
 
 	}

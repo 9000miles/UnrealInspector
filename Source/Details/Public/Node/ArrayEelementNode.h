@@ -12,7 +12,7 @@ namespace DETAILS_VIEWER
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API FArrayEelementNode :public FDetailTreeNode
+	class DETAILSVIEWER_API FArrayEelementNode :public FTreeNode
 	{
 	public:
 		FArrayEelementNode(UObject* Object, UE_Property* Property);

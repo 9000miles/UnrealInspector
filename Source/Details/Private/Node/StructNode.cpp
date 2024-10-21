@@ -8,7 +8,7 @@ namespace DETAILS_VIEWER
 
 
 	FStructNode::FStructNode(UObject* Object, UE_Property* Property)
-		:FDetailTreeNode(EDetailNodeType::Struct, Object, Property)
+		:FTreeNode(ENodeType::Struct)
 	{
 
 	}

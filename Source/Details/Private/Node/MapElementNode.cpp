@@ -7,7 +7,7 @@ namespace DETAILS_VIEWER
 {
 
 	FMapElementNode::FMapElementNode(UObject* Object, UE_Property* Property)
-		:FDetailTreeNode(EDetailNodeType::MapElement, Object, Property)
+		:FTreeNode(ENodeType::MapElement)
 	{
 
 	}

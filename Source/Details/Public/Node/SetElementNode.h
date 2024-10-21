@@ -11,7 +11,7 @@ namespace DETAILS_VIEWER
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API FSetElementNode :public FDetailTreeNode
+	class DETAILSVIEWER_API FSetElementNode :public FTreeNode
 	{
 	public:
 		FSetElementNode(UObject* Object, UE_Property* Property);

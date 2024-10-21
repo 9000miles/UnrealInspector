@@ -1,24 +1,26 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Node/NormalNode.h"
+#include "Node/GeneralNode.h"
 #include "Creater/BoolCreater.h"
 #include "Creater/StringCreater.h"
 
 namespace DETAILS_VIEWER
 {
-	FNormalNode::FNormalNode(UObject* Object, UE_Property* Property)
-		:FDetailTreeNode(EDetailNodeType::NormalProperty, Object, Property)
+	FGeneralNode::FGeneralNode(UObject* InObject, UE_Property* InProperty)
+		:FTreeNode(ENodeType::General),
+		Object(InObject),
+		Property(InProperty)
 	{
 
 	}
 
-	FNormalNode::~FNormalNode()
+	FGeneralNode::~FGeneralNode()
 	{
 	}
 
 
-	TSharedPtr<SWidget> FNormalNode::GetWidget()
+	TSharedPtr<SWidget> FGeneralNode::GetWidget()
 	{
 		//if (PropertyHolder->IsA(FBoolProperty::StaticClass()))
 		//	return MakeWidget<FWidgetCreaterBool>(PropertyHolder);
@@ -35,7 +37,7 @@ namespace DETAILS_VIEWER
 		//	return MakeWidget<FWidgetCreaterString>(PropertyHolder);
 
 
-		return FDetailTreeNode::GetWidget();
+		return FTreeNode::GetWidget();
 	}
 
 

@@ -8,7 +8,7 @@ namespace DETAILS_VIEWER
 
 
 	FSetNode::FSetNode(UObject* Object, UE_Property* Property)
-		:FDetailTreeNode(EDetailNodeType::Set, Object, Property)
+		:FTreeNode(ENodeType::Set)
 	{
 
 	}

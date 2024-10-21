@@ -12,7 +12,7 @@ namespace DETAILS_VIEWER
 	class FDetailTreeNode :public TSharedFromThis<FDetailTreeNode>
 	{
 	public:
-		FDetailTreeNode(EDetailNodeType InNodeType, UObject* Object, UE_Property* Property);
+		FDetailTreeNode(ENodeType InNodeType, UObject* Object, UE_Property* Property);
 		virtual ~FDetailTreeNode();
 
 		virtual FString GetName();
@@ -23,10 +23,10 @@ namespace DETAILS_VIEWER
 
 		//TSharedPtr<FPropertyHolder> GetPropertyHolder() { return PropertyHolder; }
 		TWeakObjectPtr<UObject> GetObject() { return ObjectPtr; }
-		EDetailNodeType GetNodeType() { return NodeType; }
+		ENodeType GetNodeType() { return NodeType; }
 
 	protected:
-		EDetailNodeType NodeType;
+		ENodeType NodeType;
 		TWeakObjectPtr<UObject> ObjectPtr;
 		TSharedPtr<FDetailTreeNode> ParentNode;
 		TArray<TSharedPtr<FDetailTreeNode>> ChildNodes;
@@ -35,6 +35,7 @@ namespace DETAILS_VIEWER
 	class FTreeNode :public ITypeName
 	{
 	public:
+		FTreeNode(ENodeType	InNodeType) {};
 		virtual FString GetName() { return TEXT("TreeNode"); };
 		virtual TSharedPtr<SWidget> GetWidget();
 
@@ -55,7 +56,7 @@ namespace DETAILS_VIEWER
 	class FCategoryTreeNode :public FTreeNode
 	{
 	public:
-		FCategoryTreeNode(TSharedPtr<FCategoryInfo> Item) :CategoryInfo(Item)
+		FCategoryTreeNode(TSharedPtr<FCategoryInfo> Item) :FTreeNode(ENodeType::General), CategoryInfo(Item)
 		{
 		}
 
@@ -72,7 +73,7 @@ namespace DETAILS_VIEWER
 	class FPropertyTreeNode :public FTreeNode
 	{
 	public:
-		FPropertyTreeNode(TSharedPtr<FPropertyInfo> InPropertyInfo) :PropertyInfo(InPropertyInfo)
+		FPropertyTreeNode(TSharedPtr<FPropertyInfo> InPropertyInfo) :FTreeNode(ENodeType::General), PropertyInfo(InPropertyInfo)
 		{
 		}
 

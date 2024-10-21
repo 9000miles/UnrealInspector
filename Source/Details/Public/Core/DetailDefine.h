@@ -29,9 +29,10 @@ public:
 namespace DETAILS_VIEWER
 {
 
-	enum EDetailNodeType
+	enum ENodeType
 	{
 		Category,
+		General,
 		ArrayElement,
 		Array,
 		MapElement,
@@ -39,7 +40,6 @@ namespace DETAILS_VIEWER
 		Struct,
 		Set,
 		SetElement,
-		NormalProperty,
-		CustomNode
+		Custom
 	};
 }
