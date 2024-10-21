@@ -24,6 +24,10 @@ namespace DETAILS_VIEWER
 		void Construct(TSharedPtr<FPropertyInfo> InPropertyInfo);
 
 	protected:
+		TSharedPtr<PROPERTY::IExecutor> GetExecutor() const { return PropertyInfo->Executor; }
+
+
+	protected:
 		TSharedPtr<FPropertyInfo> PropertyInfo;
 	};
 

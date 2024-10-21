@@ -49,7 +49,7 @@ namespace DETAILS_VIEWER
 	FText SPropertyWidgetString::GetPropertyValue() const
 	{
 		FText Result;
-		PropertyInfo->Executor->Getter->Get<FText>(Result);
+		GetExecutor()->Getter->Get<FText>(Result);
 		return Result;
 
 		//UE_Property* Property = PropertyHolder->GetProperty();
@@ -81,7 +81,7 @@ namespace DETAILS_VIEWER
 		const FString Type = PropertyInfo->Type;
 		if (Type == TEXT("FString"))
 		{
-			PropertyInfo->Executor->Setter->Set(Text.ToString());
+			GetExecutor()->Setter->Set(Text.ToString());
 
 			//FStrProperty* PropertyField = CastField<FStrProperty>(Property);
 			//FString Value = Text.ToString();
@@ -89,14 +89,14 @@ namespace DETAILS_VIEWER
 		}
 		else if (Type == TEXT("FName"))
 		{
-			PropertyInfo->Executor->Setter->Set(FName(*Text.ToString()));
+			GetExecutor()->Setter->Set(FName(*Text.ToString()));
 			//FNameProperty* PropertyField = CastField<FNameProperty>(Property);
 			//FName Value = FName(*Text.ToString());
 			//PropertyField->SetPropertyValue_InContainer(Object, Value);
 		}
 		else if (Type == TEXT("FText"))
 		{
-			PropertyInfo->Executor->Setter->Set(Text);
+			GetExecutor()->Setter->Set(Text);
 			//FTextProperty* PropertyField = CastField<FTextProperty>(Property);
 			//PropertyField->SetPropertyValue_InContainer(Object, Text);
 		}

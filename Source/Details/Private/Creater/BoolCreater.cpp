@@ -33,7 +33,7 @@ namespace DETAILS_VIEWER
 		//const bool Value = BoolProperty->GetPropertyValue_InContainer(Object);
 
 		bool Value = false;
-		PropertyInfo->Executor->Getter->Get<bool>(Value);
+		GetExecutor()->Getter->Get<bool>(Value);
 		return Value ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
 	}
 
@@ -46,7 +46,7 @@ namespace DETAILS_VIEWER
 		//BoolProperty->SetPropertyValue_InContainer(Owner, Value);
 
 		const bool Value = State == ECheckBoxState::Checked;
-		PropertyInfo->Executor->Setter->Set(Value);
+		GetExecutor()->Setter->Set(Value);
 	}
 
 	TSharedPtr<SWidget> FWidgetCreaterBool::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
