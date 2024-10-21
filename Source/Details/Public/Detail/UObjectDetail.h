@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,7 +22,7 @@ namespace DETAILS_VIEWER
 			}
 			virtual ~FUEPropertySetter() {}
 
-			// ¶¨ÒåÒ»¸öºêÀ´°ïÖúÉú³ÉÖØÔØº¯Êı
+			// å®šä¹‰ä¸€ä¸ªå®æ¥å¸®åŠ©ç”Ÿæˆé‡è½½å‡½æ•°
 #define DEFINE_SET_FUNC(Type, PropType) \
 void Set(Type value) { \
     if (!Object.IsValid() || Property == nullptr) return; \
@@ -67,7 +67,7 @@ void Set(const Type<T>& value) { \
 			DEFINE_SET_FUNC_CONTAINER(TArray, FArrayProperty);
 			DEFINE_SET_FUNC_CONTAINER(TSet, FSetProperty);
 
-			// ºê¶¨Òå Map ÀàĞÍ
+			// å®å®šä¹‰ Map ç±»å‹
 #define DEFINE_SET_FUNC_MAP(PropType) \
 template<typename K, typename V> \
 void Set(const TMap<K, V>& value) { \
@@ -79,11 +79,6 @@ void Set(const TMap<K, V>& value) { \
 }
 			DEFINE_SET_FUNC_MAP(FMapProperty);
 
-			// ¶¨ÒåÒ»¸öÄ¬ÈÏµÄ Set º¯Êı£¬Ê²Ã´Ò²²»×ö
-			void Set(void* object, const void* value)
-			{
-				// Õâ¸öÄ¬ÈÏº¯ÊıÊ²Ã´Ò²²»×ö£¬Ö÷ÒªÓÃÓÚ±ÜÃâ±àÒë´íÎó
-			}
 		private:
 			UE_Property* Property;
 			TWeakObjectPtr<UObject> Object;

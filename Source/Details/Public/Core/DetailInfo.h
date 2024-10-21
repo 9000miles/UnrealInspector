@@ -123,6 +123,13 @@ namespace DETAILS_VIEWER
 		public:
 			template<typename T>
 			void Set(T Value) {};
+			// 定义一个默认的 Set 函数，什么也不做
+			template<>
+			void Set<void*>(void* value)
+			{
+				check(false);
+				// 这个默认函数什么也不做，主要用于避免编译错误
+			}
 		};
 		class IGetter :public IJsonable
 		{
