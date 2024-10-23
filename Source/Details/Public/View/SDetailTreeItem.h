@@ -19,8 +19,12 @@ namespace DETAILS_VIEWER
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
+		//template<typename T>
 		void Construct(TSharedPtr<FTreeNode> DetailNode);
-		virtual bool HasSplitter();
+		virtual bool HasSplitter() { return false; };
+		virtual void SetSplitterSlotSize(int32 Index, float Size) {};
+		template<typename T>
+		TSharedPtr<T> GetNode() { return StaticCastSharedPtr<T>(NodePtr); };
 
 	protected:
 		TSharedPtr<FTreeNode> NodePtr;

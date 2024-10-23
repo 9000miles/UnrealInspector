@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "View/SDetailView.h"
+#include "View/SDetailViewer.h"
 #include "SlateOptMacros.h"
 #include "Core/DetailDefine.h"
 #include "View/SDetailTreeItem.h"
-#include "View/SDetailCategoryHeader.h"
-#include "View/SDetailPropertyWidget.h"
+#include "View/SDetailCategory.h"
+#include "View/SDetailProperty.h"
 #include "Core/DetailObjectWidget.h"
 #include "Core/SWidgetHandle.h"
 #include "HAL/UnrealMemory.h"
@@ -20,7 +20,7 @@
 namespace DETAILS_VIEWER
 {
 
-	void SDetailView::Construct(const FArguments& InArgs)
+	void SDetailViewer::Construct(const FArguments& InArgs)
 	{
 		DetailInfo = InArgs._DetailInfo;
 
@@ -28,8 +28,8 @@ namespace DETAILS_VIEWER
 
 		TreeView = SNew(STreeView<TSharedPtr<FTreeNode>>)
 			.TreeItemsSource(&TreeNodes)
-			.OnGenerateRow(this, &SDetailView::OnGenerateRow)
-			.OnGetChildren(this, &SDetailView::OnGetChildren)
+			.OnGenerateRow(this, &SDetailViewer::OnGenerateRow)
+			.OnGetChildren(this, &SDetailViewer::OnGetChildren)
 			.SelectionMode(ESelectionMode::SingleToggle)
 			;
 
@@ -38,23 +38,31 @@ namespace DETAILS_VIEWER
 
 		ChildSlot
 			[
-				SNew(SBox)
+				SNew(SBorder)
+					.BorderImage(FAppStyle::GetBrush("DetailsView.CategoryTop"))
+					.Padding(FMargin(3.0f))
 					[
 						SNew(SVerticalBox)
 							+ SVerticalBox::Slot()
+							.AutoHeight()
 							[
-								SNew(STextBlock).Text(FText::FromString(DetailInfo->Name))
+								// 显示名称
+								SNew(STextBlock)
+								.Text(FText::FromString(DetailInfo->Name))
 							]
 							+ SVerticalBox::Slot()
+							//.FillHeight()
 							[
+								// 显示属性树
 								TreeView.ToSharedRef()
 							]
 					]
 			];
 
+
 	}
 
-	void SDetailView::InitByOptions(FDetailOptions Options)
+	void SDetailViewer::InitByOptions(FDetailOptions Options)
 	{
 
 	}
@@ -102,13 +110,14 @@ namespace DETAILS_VIEWER
 	//	}
 	//}
 
-	TSharedRef<class ITableRow> SDetailView::OnGenerateRow(TSharedPtr<FTreeNode> Node, const TSharedRef<class STableViewBase>& OwnerTable)
+	TSharedRef<class ITableRow> SDetailViewer::OnGenerateRow(TSharedPtr<FTreeNode> Node, const TSharedRef<class STableViewBase>& OwnerTable)
 	{
-		TSharedPtr<SWidget> RowWidget;
+		TSharedPtr<SDetailTreeItem> RowWidget;
 
 		if (Node->GetTypeName() == FCategoryTreeNode::TypeName())
 		{
-			RowWidget = SNew(SDetailCategoryHeader);
+			//TSharedPtr<FCategoryTreeNode> CategoryNode = StaticCastSharedPtr<FCategoryTreeNode>(Node);
+			RowWidget = SNew(SDetailCategory, Node);
 		}
 		else
 		{
@@ -122,14 +131,17 @@ namespace DETAILS_VIEWER
 			//}
 			//else
 			//{
-			TSharedPtr<SDetailPropertyWidget> PropertyWidget = SNew(SDetailPropertyWidget, Node, bOverrideRowWidget, nullptr)
-				.OnSplitterSlotResized(this, &SDetailView::OnSplitterSlotResized)
+			//TSharedPtr<FPropertyTreeNode> PropertyNode = StaticCastSharedPtr<FPropertyTreeNode>(Node);
+			TSharedPtr<SDetailProperty> PropertyWidget = SNew(SDetailProperty, Node, bOverrideRowWidget, nullptr)
+				.OnSplitterSlotResized(this, &SDetailViewer::OnSplitterSlotResized)
 				;
 
 			RowWidget = PropertyWidget;
-			HasSplitterWidgets.Add(PropertyWidget);
 			//}
 		}
+
+		if (RowWidget->HasSplitter())
+			HasSplitterWidgets.Add(RowWidget);
 
 		return SNew(STableRow<TSharedPtr<FTreeNode>>, OwnerTable)
 			[
@@ -185,13 +197,13 @@ namespace DETAILS_VIEWER
 	//	return nullptr;
 	//}
 
-	void SDetailView::OnGetChildren(TSharedPtr<FTreeNode> Node, TArray<TSharedPtr<FTreeNode>>& Children)
+	void SDetailViewer::OnGetChildren(TSharedPtr<FTreeNode> Node, TArray<TSharedPtr<FTreeNode>>& Children)
 	{
 		Children = Node->GetChildren();
 	}
 
 
-	void SDetailView::GenerateTreeNodes()
+	void SDetailViewer::GenerateTreeNodes()
 	{
 		DetailInfo->CategoryList->Enumerate([this](TSharedPtr<FCategoryInfo> CategoryInfo)
 			{
@@ -203,7 +215,6 @@ namespace DETAILS_VIEWER
 						TSharedPtr<FPropertyTreeNode> Node = MakeShareable(new FPropertyTreeNode(PropertyInfo));
 						CategoryNode->AddChild(Node);
 					});
-
 			});
 	}
 
@@ -221,9 +232,9 @@ namespace DETAILS_VIEWER
 	//	return MakeShareable(new FNormalNode(Object, Property));
 	//}
 
-	void SDetailView::OnSplitterSlotResized(int32 Index, float Size)
+	void SDetailViewer::OnSplitterSlotResized(int32 Index, float Size)
 	{
-		for (TSharedPtr<SDetailPropertyWidget> DetialItem : HasSplitterWidgets)
+		for (TSharedPtr<SDetailTreeItem> DetialItem : HasSplitterWidgets)
 		{
 			if (!DetialItem->HasSplitter()) continue;
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "DetailFactory.h"
 #include "DetailDefine.h"
-#include "View/SDetailView.h"
+#include "View/SDetailViewer.h"
 #include "DetailViewer.generated.h"
 
 /**
@@ -25,7 +25,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	FGuid GetGuid() { return Guid; }
 
-	TSharedPtr<DETAILS_VIEWER::SDetailView> GetViewWidget() { return DetailView; }
+	TSharedPtr<DETAILS_VIEWER::SDetailViewer> GetViewWidget() { return DetailView; }
 
 public:
 	UPROPERTY(BlueprintReadWrite)
@@ -35,5 +35,5 @@ public:
 
 private:
 	FGuid Guid;
-	TSharedPtr<DETAILS_VIEWER::SDetailView> DetailView;
+	TSharedPtr<DETAILS_VIEWER::SDetailViewer> DetailView;
 };

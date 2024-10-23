@@ -48,8 +48,28 @@ namespace DETAILS_VIEWER
 
 	FText SPropertyWidgetString::GetPropertyValue() const
 	{
+		const FString Type = PropertyInfo->Type;
+		if (Type == TEXT("FString"))
+		{
+			FString Result;
+			GetExecutor()->Getter->Get(Result);
+			return FText::FromString(Result);
+		}
+		else if (Type == TEXT("FName"))
+		{
+			FName Result;
+			GetExecutor()->Getter->Get(Result);
+			return FText::FromString(Result.ToString());
+		}
+		else if (Type == TEXT("FText"))
+		{
+			FText Result;
+			GetExecutor()->Getter->Get(Result);
+			return Result;
+		}
+
 		FText Result;
-		GetExecutor()->Getter->Get<FText>(Result);
+		GetExecutor()->Getter->Get(Result);
 		return Result;
 
 		//UE_Property* Property = PropertyHolder->GetProperty();

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Creater/BoolCreater.h"
+#include "Core/DetailInfo.h"
 
 namespace DETAILS_VIEWER
 {
@@ -33,7 +34,7 @@ namespace DETAILS_VIEWER
 		//const bool Value = BoolProperty->GetPropertyValue_InContainer(Object);
 
 		bool Value = false;
-		GetExecutor()->Getter->Get<bool>(Value);
+		GetExecutor()->Getter->Get(Value);
 		return Value ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
 	}
 
@@ -46,7 +47,11 @@ namespace DETAILS_VIEWER
 		//BoolProperty->SetPropertyValue_InContainer(Owner, Value);
 
 		const bool Value = State == ECheckBoxState::Checked;
-		GetExecutor()->Setter->Set(Value);
+		TSharedPtr<PROPERTY::ISetter> Setter = GetExecutor()->Setter;
+		if (Setter.IsValid())
+		{
+			Setter->Set(Value);
+		}
 	}
 
 	TSharedPtr<SWidget> FWidgetCreaterBool::MakeWidget(TSharedPtr<FTreeNode> TreeNode)

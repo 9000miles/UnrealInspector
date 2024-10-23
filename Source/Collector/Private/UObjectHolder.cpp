@@ -9,7 +9,7 @@ namespace UObjectCollector
 		ObjectPtr(InObjectPtr)
 	{
 		ObjectInfo = MakeShared<FUObjectInfo>(InObjectPtr);
-		UE_LOG(LogCollector, Log, TEXT("ObjectInfo: %s"), *ObjectInfo->ToString());
+		//UE_LOG(LogCollector, Log, TEXT("ObjectInfo: %s"), *ObjectInfo->ToString());
 	}
 
 	FUObjectHolder::~FUObjectHolder()

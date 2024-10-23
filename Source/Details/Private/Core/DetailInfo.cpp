@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Core/DetailInfo.h"
+#include "Node/DetailNode.h"
 
 namespace DETAILS_VIEWER
 {
 #define TYPE_NAME TEXT("TYPE_NAME")
 
-	TSharedPtr<SWidget> FCustomDetailMaker::MakeWidget()
+	TSharedPtr<SWidget> FCustomDetailMaker::MakeWidget(TSharedPtr<FTreeNode> Node)
 	{
 		return SNullWidget::NullWidget;
 	}
@@ -72,7 +73,7 @@ namespace DETAILS_VIEWER
 
 	}
 
-	TSharedPtr<SWidget> FDetailMaker::MakeWidget()
+	TSharedPtr<SWidget> FDetailMaker::MakeWidget(TSharedPtr<FTreeNode> Node)
 	{
 		return SNullWidget::NullWidget;
 	}
@@ -112,6 +113,12 @@ namespace DETAILS_VIEWER
 	}
 
 	TMap<FString, TSharedPtr<ITypeName>> Factory::Map;
+
+	FCategoryInfo::FCategoryInfo()
+	{
+		//CategoryExecutor = MakeShared<ICategoryExecutor>();
+		PropertyList = MakeShared<FPropertyList>();
+	}
 
 	FCategoryInfo::~FCategoryInfo()
 	{
@@ -263,7 +270,7 @@ namespace DETAILS_VIEWER
 
 	void FPropertyList::Add(TSharedPtr<FPropertyInfo> Parameter)
 	{
-
+		Parameters.Add(Parameter);
 	}
 
 	TSharedPtr<FPropertyInfo> FPropertyList::Find(const FString& Name)

@@ -7,10 +7,10 @@
 namespace DETAILS_VIEWER
 {
 
-	class FDetailFactory
+	class FWidgetCreaterFactory
 	{
 	public:
-		static FDetailFactory& Get();
+		static FWidgetCreaterFactory& Get();
 
 		TSharedPtr<IDetailWidgetCreater> FindCreater(const FString& Identifier);
 		void RegisterCreater(TSharedRef<IDetailWidgetCreater> Creater);

@@ -7,12 +7,12 @@
 namespace DETAILS_VIEWER
 {
 
-	FDetailFactory& FDetailFactory::Get()
+	FWidgetCreaterFactory& FWidgetCreaterFactory::Get()
 	{
-		return TLazySingleton<FDetailFactory>::Get();
+		return TLazySingleton<FWidgetCreaterFactory>::Get();
 	}
 
-	TSharedPtr<IDetailWidgetCreater> FDetailFactory::FindCreater(const FString& Identifier)
+	TSharedPtr<IDetailWidgetCreater> FWidgetCreaterFactory::FindCreater(const FString& Identifier)
 	{
 		const bool bHasCreater = Creaters.Contains(Identifier);
 		if (!bHasCreater)
@@ -25,7 +25,7 @@ namespace DETAILS_VIEWER
 		return CreaterPtr;
 	}
 
-	void FDetailFactory::RegisterCreater(TSharedRef<IDetailWidgetCreater> Creater)
+	void FWidgetCreaterFactory::RegisterCreater(TSharedRef<IDetailWidgetCreater> Creater)
 	{
 		const TArray<FString> Types = Creater->SupportTypes();
 		for (const FString& PropertyType : Types)

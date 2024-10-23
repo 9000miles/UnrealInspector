@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "View/SDetailPropertyWidget.h"
+#include "View/SDetailProperty.h"
 #include "SlateOptMacros.h"
 #include "View/SPropertyName.h"
 #include "Creater/DetailCreater.h"
@@ -11,9 +11,10 @@ namespace DETAILS_VIEWER
 	static float SplitterSlotSize = 0.f;
 
 	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
-		void SDetailPropertyWidget::Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> Node, bool bOverrideRowWidget, TSharedPtr<SWidget> InWidget)
+		void SDetailProperty::Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> InTreeNode, bool bOverrideRowWidget, TSharedPtr<SWidget> InWidget)
 	{
-		SDetailTreeItem::Construct(Node);
+		//SDetailTreeItem::Construct(StaticCastSharedPtr<FPropertyTreeNode>(InTreeNode));
+		SDetailTreeItem::Construct(InTreeNode);
 
 		OnSplitterSlotResized = InArgs._OnSplitterSlotResized;
 
@@ -34,13 +35,13 @@ namespace DETAILS_VIEWER
 		{
 			//const bool bOverrideRowWidget = DetailNodePtr->OverrideRowWidget();
 
-			TSharedPtr<SWidget> PropertyWidget = InWidget.IsValid() ? InWidget : GetPropertyNode()->PropertyInfo->Executor->WidgetMaker->MakeWidget();
-			TSharedPtr<SPropertyName> PropertyName = SNew(SPropertyName, Node);
+			TSharedPtr<SWidget> PropertyWidget = InWidget.IsValid() ? InWidget : GetNode<FPropertyTreeNode>()->PropertyInfo->Executor->WidgetMaker->MakeWidget(NodePtr);
+			TSharedPtr<SPropertyName> PropertyName = SNew(SPropertyName, InTreeNode);
 
 			TSharedPtr<SWidget> Widget = PropertyWidget;
 			if (!PropertyWidget)
 			{
-				FText Text = FText::FromString(FString::Printf(TEXT("%s Not Implemented"), *GetPropertyNode()->PropertyInfo->Type));
+				FText Text = FText::FromString(FString::Printf(TEXT("%s Not Implemented"), *GetNode<FPropertyTreeNode>()->PropertyInfo->Type));
 				TSharedRef<STextBlock> NotImplementd = SNew(STextBlock)
 					.Text(Text)
 					;
@@ -55,14 +56,14 @@ namespace DETAILS_VIEWER
 					+ SSplitter::Slot()
 					.Value(SplitterSlotSize)
 					.SizeRule(SSplitter::ESizeRule::FractionOfParent)
-					.OnSlotResized(this, &SDetailPropertyWidget::SplitterSlotResized, 0)
+					.OnSlotResized(this, &SDetailProperty::SplitterSlotResized, 0)
 					[
 						PropertyName.ToSharedRef()
 					]
 					+ SSplitter::Slot()
 					//.Value(SplitterSlotSize)
 					.SizeRule(SSplitter::ESizeRule::FractionOfParent)
-					.OnSlotResized(this, &SDetailPropertyWidget::SplitterSlotResized, 1)
+					.OnSlotResized(this, &SDetailProperty::SplitterSlotResized, 1)
 					[
 						SNew(SBorder)
 							.BorderImage(FAppStyle::Get().GetBrush("NoBorder"))
@@ -79,7 +80,7 @@ namespace DETAILS_VIEWER
 									.AutoWidth()
 									[
 										SNew(SButton)
-											.OnClicked(this, &SDetailPropertyWidget::OnResetClicked)
+											.OnClicked(this, &SDetailProperty::OnResetClicked)
 											[
 												SNew(SImage)
 											]
@@ -132,29 +133,29 @@ namespace DETAILS_VIEWER
 		//	}
 		//}
 
-		void SDetailPropertyWidget::SplitterSlotResized(float Size, int32 Index)
+		void SDetailProperty::SplitterSlotResized(float Size, int32 Index)
 	{
 		OnSplitterSlotResized.ExecuteIfBound(Index, Size);
 		SetSplitterSlotSize(Index, Size);
 	}
 
-	void SDetailPropertyWidget::SetSplitterSlotSize(int32 Index, float Size)
+	void SDetailProperty::SetSplitterSlotSize(int32 Index, float Size)
 	{
 		SSplitter::FSlot& Slot = Splitter->SlotAt(Index);
 		Slot.SetSizeValue(Size);
 	}
 
-	float SDetailPropertyWidget::GetSlotSize() const
+	float SDetailProperty::GetSlotSize() const
 	{
 		return SplitterSlotSize;
 	}
 
-	FReply SDetailPropertyWidget::OnResetClicked()
+	FReply SDetailProperty::OnResetClicked()
 	{
 		return FReply::Handled();
 	}
 
-	bool SDetailPropertyWidget::HasSplitter()
+	bool SDetailProperty::HasSplitter()
 	{
 		return Splitter.IsValid();
 	}

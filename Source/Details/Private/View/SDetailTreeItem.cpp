@@ -8,17 +8,18 @@
 namespace DETAILS_VIEWER
 {
 
+	//bool SDetailTreeItem<T>::HasSplitter()
+	//{
+	//	return false;
+	//}
+	END_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
-	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
+
 		void SDetailTreeItem::Construct(TSharedPtr<FTreeNode> DetailNode)
 	{
+
+
 		NodePtr = DetailNode;
 	}
-
-	bool SDetailTreeItem::HasSplitter()
-	{
-		return false;
-	}
-	END_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 }

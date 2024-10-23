@@ -7,6 +7,10 @@ namespace DETAILS_VIEWER
 
 
 
+	FPropertyWidgetCreater::FPropertyWidgetCreater()
+	{
+	}
+
 	TArray<FString> FPropertyWidgetCreater::SupportTypes()
 	{
 		return TArray<FString>();
@@ -57,6 +61,23 @@ namespace DETAILS_VIEWER
 	TArray<FString> FRowWidgetCreater::SupportTypes()
 	{
 		return TArray<FString>();
+	}
+
+
+	IDetailWidgetCreater::IDetailWidgetCreater()
+	{
+	}
+
+
+	FString IDetailWidgetCreater::GetTypeName()
+	{
+		return TEXT("IDetailWidgetCreater");
+	}
+
+
+	void IDetailWidgetCreater::Initalized()
+	{
+		FWidgetCreaterFactory::Get().RegisterCreater(AsShared());
 	}
 
 }

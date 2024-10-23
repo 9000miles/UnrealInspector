@@ -7,6 +7,8 @@
 #include "Interface/ITypeName.h"
 #include "Interface/IJsonable.h"
 
+namespace DETAILS_VIEWER { class FTreeNode; }
+
 namespace DETAILS_VIEWER
 {
 	class IExecutorData
@@ -34,6 +36,7 @@ namespace DETAILS_VIEWER
 		static bool Register()
 		{
 			TSharedPtr<T> Instance = MakeShared<T>();
+			Instance->Initalized();
 			FString TypeName = Instance->GetTypeName();
 			if (Map.Contains(TypeName)) return false;
 
@@ -57,14 +60,14 @@ namespace DETAILS_VIEWER
 	{
 	public:
 		virtual ~IDetailMaker() {}
-		virtual TSharedPtr<SWidget> MakeWidget() = 0;
+		virtual TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> Node) = 0;
 	};
 
 	class FDetailMaker : public IDetailMaker
 	{
 	public:
 		virtual ~FDetailMaker() {}
-		virtual TSharedPtr<SWidget> MakeWidget() override;
+		virtual TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> Node) override;
 
 		FString GetTypeName() override;
 
@@ -74,7 +77,7 @@ namespace DETAILS_VIEWER
 	{
 	public:
 		virtual ~FCustomDetailMaker() {}
-		virtual TSharedPtr<SWidget> MakeWidget() override;
+		virtual TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> Node) override;
 
 		FString GetTypeName() override;
 
@@ -94,6 +97,10 @@ namespace DETAILS_VIEWER
 		virtual void Execute(const FString String) = 0;
 	};
 
+	/**
+	 * 细节面板指挥官
+	 * 负责创建细节面板，整个面板的复制和粘贴
+	 */
 	class IDetailCommander :public IJsonable, public ITypeName
 	{
 	public:
@@ -121,21 +128,24 @@ namespace DETAILS_VIEWER
 		class ISetter :public IJsonable
 		{
 		public:
-			template<typename T>
-			void Set(T Value) {};
-			// 定义一个默认的 Set 函数，什么也不做
-			template<>
-			void Set<void*>(void* value)
-			{
-				check(false);
-				// 这个默认函数什么也不做，主要用于避免编译错误
-			}
+			virtual void Set(const bool Value) = 0;
+			virtual void Set(const float Value) = 0;
+			virtual void Set(const double Value) = 0;
+			virtual void Set(const int32 Value) = 0;
+			virtual void Set(const FString value) = 0;
+			virtual void Set(const FName value) = 0;
+			virtual void Set(const FText value) = 0;
 		};
 		class IGetter :public IJsonable
 		{
 		public:
-			template<typename T>
-			void Get(T& Out) { }
+			virtual void Get(bool& Out) = 0;
+			virtual void Get(float& Out) = 0;
+			virtual void Get(double& Out) = 0;
+			virtual void Get(int32& Out) = 0;
+			virtual void Get(FString& Out) = 0;
+			virtual void Get(FName& Out) = 0;
+			virtual void Get(FText& Out) = 0;
 		};
 		class IEditable :public IJsonable
 		{
@@ -155,7 +165,7 @@ namespace DETAILS_VIEWER
 		class IWidgetMaker :public IJsonable
 		{
 		public:
-			virtual TSharedRef<SWidget> MakeWidget() = 0;
+			virtual TSharedRef<SWidget> MakeWidget(TSharedPtr<FTreeNode> Node) = 0;
 		};
 
 		class IExecutor :public IJsonable
@@ -344,10 +354,7 @@ namespace DETAILS_VIEWER
 	class FCategoryInfo :public IJsonable
 	{
 	public:
-		FCategoryInfo()
-		{
-			PropertyList = MakeShared<FPropertyList>();
-		}
+		FCategoryInfo();
 		virtual ~FCategoryInfo();
 
 		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;

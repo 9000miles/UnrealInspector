@@ -14,7 +14,7 @@ bool UDetailTestObject::IsTickableInEditor() const
 
 void UDetailTestObject::Tick(float DeltaTime)
 {
-	return;
+	//return;
 
 	const bool bIsDefaultObject = HasAnyFlags(RF_ClassDefaultObject);
 	if (bIsDefaultObject) return;

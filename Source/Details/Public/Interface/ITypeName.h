@@ -4,6 +4,7 @@ namespace DETAILS_VIEWER
 	{
 	public:
 		virtual FString GetTypeName() = 0;
+		virtual void Initalized() {}
 
 		template<typename T>
 		T CreateInstance() {}

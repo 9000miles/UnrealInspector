@@ -105,6 +105,8 @@ namespace DETAILS_VIEWER
 	void FTreeNode::AddChild(TSharedPtr<FTreeNode> Node)
 	{
 		Children.Add(Node);
+
+		Node->SetParent(AsShared());
 	}
 
 }

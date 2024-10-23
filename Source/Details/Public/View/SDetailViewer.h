@@ -9,7 +9,7 @@
 #include "Widgets/Views/STreeView.h"
 #include "Node/DetailNode.h"
 #include "SDetailTreeItem.h"
-#include "SDetailPropertyWidget.h"
+#include "SDetailProperty.h"
 #include "Core/DetailInfo.h"
 
 
@@ -19,10 +19,10 @@ namespace DETAILS_VIEWER
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API SDetailView : public SCompoundWidget
+	class DETAILSVIEWER_API SDetailViewer : public SCompoundWidget
 	{
 	public:
-		SLATE_BEGIN_ARGS(SDetailView)
+		SLATE_BEGIN_ARGS(SDetailViewer)
 			{}
 			SLATE_ARGUMENT(FDetailOptions, Options)
 			SLATE_ARGUMENT(TSharedPtr<FDetailInfo>, DetailInfo)
@@ -51,7 +51,7 @@ namespace DETAILS_VIEWER
 		TSharedPtr<STreeView<TSharedPtr<FTreeNode>>> TreeView;
 		TArray<TSharedPtr<FTreeNode>> TreeNodes;
 
-		TArray<TSharedPtr<SDetailPropertyWidget>> HasSplitterWidgets;
+		TArray<TSharedPtr<SDetailTreeItem>> HasSplitterWidgets;
 	};
 
 }

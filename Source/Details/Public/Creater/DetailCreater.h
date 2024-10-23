@@ -15,12 +15,17 @@ namespace DETAILS_VIEWER
 	 * 细节面板创建器
 	 *	整个面板创建
 	 */
-	class IDetailWidgetCreater :public ITypeName
+	class IDetailWidgetCreater :public TSharedFromThis<IDetailWidgetCreater>, public ITypeName
 	{
 	public:
+		IDetailWidgetCreater();
 		virtual ~IDetailWidgetCreater() {}
 		virtual TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) = 0;
 		virtual TArray<FString> SupportTypes() = 0;
+
+		FString GetTypeName() override;
+		void Initalized() override;
+
 	};
 
 	/**
@@ -45,6 +50,7 @@ namespace DETAILS_VIEWER
 	{
 		friend class FGeneralNode;
 	public:
+		FPropertyWidgetCreater();
 		virtual ~FPropertyWidgetCreater() {}
 	public:
 		virtual TArray<FString> SupportTypes() override;

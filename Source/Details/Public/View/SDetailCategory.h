@@ -12,17 +12,18 @@ namespace DETAILS_VIEWER
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API SDetailCategoryHeader : public SDetailTreeItem
+	class DETAILSVIEWER_API SDetailCategory : public SDetailTreeItem
 	{
 	public:
-		SLATE_BEGIN_ARGS(SDetailCategoryHeader)
+		SLATE_BEGIN_ARGS(SDetailCategory)
 			{}
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
-		void Construct(const FArguments& InArgs);
+		void Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> InTreeNode);
 
-		bool HasSplitter() override;
+		virtual bool HasSplitter() override;
+		virtual void SetSplitterSlotSize(int32 Index, float Size) override {};
 	};
 
 }

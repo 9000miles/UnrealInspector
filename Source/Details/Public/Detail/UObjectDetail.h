@@ -46,6 +46,7 @@ void Set(Type value) { \
 			DEFINE_SET_FUNC(int64, FInt64Property);
 
 			DEFINE_SET_FUNC(bool, FBoolProperty);
+			//void SetValue(const bool value) override;
 			DEFINE_SET_FUNC(uint8, FByteProperty);
 			DEFINE_SET_FUNC(float, FFloatProperty);
 			DEFINE_SET_FUNC(double, FDoubleProperty);
@@ -96,14 +97,33 @@ void Set(const TMap<K, V>& value) { \
 			virtual ~FUEPropertyGetter() {}
 
 
-			void Get(bool& Out)
-			{
-				if (!Object.IsValid()) return;
-				if (Property == nullptr) return;
+#define DEFINE_GET_FUNC(Type, PropType)\
+void Get(Type& Out)\
+{\
+	if (!Object.IsValid()) return;\
+	if (Property == nullptr) return;\
+	PropType* Ptr = CastField<PropType>(Property); \
+	Out = Ptr->GetPropertyValue_InContainer(Object.Get()); \
+}
 
-				FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
-				Out = PropertyField->GetPropertyValue_InContainer(Object.Get());
-			}
+			DEFINE_GET_FUNC(bool, FBoolProperty);
+			DEFINE_GET_FUNC(float, FFloatProperty);
+			DEFINE_GET_FUNC(double, FDoubleProperty);
+			DEFINE_GET_FUNC(int32, FIntProperty);
+			DEFINE_GET_FUNC(FString, FStrProperty);
+			DEFINE_GET_FUNC(FName, FNameProperty);
+			DEFINE_GET_FUNC(FText, FTextProperty);
+
+			//void Get(bool& Out)
+			//{
+			//	if (!Object.IsValid()) return;
+			//	if (Property == nullptr) return;
+
+			//	FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
+			//	Out = PropertyField->GetPropertyValue_InContainer(Object.Get());
+			//}
+
+			//bool GetValue() override;
 
 		private:
 			UE_Property* Property;
@@ -151,6 +171,25 @@ void Set(const TMap<K, V>& value) { \
 			virtual ~FUEPropertyDefaultGetter() {}
 
 			FString GetDefault() override;
+			//bool GetValue() override { return false; }
+
+
+#define DEFINE_GET_FUNC(Type, PropType)\
+void Get(Type& Out)\
+{\
+	if (!Object.IsValid()) return;\
+	if (Property == nullptr) return;\
+	PropType* Ptr = CastField<PropType>(Property); \
+	Out = Ptr->GetPropertyValue_InContainer(Object.Get()); \
+}
+
+			DEFINE_GET_FUNC(bool, FBoolProperty);
+			DEFINE_GET_FUNC(float, FFloatProperty);
+			DEFINE_GET_FUNC(double, FDoubleProperty);
+			DEFINE_GET_FUNC(int32, FIntProperty);
+			DEFINE_GET_FUNC(FString, FStrProperty);
+			DEFINE_GET_FUNC(FName, FNameProperty);
+			DEFINE_GET_FUNC(FText, FTextProperty);
 
 			UE_Property* Property;
 			TWeakObjectPtr<UObject> Object;
@@ -166,7 +205,7 @@ void Set(const TMap<K, V>& value) { \
 			}
 			virtual ~FUEPropertyWidgetMaker() {}
 
-			TSharedRef<SWidget> MakeWidget() override;
+			TSharedRef<SWidget> MakeWidget(TSharedPtr<FTreeNode> Node) override;
 
 		private:
 			UE_Property* Property;
@@ -267,7 +306,9 @@ void Set(const TMap<K, V>& value) { \
 	};
 
 	/**
-	 * $Comment$
+	 * UObject Detail持有器
+	 * 设置对象
+	 * 获取Widget
 	 */
 	class FUObjectDetailHolder :public IDetailHolder
 	{

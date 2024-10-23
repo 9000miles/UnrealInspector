@@ -32,7 +32,7 @@ namespace DETAILS_VIEWER
 	//	TArray<TSharedPtr<FDetailTreeNode>> ChildNodes;
 	//};
 
-	class FTreeNode :public ITypeName
+	class FTreeNode :public TSharedFromThis<FTreeNode>, public ITypeName
 	{
 	public:
 		FTreeNode(ENodeType	InNodeType) {};
@@ -42,6 +42,7 @@ namespace DETAILS_VIEWER
 		TArray<TSharedPtr<FTreeNode>> GetChildren() { return Children; }
 		TSharedPtr<FTreeNode> GetParent() { return Parent; }
 		void AddChild(TSharedPtr<FTreeNode> Node);
+		void SetParent(TSharedPtr<FTreeNode> Node) { Parent = Node; }
 
 	protected:
 		TSharedPtr<FTreeNode> Parent;
@@ -75,6 +76,7 @@ namespace DETAILS_VIEWER
 	public:
 		FPropertyTreeNode(TSharedPtr<FPropertyInfo> InPropertyInfo) :FTreeNode(ENodeType::General), PropertyInfo(InPropertyInfo)
 		{
+			// @TODO 实现复杂属性的子属性创建，数组，结构体，等等
 		}
 
 	public:

@@ -8,8 +8,8 @@ UDetailViewer::UDetailViewer()
 {
 	Guid = FGuid::NewGuid();
 
-	DetailView = SNew(DETAILS_VIEWER::SDetailView)
-		;
+	//DetailView = SNew(DETAILS_VIEWER::SDetailViewer)
+	//	;
 }
 
 void UDetailViewer::InitByOptions(FDetailOptions Options)

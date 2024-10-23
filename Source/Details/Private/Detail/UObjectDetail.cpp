@@ -1,12 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Detail/UObjectDetail.h"
 #include "JsonObjectConverter.h"
-#include "View/SDetailView.h"
+#include "View/SDetailViewer.h"
 
 namespace DETAILS_VIEWER
 {
 	namespace PROPERTY
 	{
+
+#define LOCTEXT_NAMESPACE "DETAILS_VIEWER"
 
 		bool FUEPropertyEditable::CanEdit()
 		{
@@ -23,8 +25,23 @@ namespace DETAILS_VIEWER
 			return TEXT("");
 		}
 
-		TSharedRef<SWidget> FUEPropertyWidgetMaker::MakeWidget()
+		TSharedRef<SWidget> FUEPropertyWidgetMaker::MakeWidget(TSharedPtr<FTreeNode> Node)
 		{
+			TSharedPtr<FPropertyTreeNode> PropertyNode = StaticCastSharedPtr<FPropertyTreeNode>(Node);
+
+
+			FString Type = Property->GetCPPType();
+			TSharedPtr<IDetailWidgetCreater> WidgetCreater = FWidgetCreaterFactory::Get().FindCreater(Type);
+			if (!WidgetCreater.IsValid())
+			{
+				return SNew(STextBlock)
+					.Text(LOCTEXT("UnkownType", "UnkownType"))
+					;
+			}
+
+			return WidgetCreater->MakeWidget(Node).ToSharedRef();
+
+			return SNew(SImage);
 			return SNullWidget::NullWidget;
 		}
 
@@ -94,6 +111,22 @@ namespace DETAILS_VIEWER
 
 			return MakeShareable(new FJsonValueNull());
 		}
+#undef LOCTEXT_NAMESPACE
+
+		//void FUEPropertySetter::SetValue(const bool value)
+		//{
+		//	if (!Object.IsValid() || Property == nullptr) return; FBoolProperty* Ptr = CastField<FBoolProperty>(Property); if (Ptr) {
+		//		Ptr->SetPropertyValue_InContainer(Object.Get(), value);
+		//	}
+		//}
+
+		//bool FUEPropertyGetter::GetValue()
+		//{
+		//	bool Result = false;
+		//	Get(Result);
+		//	return Result;
+		//}
+
 	}
 
 	FUObjectDetailHolder::FUObjectDetailHolder()
@@ -136,15 +169,18 @@ namespace DETAILS_VIEWER
 			auto Property = *PropertyIt;
 			const FString PropertyName = Property->GetName();
 			const FString PropertyType = Property->GetCPPType();
-			const FString Category = Property->GetMetaData(TEXT("Category"));
+			FString Category = Property->GetMetaData(TEXT("Category"));
+			Category = Category.IsEmpty() ? TEXT("Default") : Category;
 			const FString DisplayName = Property->GetMetaData(TEXT("DisplayName"));
 
 			TSharedPtr<FCategoryInfo> ExistCategory = CategoryList->Find(Category);
 			if (!ExistCategory.IsValid())
 			{
 				TSharedPtr<FCategoryInfo> CategoryInfo = MakeShareable(new FCategoryInfo());
+				CategoryInfo->Name = Category;
+
 				ExistCategory = CategoryInfo;
-				CategoryList->Add(CategoryInfo);
+				CategoryList->Add(ExistCategory);
 			}
 
 			TSharedPtr<FPropertyInfo> Parameter = MakeShareable(new FPropertyInfo());
@@ -171,7 +207,10 @@ namespace DETAILS_VIEWER
 
 	TSharedPtr<SWidget> FUObjectDetailHolder::GetWidget()
 	{
-		return SNew(SDetailView)
+		if (!Object.IsValid())
+			return SNullWidget::NullWidget;
+
+		return SNew(SDetailViewer)
 			.DetailInfo(DetailInfo)
 			;
 	}

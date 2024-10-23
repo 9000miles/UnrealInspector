@@ -26,8 +26,7 @@ public:
 };
 
 template<typename T>
-TSharedPtr<T>
-FDetialManager::Create(TSharedPtr<FDetailOptions> Options)
+TSharedPtr<T> FDetialManager::Create(TSharedPtr<FDetailOptions> Options)
 {
 	TSharedPtr<T> Instance = Factory::Get<T>(T::TypeName());
 	check(Instance.IsValid());

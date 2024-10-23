@@ -27,7 +27,10 @@ void FDetailsViewerModule::StartupModule()
 	Factory::Register<FUObjectDetailHolder>();
 	Factory::Register<FUObjectDetailCommander>();
 
-	DETAILS_VIEWER_TEST::FDetailsViewerTestModule::RunTest();
+	//FDetailFactory::Get().RegisterCreater(Factory::Get<IDetailWidgetCreater>(FWidgetCreaterBool::TypeName()).ToSharedRef());
+	//FDetailFactory::Get().RegisterCreater(Factory::Get<IDetailWidgetCreater>(FWidgetCreaterString::TypeName()).ToSharedRef());
+
+	//DETAILS_VIEWER_TEST::FDetailsViewerTestModule::RunTest();
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
