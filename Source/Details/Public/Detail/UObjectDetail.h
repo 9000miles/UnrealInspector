@@ -114,17 +114,6 @@ void Get(Type& Out)\
 			DEFINE_GET_FUNC(FName, FNameProperty);
 			DEFINE_GET_FUNC(FText, FTextProperty);
 
-			//void Get(bool& Out)
-			//{
-			//	if (!Object.IsValid()) return;
-			//	if (Property == nullptr) return;
-
-			//	FBoolProperty* PropertyField = CastField<FBoolProperty>(Property);
-			//	Out = PropertyField->GetPropertyValue_InContainer(Object.Get());
-			//}
-
-			//bool GetValue() override;
-
 		private:
 			UE_Property* Property;
 			TWeakObjectPtr<UObject> Object;

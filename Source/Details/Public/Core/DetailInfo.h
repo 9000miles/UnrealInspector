@@ -125,6 +125,12 @@ namespace DETAILS_VIEWER
 
 	namespace PROPERTY
 	{
+		class IPropertyAccessor :public IJsonable
+		{
+			virtual void Set(TSharedPtr<FPropertyInfo> PropetyInfo, const bool Value) = 0;
+			virtual void Get(TSharedPtr<FPropertyInfo> PropetyInfo, bool& Value) = 0;
+			virtual void Default(TSharedPtr<FPropertyInfo> PropetyInfo, bool& Value) = 0;
+		};
 		class ISetter :public IJsonable
 		{
 		public:
