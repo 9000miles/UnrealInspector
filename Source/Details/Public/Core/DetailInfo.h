@@ -127,32 +127,41 @@ namespace DETAILS_VIEWER
 	{
 		class IPropertyAccessor :public IJsonable
 		{
-			virtual void Set(TSharedPtr<FPropertyInfo> PropetyInfo, const bool Value) = 0;
-			virtual void Get(TSharedPtr<FPropertyInfo> PropetyInfo, bool& Value) = 0;
-			virtual void Default(TSharedPtr<FPropertyInfo> PropetyInfo, bool& Value) = 0;
-		};
-		class ISetter :public IJsonable
-		{
 		public:
 			virtual void Set(const bool Value) = 0;
 			virtual void Set(const float Value) = 0;
 			virtual void Set(const double Value) = 0;
+			//virtual void Set(const int Value) = 0;
+			//virtual void Set(const uint8 Value) = 0;
+			//virtual void Set(const int8 Value) = 0;
 			virtual void Set(const int32 Value) = 0;
-			virtual void Set(const FString value) = 0;
-			virtual void Set(const FName value) = 0;
-			virtual void Set(const FText value) = 0;
-		};
-		class IGetter :public IJsonable
-		{
-		public:
+			virtual void Set(const FString Value) = 0;
+			virtual void Set(const FName Value) = 0;
+			virtual void Set(const FText Value) = 0;
+
 			virtual void Get(bool& Out) = 0;
 			virtual void Get(float& Out) = 0;
 			virtual void Get(double& Out) = 0;
+			//virtual void Get(int& Out) = 0;
+			//virtual void Get(uint8& Out) = 0;
+			//virtual void Get(int8& Out) = 0;
 			virtual void Get(int32& Out) = 0;
 			virtual void Get(FString& Out) = 0;
 			virtual void Get(FName& Out) = 0;
 			virtual void Get(FText& Out) = 0;
+
+			virtual void Default(bool& Out) = 0;
+			virtual void Default(float& Out) = 0;
+			virtual void Default(double& Out) = 0;
+			//virtual void Default(int& Out) = 0;
+			//virtual void Default(uint8& Out) = 0;
+			//virtual void Default(int8& Out) = 0;
+			virtual void Default(int32& Out) = 0;
+			virtual void Default(FString& Out) = 0;
+			virtual void Default(FName& Out) = 0;
+			virtual void Default(FText& Out) = 0;
 		};
+
 		class IEditable :public IJsonable
 		{
 		public:
@@ -162,11 +171,6 @@ namespace DETAILS_VIEWER
 		{
 		public:
 			virtual bool CanVisible() = 0;
-		};
-		class IDefaultGetter :public IGetter
-		{
-		public:
-			virtual FString GetDefault() = 0;
 		};
 		class IWidgetMaker :public IJsonable
 		{
@@ -187,11 +191,9 @@ namespace DETAILS_VIEWER
 			TSharedPtr<FJsonObject> ToJson() override;
 
 		public:
-			TSharedPtr<ISetter> Setter;
-			TSharedPtr<IGetter> Getter;
+			TSharedPtr<IPropertyAccessor> Accessor;
 			TSharedPtr<IEditable> Editable;
 			TSharedPtr<IVisible> Visible;
-			TSharedPtr<IDefaultGetter> DefaultGetter;
 			TSharedPtr<IWidgetMaker> WidgetMaker;
 			TSharedPtr<ICopier> CopyExecutor;
 			TSharedPtr<IPaster> PasteExecutor;

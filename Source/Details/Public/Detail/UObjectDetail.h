@@ -11,31 +11,30 @@ namespace DETAILS_VIEWER
 {
 	namespace PROPERTY
 	{
-		class FUEPropertySetter :public ISetter
+		class FUEPropertyAccessor :public IPropertyAccessor
 		{
 		public:
-			FUEPropertySetter(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+			FUEPropertyAccessor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
 				:Property(InProperty),
 				Object(InObject)
 			{
 
 			}
-			virtual ~FUEPropertySetter() {}
+			virtual ~FUEPropertyAccessor() {}
 
-			// 定义一个宏来帮助生成重载函数
+			//* ============================== Set ================================= *//
 #define DEFINE_SET_FUNC(Type, PropType) \
-void Set(Type value) { \
-    if (!Object.IsValid() || Property == nullptr) return; \
-    PropType* Ptr = CastField<PropType>(Property); \
-    if (Ptr) { \
-        Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
-    } \
-}
+			void Set(Type value) { \
+				if (!Object.IsValid() || Property == nullptr) return; \
+				PropType* Ptr = CastField<PropType>(Property); \
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
+			}
 			DEFINE_SET_FUNC(FString, FStrProperty);
 			DEFINE_SET_FUNC(FName, FNameProperty);
 			DEFINE_SET_FUNC(FText, FTextProperty);
 
 
+			//DEFINE_SET_FUNC(uint8, FUInt8Property);
 			DEFINE_SET_FUNC(uint16, FUInt16Property);
 			DEFINE_SET_FUNC(uint32, FUInt32Property);
 			DEFINE_SET_FUNC(uint64, FUInt64Property);
@@ -46,65 +45,41 @@ void Set(Type value) { \
 			DEFINE_SET_FUNC(int64, FInt64Property);
 
 			DEFINE_SET_FUNC(bool, FBoolProperty);
-			//void SetValue(const bool value) override;
 			DEFINE_SET_FUNC(uint8, FByteProperty);
 			DEFINE_SET_FUNC(float, FFloatProperty);
 			DEFINE_SET_FUNC(double, FDoubleProperty);
 
 
-			//DEFINE_SET_FUNC(TSet<T>, FInterfaceProperty);
 			DEFINE_SET_FUNC(UObject*, FObjectProperty);
 			DEFINE_SET_FUNC(UClass*, FClassProperty);
 
 #define DEFINE_SET_FUNC_CONTAINER(Type, PropType) \
-template<typename T> \
-void Set(const Type<T>& value) { \
-    if (!Object.IsValid() || Property == nullptr) return; \
-    PropType* Ptr = CastField<PropType>(Property); \
-    if (Ptr) { \
-        Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
-    } \
-}
+			template<typename T> \
+			void Set(const Type<T>& value) { \
+				if (!Object.IsValid() || Property == nullptr) return; \
+				PropType* Ptr = CastField<PropType>(Property); \
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
+			}
 			DEFINE_SET_FUNC_CONTAINER(TArray, FArrayProperty);
 			DEFINE_SET_FUNC_CONTAINER(TSet, FSetProperty);
 
 			// 宏定义 Map 类型
 #define DEFINE_SET_FUNC_MAP(PropType) \
-template<typename K, typename V> \
-void Set(const TMap<K, V>& value) { \
-    if (!Object.IsValid() || Property == nullptr) return; \
-    PropType* Ptr = CastField<PropType>(Property); \
-    if (Ptr) { \
-        Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
-    } \
-}
+			template<typename K, typename V> \
+			void Set(const TMap<K, V>& value) {\
+				if (!Object.IsValid() || Property == nullptr) return; \
+				PropType* Ptr = CastField<PropType>(Property); \
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
+			}
 			DEFINE_SET_FUNC_MAP(FMapProperty);
 
-		private:
-			UE_Property* Property;
-			TWeakObjectPtr<UObject> Object;
-		};
-
-		class FUEPropertyGetter :public IGetter
-		{
-		public:
-			FUEPropertyGetter(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
-				:Property(InProperty),
-				Object(InObject)
-			{
-
+			//* ============================== Get ================================= *//
+#define DEFINE_GET_FUNC(Type, PropType) \
+			void Get(Type& Out) { \
+				if (!Object.IsValid() || Property == nullptr) return; \
+				PropType* Ptr = CastField<PropType>(Property); \
+				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Object.Get()); \
 			}
-			virtual ~FUEPropertyGetter() {}
-
-
-#define DEFINE_GET_FUNC(Type, PropType)\
-void Get(Type& Out)\
-{\
-	if (!Object.IsValid()) return;\
-	if (Property == nullptr) return;\
-	PropType* Ptr = CastField<PropType>(Property); \
-	Out = Ptr->GetPropertyValue_InContainer(Object.Get()); \
-}
 
 			DEFINE_GET_FUNC(bool, FBoolProperty);
 			DEFINE_GET_FUNC(float, FFloatProperty);
@@ -113,6 +88,23 @@ void Get(Type& Out)\
 			DEFINE_GET_FUNC(FString, FStrProperty);
 			DEFINE_GET_FUNC(FName, FNameProperty);
 			DEFINE_GET_FUNC(FText, FTextProperty);
+
+			//* ============================== Default ================================= *//
+#define DEFINE_DEFAULT_FUNC(Type, PropType)\
+			void Default(Type& Out)\
+			{\
+				if (!Object.IsValid() || Property == nullptr) return;\
+				PropType* Ptr = CastField<PropType>(Property); \
+				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Object.Get()); \
+			}
+
+			DEFINE_DEFAULT_FUNC(bool, FBoolProperty);
+			DEFINE_DEFAULT_FUNC(float, FFloatProperty);
+			DEFINE_DEFAULT_FUNC(double, FDoubleProperty);
+			DEFINE_DEFAULT_FUNC(int32, FIntProperty);
+			DEFINE_DEFAULT_FUNC(FString, FStrProperty);
+			DEFINE_DEFAULT_FUNC(FName, FNameProperty);
+			DEFINE_DEFAULT_FUNC(FText, FTextProperty);
 
 		private:
 			UE_Property* Property;
@@ -147,41 +139,6 @@ void Get(Type& Out)\
 
 		private:
 			UE_Property* Property;
-		};
-
-		class FUEPropertyDefaultGetter :public IDefaultGetter
-		{
-		public:
-			FUEPropertyDefaultGetter(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
-				:Property(InProperty),
-				Object(InObject)
-			{
-			}
-			virtual ~FUEPropertyDefaultGetter() {}
-
-			FString GetDefault() override;
-			//bool GetValue() override { return false; }
-
-
-#define DEFINE_GET_FUNC(Type, PropType)\
-void Get(Type& Out)\
-{\
-	if (!Object.IsValid()) return;\
-	if (Property == nullptr) return;\
-	PropType* Ptr = CastField<PropType>(Property); \
-	Out = Ptr->GetPropertyValue_InContainer(Object.Get()); \
-}
-
-			DEFINE_GET_FUNC(bool, FBoolProperty);
-			DEFINE_GET_FUNC(float, FFloatProperty);
-			DEFINE_GET_FUNC(double, FDoubleProperty);
-			DEFINE_GET_FUNC(int32, FIntProperty);
-			DEFINE_GET_FUNC(FString, FStrProperty);
-			DEFINE_GET_FUNC(FName, FNameProperty);
-			DEFINE_GET_FUNC(FText, FTextProperty);
-
-			UE_Property* Property;
-			TWeakObjectPtr<UObject> Object;
 		};
 
 		class FUEPropertyWidgetMaker :public IWidgetMaker
@@ -255,11 +212,9 @@ void Get(Type& Out)\
 				:Property(InProperty),
 				Object(InObject)
 			{
-				Setter = MakeShareable(new PROPERTY::FUEPropertySetter(Object, Property));
-				Getter = MakeShareable(new PROPERTY::FUEPropertyGetter(Object, Property));
+				Accessor = MakeShareable(new PROPERTY::FUEPropertyAccessor(Object, Property));
 				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable(Property));
 				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible(Property));
-				DefaultGetter = MakeShareable(new PROPERTY::FUEPropertyDefaultGetter(Object, Property));
 				WidgetMaker = MakeShareable(new PROPERTY::FUEPropertyWidgetMaker(Property));
 				CopyExecutor = MakeShareable(new PROPERTY::FUEPropertyCopier(Object, Property));
 				PasteExecutor = MakeShareable(new PROPERTY::FUEPropertyPaster(Object, Property));

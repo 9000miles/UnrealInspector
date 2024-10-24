@@ -20,11 +20,6 @@ namespace DETAILS_VIEWER
 			return true;
 		}
 
-		FString FUEPropertyDefaultGetter::GetDefault()
-		{
-			return TEXT("");
-		}
-
 		TSharedRef<SWidget> FUEPropertyWidgetMaker::MakeWidget(TSharedPtr<FTreeNode> Node)
 		{
 			TSharedPtr<FPropertyTreeNode> PropertyNode = StaticCastSharedPtr<FPropertyTreeNode>(Node);

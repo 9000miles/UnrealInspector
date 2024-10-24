@@ -183,11 +183,9 @@ namespace DETAILS_VIEWER
 	{
 		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 
-		JsonObject->SetObjectField(TEXT("Setter"), Setter->ToJson());
-		JsonObject->SetObjectField(TEXT("Getter"), Getter->ToJson());
+		JsonObject->SetObjectField(TEXT("Setter"), Accessor->ToJson());
 		JsonObject->SetObjectField(TEXT("Editable"), Editable->ToJson());
 		JsonObject->SetObjectField(TEXT("Visible"), Visible->ToJson());
-		JsonObject->SetObjectField(TEXT("DefaultGetter"), DefaultGetter->ToJson());
 		JsonObject->SetObjectField(TEXT("WidgetMaker"), WidgetMaker->ToJson());
 
 		return JsonObject;

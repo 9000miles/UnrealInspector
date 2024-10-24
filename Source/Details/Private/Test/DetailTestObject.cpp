@@ -39,11 +39,15 @@ TStatId UDetailTestObject::GetStatId() const
 
 void UDetailTestObject::PrintPropertyValue()
 {
+#define PRINT_VALUE(Name, Format, Value) \
+    UE_LOG(LogTemp, Log, TEXT(#Name ": " Format), Value);
 
-	UE_LOG(LogTemp, Log, TEXT("%s"), Bool_1 ? TEXT("TRUE") : TEXT("FALSE"));
-	UE_LOG(LogTemp, Log, TEXT("%s"), *String_1);
-	UE_LOG(LogTemp, Log, TEXT("%s"), *Text_1.ToString());
-	UE_LOG(LogTemp, Log, TEXT("%s"), *Name_1.ToString());
+	PRINT_VALUE(Bool_1, "%s", Bool_1 ? TEXT("TRUE") : TEXT("FALSE"));
+	PRINT_VALUE(String_1, TEXT("%s"), *String_1);
+	PRINT_VALUE(Text_1, TEXT("%s"), *Text_1.ToString());
+	PRINT_VALUE(Name_1, TEXT("%s"), *Name_1.ToString());
+
+	PRINT_VALUE(_PropertyBuilder, "%d", _PropertyBuilder);
 
 }
 
