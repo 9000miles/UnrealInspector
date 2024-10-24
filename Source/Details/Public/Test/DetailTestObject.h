@@ -37,9 +37,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, Category = "AAA", meta = (DisplayName = "窝窝屎"))
-	bool Bool_1;
+	bool Bool_1 = true;
 	UPROPERTY(EditAnywhere, meta = (HintText = "This is FString Property"))
-	FString String_1;
+	FString String_1 = TEXT("sjoifwoeo");
 	UPROPERTY(EditAnywhere)
 	FText Text_1;
 	UPROPERTY()
@@ -49,7 +49,7 @@ public:
 
 
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomPropertyBuilder"))
-	int32 _PropertyBuilder;
+	int32 _PropertyBuilder = 456;
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomDetailRowWidget"))
 	int32 _DetailRowWidget;
 	UPROPERTY(meta = (FuncPropertyRowWidget = "Property_FuncPropertyRow_RowWidget"))

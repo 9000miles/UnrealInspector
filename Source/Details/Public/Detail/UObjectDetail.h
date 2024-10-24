@@ -11,6 +11,18 @@ namespace DETAILS_VIEWER
 {
 	namespace PROPERTY
 	{
+		class FUEPropertyHelper
+		{
+		public:
+			static FString PropertyToJson(UObject* Object, FName Name);
+			static void JsonToProperty(UObject* Object, FName Name, FString Json);
+
+
+			static FString JsonValueToString(TSharedPtr<FJsonValue> JsonValue);
+			static TSharedPtr<FJsonValue> StringToJsonValue(const FString& JsonString);
+
+		};
+
 		class FUEPropertyAccessor :public IPropertyAccessor
 		{
 		public:
@@ -23,35 +35,23 @@ namespace DETAILS_VIEWER
 			virtual ~FUEPropertyAccessor() {}
 
 			//* ============================== Set ================================= *//
-#define DEFINE_SET_FUNC(Type, PropType) \
-			void Set(Type value) { \
-				if (!Object.IsValid() || Property == nullptr) return; \
-				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
-			}
-			DEFINE_SET_FUNC(FString, FStrProperty);
-			DEFINE_SET_FUNC(FName, FNameProperty);
-			DEFINE_SET_FUNC(FText, FTextProperty);
-
-
-			//DEFINE_SET_FUNC(uint8, FUInt8Property);
-			DEFINE_SET_FUNC(uint16, FUInt16Property);
-			DEFINE_SET_FUNC(uint32, FUInt32Property);
-			DEFINE_SET_FUNC(uint64, FUInt64Property);
-
-			DEFINE_SET_FUNC(int8, FInt8Property);
-			DEFINE_SET_FUNC(int16, FInt16Property);
-			DEFINE_SET_FUNC(int32, FIntProperty);
-			DEFINE_SET_FUNC(int64, FInt64Property);
-
-			DEFINE_SET_FUNC(bool, FBoolProperty);
-			DEFINE_SET_FUNC(uint8, FByteProperty);
-			DEFINE_SET_FUNC(float, FFloatProperty);
-			DEFINE_SET_FUNC(double, FDoubleProperty);
-
-
-			DEFINE_SET_FUNC(UObject*, FObjectProperty);
-			DEFINE_SET_FUNC(UClass*, FClassProperty);
+			void Set(FString value) { SetValue<FString, FStrProperty>(value); }
+			void Set(FName value) { SetValue<FName, FNameProperty>(value); }
+			void Set(FText value) { SetValue<FText, FTextProperty>(value); }
+			//void Set(FVector value) { SetValue<FVector, FStructProperty>(value); }
+			void Set(uint16 value) { SetValue<uint16, FUInt16Property>(value); }
+			void Set(uint32 value) { SetValue<uint32, FUInt32Property>(value); }
+			void Set(uint64 value) { SetValue<uint64, FUInt64Property>(value); }
+			void Set(int8 value) { SetValue<int8, FInt8Property>(value); }
+			void Set(int16 value) { SetValue<int16, FInt16Property>(value); }
+			void Set(int32 value) { SetValue<int32, FIntProperty>(value); }
+			void Set(int64 value) { SetValue<int64, FInt64Property>(value); }
+			void Set(bool value) { SetValue<bool, FBoolProperty>(value); }
+			void Set(uint8 value) { SetValue<uint8, FByteProperty>(value); }
+			void Set(float value) { SetValue<float, FFloatProperty>(value); }
+			void Set(double value) { SetValue<double, FDoubleProperty>(value); }
+			void Set(UObject* value) { SetValue<UObject*, FObjectProperty>(value); }
+			void Set(UClass* value) { SetValue<UClass*, FClassProperty>(value); }
 
 #define DEFINE_SET_FUNC_CONTAINER(Type, PropType) \
 			template<typename T> \
@@ -74,37 +74,41 @@ namespace DETAILS_VIEWER
 			DEFINE_SET_FUNC_MAP(FMapProperty);
 
 			//* ============================== Get ================================= *//
-#define DEFINE_GET_FUNC(Type, PropType) \
-			void Get(Type& Out) { \
-				if (!Object.IsValid() || Property == nullptr) return; \
-				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Object.Get()); \
+			void Get(bool& Out) { GetValue<bool, FBoolProperty>(Out); }
+			void Get(float& Out) { GetValue<float, FFloatProperty>(Out); }
+			void Get(double& Out) { GetValue<double, FDoubleProperty>(Out); }
+			void Get(int32& Out) { GetValue<int32, FIntProperty>(Out); }
+			void Get(FString& Out) { GetValue<FString, FStrProperty>(Out); }
+			void Get(FName& Out) { GetValue<FName, FNameProperty>(Out); }
+			void Get(FText& Out) { GetValue<FText, FTextProperty>(Out); }
+
+			//* ============================== Reset ================================= *//
+			void Reset() {
+				if (!Object.IsValid()) return;
+
+				UObject* CDO = Object->GetClass()->ClassDefaultObject.Get();
+				if (CDO == nullptr || Property == nullptr) return;
+
+				FString DefaultValue = FUEPropertyHelper::PropertyToJson(CDO, Property->GetFName());
+				FUEPropertyHelper::JsonToProperty(Object.Get(), Property->GetFName(), DefaultValue);
 			}
 
-			DEFINE_GET_FUNC(bool, FBoolProperty);
-			DEFINE_GET_FUNC(float, FFloatProperty);
-			DEFINE_GET_FUNC(double, FDoubleProperty);
-			DEFINE_GET_FUNC(int32, FIntProperty);
-			DEFINE_GET_FUNC(FString, FStrProperty);
-			DEFINE_GET_FUNC(FName, FNameProperty);
-			DEFINE_GET_FUNC(FText, FTextProperty);
+		protected:
+			template<typename TValue, typename TPropertyType>
+			void SetValue(TValue value) {
+				if (!Object.IsValid() || Property == nullptr) return;
 
-			//* ============================== Default ================================= *//
-#define DEFINE_DEFAULT_FUNC(Type, PropType)\
-			void Default(Type& Out)\
-			{\
-				if (!Object.IsValid() || Property == nullptr) return;\
-				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Object.Get()); \
+				TPropertyType* Ptr = CastField<TPropertyType>(Property);
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value);
 			}
 
-			DEFINE_DEFAULT_FUNC(bool, FBoolProperty);
-			DEFINE_DEFAULT_FUNC(float, FFloatProperty);
-			DEFINE_DEFAULT_FUNC(double, FDoubleProperty);
-			DEFINE_DEFAULT_FUNC(int32, FIntProperty);
-			DEFINE_DEFAULT_FUNC(FString, FStrProperty);
-			DEFINE_DEFAULT_FUNC(FName, FNameProperty);
-			DEFINE_DEFAULT_FUNC(FText, FTextProperty);
+			template<typename TValue, typename TPropertyType>
+			void GetValue(TValue& Out) {
+				if (!Object.IsValid() || Property == nullptr) return;
+
+				TPropertyType* Ptr = CastField<TPropertyType>(Property);
+				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Object.Get());
+			}
 
 		private:
 			UE_Property* Property;
@@ -230,17 +234,6 @@ namespace DETAILS_VIEWER
 		};
 
 
-		class FUEPropertyHelper
-		{
-		public:
-			static FString PropertyToJson(UObject* Object, FName Name);
-			static void JsonToProperty(UObject* Object, FName Name, FString Json);
-
-
-			static FString JsonValueToString(TSharedPtr<FJsonValue> JsonValue);
-			static TSharedPtr<FJsonValue> StringToJsonValue(const FString& JsonString);
-
-		};
 	}
 
 	class FUObjectDetailCommander : public IDetailCommander

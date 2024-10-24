@@ -152,6 +152,7 @@ namespace DETAILS_VIEWER
 
 	FReply SDetailProperty::OnResetClicked()
 	{
+		GetNode<FPropertyTreeNode>()->PropertyInfo->Executor->Accessor->Reset();
 		return FReply::Handled();
 	}
 

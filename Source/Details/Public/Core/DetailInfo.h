@@ -138,6 +138,7 @@ namespace DETAILS_VIEWER
 			virtual void Set(const FString Value) = 0;
 			virtual void Set(const FName Value) = 0;
 			virtual void Set(const FText Value) = 0;
+			//virtual void Set(const FVector Value) = 0;
 
 			virtual void Get(bool& Out) = 0;
 			virtual void Get(float& Out) = 0;
@@ -149,17 +150,9 @@ namespace DETAILS_VIEWER
 			virtual void Get(FString& Out) = 0;
 			virtual void Get(FName& Out) = 0;
 			virtual void Get(FText& Out) = 0;
+			//virtual void Get(FVector& Out) = 0;
 
-			virtual void Default(bool& Out) = 0;
-			virtual void Default(float& Out) = 0;
-			virtual void Default(double& Out) = 0;
-			//virtual void Default(int& Out) = 0;
-			//virtual void Default(uint8& Out) = 0;
-			//virtual void Default(int8& Out) = 0;
-			virtual void Default(int32& Out) = 0;
-			virtual void Default(FString& Out) = 0;
-			virtual void Default(FName& Out) = 0;
-			virtual void Default(FText& Out) = 0;
+			virtual void Reset() = 0;
 		};
 
 		class IEditable :public IJsonable
