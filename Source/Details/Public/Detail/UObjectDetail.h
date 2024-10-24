@@ -233,8 +233,9 @@ namespace DETAILS_VIEWER
 		class FUEPropertyHelper
 		{
 		public:
-			static FString PropertyToJson(void* ContainerPtr, UE_Property* Property);
-			static void JsonToProperty(void* ContainerPtr, UE_Property* Property, FString Json);
+			static FString PropertyToJson(UObject* Object, FName Name);
+			static void JsonToProperty(UObject* Object, FName Name, FString Json);
+
 
 			static FString JsonValueToString(TSharedPtr<FJsonValue> JsonValue);
 			static TSharedPtr<FJsonValue> StringToJsonValue(const FString& JsonString);

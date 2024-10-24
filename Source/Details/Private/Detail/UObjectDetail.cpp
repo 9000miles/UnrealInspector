@@ -42,19 +42,22 @@ namespace DETAILS_VIEWER
 
 		const FString FUEPropertyCopier::Execute()
 		{
-			return FUEPropertyHelper::PropertyToJson(ContainerPtr, Property);
+			return FUEPropertyHelper::PropertyToJson(Object.Get(), Property->GetFName());
 		}
 
 		void FUEPropertyPaster::Execute(const FString String)
 		{
-			FUEPropertyHelper::JsonToProperty(ContainerPtr, Property, String);
+			FUEPropertyHelper::JsonToProperty(Object.Get(), Property->GetFName(), String);
 		}
 
 #define JSON_KEY FString(TEXT("Key"))
 
-		FString FUEPropertyHelper::PropertyToJson(void* ContainerPtr, UE_Property* Property)
+		FString FUEPropertyHelper::PropertyToJson(UObject* Object, FName Name)
 		{
-			void* ValuePtr = Property->ContainerPtrToValuePtr<void>(ContainerPtr);
+			if (Object == nullptr) return FString();
+
+			FProperty* Property = Object->GetClass()->FindPropertyByName(Name);
+			void* ValuePtr = Property->ContainerPtrToValuePtr<void>(Object);
 
 			TSharedPtr<FJsonValue> JsonValue = FJsonObjectConverter::UPropertyToJsonValue(Property, ValuePtr);
 			if (JsonValue.IsValid())
@@ -63,9 +66,12 @@ namespace DETAILS_VIEWER
 			return FString();
 		}
 
-		void FUEPropertyHelper::JsonToProperty(void* ContainerPtr, UE_Property* Property, FString Json)
+		void FUEPropertyHelper::JsonToProperty(UObject* Object, FName Name, FString Json)
 		{
-			void* ValuePtr = Property->ContainerPtrToValuePtr<void>(ContainerPtr);
+			if (Object == nullptr) return;
+
+			FProperty* Property = Object->GetClass()->FindPropertyByName(Name);
+			void* ValuePtr = Property->ContainerPtrToValuePtr<void>(Object);
 
 			TSharedPtr<FJsonValue> JsonValue = StringToJsonValue(Json);
 			FText OutReason;

@@ -42,13 +42,17 @@ void UDetailTestObject::PrintPropertyValue()
 #define PRINT_VALUE(Name, Format, Value) \
     UE_LOG(LogTemp, Log, TEXT(#Name ": " Format), Value);
 
-	PRINT_VALUE(Bool_1, "%s", Bool_1 ? TEXT("TRUE") : TEXT("FALSE"));
-	PRINT_VALUE(String_1, "%s", *String_1);
-	PRINT_VALUE(Text_1, "%s", *Text_1.ToString());
-	PRINT_VALUE(Name_1, "%s", *Name_1.ToString());
-
-	PRINT_VALUE(_PropertyBuilder, "%d", _PropertyBuilder);
-
+	UClass* ObjectClass = StaticClass();
+	for (TFieldIterator<FProperty> It(ObjectClass); It; ++It)
+	{
+		FProperty* Property = *It;
+		//if (Property->HasAnyPropertyFlags(CPF_BlueprintVisible))
+		{
+			FString PropertyName = Property->GetNameCPP();
+			FString JsonValue = PROPERTY::FUEPropertyHelper::PropertyToJson(this, *PropertyName);
+			UE_LOG(LogTemp, Log, TEXT("%s: %s"), *PropertyName, *JsonValue);
+		}
+	}
 }
 
 void UDetailTestObject::TickChangeProperty()
