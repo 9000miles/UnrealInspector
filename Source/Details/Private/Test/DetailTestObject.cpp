@@ -43,9 +43,9 @@ void UDetailTestObject::PrintPropertyValue()
     UE_LOG(LogTemp, Log, TEXT(#Name ": " Format), Value);
 
 	PRINT_VALUE(Bool_1, "%s", Bool_1 ? TEXT("TRUE") : TEXT("FALSE"));
-	PRINT_VALUE(String_1, TEXT("%s"), *String_1);
-	PRINT_VALUE(Text_1, TEXT("%s"), *Text_1.ToString());
-	PRINT_VALUE(Name_1, TEXT("%s"), *Name_1.ToString());
+	PRINT_VALUE(String_1, "%s", *String_1);
+	PRINT_VALUE(Text_1, "%s", *Text_1.ToString());
+	PRINT_VALUE(Name_1, "%s", *Name_1.ToString());
 
 	PRINT_VALUE(_PropertyBuilder, "%d", _PropertyBuilder);
 
