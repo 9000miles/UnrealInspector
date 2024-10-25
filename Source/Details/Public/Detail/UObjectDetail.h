@@ -93,6 +93,12 @@ namespace DETAILS_VIEWER
 				FUEPropertyHelper::JsonToProperty(Object.Get(), Property->GetFName(), DefaultValue);
 			}
 
+			//* ============================== OnPropertyChanged ================================= *//
+			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action)
+			{
+
+			}
+
 		protected:
 			template<typename TValue, typename TPropertyType>
 			void SetValue(TValue value) {
@@ -100,6 +106,8 @@ namespace DETAILS_VIEWER
 
 				TPropertyType* Ptr = CastField<TPropertyType>(Property);
 				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value);
+
+				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
 			}
 
 			template<typename TValue, typename TPropertyType>

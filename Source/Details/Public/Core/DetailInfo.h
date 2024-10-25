@@ -125,6 +125,14 @@ namespace DETAILS_VIEWER
 
 	namespace PROPERTY
 	{
+		enum EPropertyChangeAction
+		{
+			Unspecified,
+			ArrayAdd,
+			ArrayRemove,
+			ArrayClear,
+			Duplicate,
+		};
 		class IPropertyAccessor :public IJsonable
 		{
 		public:
@@ -153,6 +161,8 @@ namespace DETAILS_VIEWER
 			//virtual void Get(FVector& Out) = 0;
 
 			virtual void Reset() = 0;
+
+			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action) = 0;
 		};
 
 		class IEditable :public IJsonable
