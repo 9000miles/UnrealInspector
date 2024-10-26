@@ -9,7 +9,7 @@
 #include "Creater/StringCreater.h"
 #include "Core/DetailInfo.h"
 #include "Detail/UObjectDetail.h"
-#include "Creater/IntegerCreater.h"
+#include "Creater/NumericCreater.h"
 
 #define LOCTEXT_NAMESPACE "FPropertyInspectorModule"
 
@@ -21,7 +21,7 @@ void FDetailsViewerModule::StartupModule()
 
 	Factory::Register<FWidgetCreaterBool>();
 	Factory::Register<FWidgetCreaterString>();
-	Factory::Register<FWidgetCreaterInteger>();
+	Factory::Register<FWidgetCreaterNumeric>();
 
 	Factory::Register<FDetailMaker>();
 	Factory::Register<FCustomDetailMaker>();

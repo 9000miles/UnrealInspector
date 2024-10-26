@@ -294,6 +294,8 @@ namespace DETAILS_VIEWER
 
 			TSharedPtr<FJsonObject> GetMetadata() { return Metadata; }
 
+			bool Has(const FString& Key) { return Metadata->HasField(Key); }
+
 		protected:
 			TSharedPtr<FJsonObject> Metadata;
 		};

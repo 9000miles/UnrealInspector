@@ -210,7 +210,11 @@ namespace DETAILS_VIEWER
 			FUEPropertyMetadata(UE_Property* InProperty)
 				:Property(InProperty)
 			{
+				auto ssf = Property->GetMetaDataMap();
 				Metadata = MakeShared<FJsonObject>();
+				Metadata->SetStringField(TEXT("DisplayeName"), Property->GetMetaData(TEXT("DisplayeName")));
+				Metadata->SetNumberField(TEXT("Min"), Property->GetFloatMetaData(TEXT("UIMin")));
+				Metadata->SetNumberField(TEXT("Max"), Property->GetFloatMetaData(TEXT("UIMax")));
 			}
 
 		private:

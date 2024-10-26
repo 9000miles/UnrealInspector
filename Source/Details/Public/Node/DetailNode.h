@@ -37,6 +37,7 @@ namespace DETAILS_VIEWER
 	public:
 		FTreeNode(ENodeType	InNodeType) {};
 		virtual FString GetName() { return TEXT("TreeNode"); };
+		virtual FString GetDisplayName() { return TEXT("TreeNode"); };
 		virtual TSharedPtr<SWidget> GetWidget();
 
 		TArray<TSharedPtr<FTreeNode>> GetChildren() { return Children; }
@@ -65,6 +66,7 @@ namespace DETAILS_VIEWER
 		static FString TypeName() { return TEXT("CategoryTreeNode"); }
 		FString GetTypeName() override { return FCategoryTreeNode::TypeName(); }
 		FString GetName() override;
+		FString GetDisplayName() override;
 		TSharedPtr<SWidget> GetWidget() override;
 
 	protected:
@@ -83,6 +85,7 @@ namespace DETAILS_VIEWER
 		static FString TypeName() { return TEXT("PropertyTreeNode"); }
 		FString GetTypeName() override { return FPropertyTreeNode::TypeName(); }
 		FString GetName() override;
+		FString GetDisplayName() override;
 		TSharedPtr<SWidget> GetWidget() override;
 
 	public:

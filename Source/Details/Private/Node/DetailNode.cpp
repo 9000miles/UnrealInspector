@@ -50,6 +50,11 @@ namespace DETAILS_VIEWER
 	}
 
 
+	FString FCategoryTreeNode::GetDisplayName()
+	{
+		return CategoryInfo->DisplayName;
+	}
+
 	TSharedPtr<SWidget> FCategoryTreeNode::GetWidget()
 	{
 		return /*SNew(SExpandableArea)
@@ -70,6 +75,11 @@ namespace DETAILS_VIEWER
 		return PropertyInfo->Name;
 	}
 
+
+	FString FPropertyTreeNode::GetDisplayName()
+	{
+		return PropertyInfo->DisplayName;
+	}
 
 	TSharedPtr<SWidget> FPropertyTreeNode::GetWidget()
 	{

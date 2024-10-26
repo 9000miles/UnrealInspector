@@ -19,7 +19,11 @@ namespace DETAILS_VIEWER
 			{}
 		SLATE_END_ARGS()
 
+		FString GetDisplayName();
 		/** Constructs this widget with InArgs */
 		void Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> TreeNode);
+
+	private:
+		TSharedPtr<FTreeNode> TreeNode;
 	};
 }

@@ -44,8 +44,12 @@ public:
 	FText Text_1;
 	UPROPERTY()
 	FName Name_1;
-	//UPROPERTY(meta = (UIMin = 0, UIMax = 100))
-	//int32 _int32_;
+	UPROPERTY(meta = (UIMin = 0, UIMax = 100))
+	int32 int32_Min_Max;
+
+
+	UPROPERTY(meta = (UIMin = 0.55, UIMax = 50.1))
+	float float_Min_Max;
 
 
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomPropertyBuilder"))

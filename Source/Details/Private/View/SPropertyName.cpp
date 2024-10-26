@@ -6,9 +6,11 @@
 namespace DETAILS_VIEWER
 {
 	BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
-		void SPropertyName::Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> TreeNode)
+		void SPropertyName::Construct(const FArguments& InArgs, TSharedPtr<FTreeNode> InTreeNode)
 	{
-		const FString Name = TreeNode->GetName();
+		TreeNode = InTreeNode;
+
+		const FString Name = GetDisplayName();
 
 		ChildSlot
 			[
@@ -16,6 +18,12 @@ namespace DETAILS_VIEWER
 					.Text(FText::FromString(Name))
 			];
 
+	}
+
+	FString SPropertyName::GetDisplayName()
+	{
+		const FString Result = TreeNode->GetDisplayName();
+		return Result.IsEmpty() ? TreeNode->GetName() : Result;
 	}
 	END_SLATE_FUNCTION_BUILD_OPTIMIZATION
 }
