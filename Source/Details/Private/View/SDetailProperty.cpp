@@ -72,11 +72,13 @@ namespace DETAILS_VIEWER
 								SNew(SHorizontalBox)
 									+ SHorizontalBox::Slot()
 									.HAlign(HAlign_Fill)
+									.VAlign(VAlign_Center)
 									[
 										Widget.ToSharedRef()
 									]
 									+ SHorizontalBox::Slot()
 									.Padding(3, 0)
+									.VAlign(VAlign_Center)
 									.AutoWidth()
 									[
 										SNew(SButton)

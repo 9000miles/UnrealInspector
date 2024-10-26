@@ -29,8 +29,9 @@ namespace DETAILS_VIEWER
 			TSharedPtr<IDetailWidgetCreater> WidgetCreater = FWidgetCreaterFactory::Get().FindCreater(Type);
 			if (!WidgetCreater.IsValid())
 			{
+				const FText Message = FText::FromString(FString::Printf(TEXT("Unkown Type: %s"), *Type));
 				return SNew(STextBlock)
-					.Text(LOCTEXT("UnkownType", "UnkownType"))
+					.Text(Message)
 					;
 			}
 

@@ -17,7 +17,7 @@ namespace DETAILS_VIEWER
 		const bool bHasCreater = Creaters.Contains(Identifier);
 		if (!bHasCreater)
 		{
-			UE_LOG(LogRuntimeDetail, Warning, TEXT("Not found %s UPropertyBuilder"), *Identifier);
+			UE_LOG(LogRuntimeDetail, Warning, TEXT("Not found TSharedPtr<IDetailWidgetCreater>> for %s"), *Identifier);
 			return nullptr;
 		}
 

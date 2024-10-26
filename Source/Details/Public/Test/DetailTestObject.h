@@ -51,6 +51,8 @@ public:
 	UPROPERTY(meta = (UIMin = 0.55, UIMax = 50.1))
 	float float_Min_Max;
 
+	UPROPERTY()
+	FVector2D Vector2D_1;
 
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomPropertyBuilder"))
 	int32 _PropertyBuilder = 456;
