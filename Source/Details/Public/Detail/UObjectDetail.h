@@ -42,6 +42,7 @@ namespace DETAILS_VIEWER
 			void Set(FVector2D Value) { SetStructValue<FVector2D>(Value); }
 			void Set(FVector Value) { SetStructValue<FVector>(Value); }
 			void Set(FVector4 Value) { SetStructValue<FVector4>(Value); }
+			void Set(FTransform Value) { SetStructValue<FTransform>(Value); }
 			void Set(uint16 Value) { SetValue<uint16, FUInt16Property>(Value); }
 			void Set(uint32 Value) { SetValue<uint32, FUInt32Property>(Value); }
 			void Set(uint64 Value) { SetValue<uint64, FUInt64Property>(Value); }
@@ -89,6 +90,7 @@ namespace DETAILS_VIEWER
 			void Get(FVector2D& Out) { GetStructValue<FVector2D>(Out); }
 			void Get(FVector& Out) { GetStructValue<FVector>(Out); }
 			void Get(FVector4& Out) { GetStructValue<FVector4>(Out); }
+			void Get(FTransform& Out) { GetStructValue<FTransform>(Out); }
 
 			//* ============================== Reset ================================= *//
 			void Reset() {

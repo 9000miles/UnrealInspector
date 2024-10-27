@@ -60,6 +60,8 @@ public:
 
 	UPROPERTY()
 	FGuid Guid_1;
+	UPROPERTY()
+	FTransform Transform;
 
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomPropertyBuilder"))
 	int32 _PropertyBuilder = 456;
