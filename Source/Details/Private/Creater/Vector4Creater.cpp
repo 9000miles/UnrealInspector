@@ -1,118 +1,208 @@
-//// Fill out your copyright notice in the Description page of Project Settings.
-//
-//
-//#include "Creater/StringCreater.h"
-//#include "Widget/SPropertyWidget.h"
-//
-//namespace DETAILS_VIEWER
-//{
-//
-//	void SPropertyWidgetString::Construct(const FArguments& InArgs, TSharedPtr<FPropertyInfo> InPropertyInfo)
-//	{
-//		SPropertyWidget::Construct(InPropertyInfo);
-//
-//		const FText Value = GetPropertyValue();
-//		const FText HintText = GetHintText();
-//
-//		EditableTextBoxPtr = SNew(SEditableTextBox)
-//			.Text(this, &SPropertyWidgetString::GetText)
-//			.HintText(HintText)
-//			.OnTextCommitted(this, &SPropertyWidgetString::OnTextCommitted)
-//			;
-//
-//		ChildSlot
-//			[
-//				EditableTextBoxPtr.ToSharedRef()
-//			];
-//	}
-//
-//	void SPropertyWidgetString::OnTextCommitted(const FText& Text, ETextCommit::Type Type)
-//	{
-//		if (!(Type == ETextCommit::OnEnter || Type == ETextCommit::OnUserMovedFocus)) return;
-//
-//		SetPropertyValue(Text);
-//	}
-//
-//	FText SPropertyWidgetString::GetText() const
-//	{
-//		return GetPropertyValue();
-//	}
-//
-//	FText SPropertyWidgetString::GetHintText()
-//	{
-//		return PropertyInfo->Metadata->Get<FText>(TEXT("HintText"));
-//	}
-//
-//	FText SPropertyWidgetString::GetPropertyValue() const
-//	{
-//		const FString Type = PropertyInfo->Type;
-//		if (Type == TEXT("FString"))
-//		{
-//			FString Result;
-//			GetExecutor()->Accessor->Get(Result);
-//			return FText::FromString(Result);
-//		}
-//		else if (Type == TEXT("string"))
-//		{
-//			FString Result;
-//			GetExecutor()->Accessor->Get(Result);
-//			return FText::FromString(Result);
-//		}
-//		else if (Type == TEXT("FName"))
-//		{
-//			FName Result;
-//			GetExecutor()->Accessor->Get(Result);
-//			return FText::FromString(Result.ToString());
-//		}
-//		else if (Type == TEXT("FText"))
-//		{
-//			FText Result;
-//			GetExecutor()->Accessor->Get(Result);
-//			return Result;
-//		}
-//
-//		return FText();
-//	}
-//
-//	void SPropertyWidgetString::SetPropertyValue(FText Text)
-//	{
-//		const FString Type = PropertyInfo->Type;
-//		if (Type == TEXT("FString"))
-//		{
-//			GetExecutor()->Accessor->Set(Text.ToString());
-//		}
-//		else if (Type == TEXT("string"))
-//		{
-//			GetExecutor()->Accessor->Set(Text.ToString());
-//		}
-//		else if (Type == TEXT("FName"))
-//		{
-//			GetExecutor()->Accessor->Set(FName(*Text.ToString()));
-//		}
-//		else if (Type == TEXT("FText"))
-//		{
-//			GetExecutor()->Accessor->Set(Text);
-//		}
-//	}
-//
-//	FWidgetCreaterString::FWidgetCreaterString()
-//	{
-//	}
-//
-//	TSharedPtr<SWidget> FWidgetCreaterString::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
-//	{
-//		TSharedPtr<FPropertyTreeNode> PropertyTreeNode = StaticCastSharedPtr<FPropertyTreeNode>(TreeNode);
-//		return SNew(SPropertyWidgetString, PropertyTreeNode->PropertyInfo);
-//	}
-//
-//	TArray<FString> FWidgetCreaterString::SupportTypes()
-//	{
-//		return { TEXT("FString") ,TEXT("string"), TEXT("FName"), TEXT("FText") };
-//	}
-//
-//	FString FWidgetCreaterString::GetTypeName()
-//	{
-//		return FWidgetCreaterString::TypeName();
-//	}
-//
-//}
+#include "Creater/Vector4Creater.h"
+#include "Widgets/Input/SNumericEntryBox.h"
+
+namespace DETAILS_VIEWER
+{
+#define LOCTEXT_NAMESPACE "SPropertyWidgetVector4"
+
+	void SPropertyWidgetVector4::Construct(const FArguments& InArgs, TSharedPtr<FPropertyInfo> InPropertyInfo)
+	{
+		SPropertyWidget::Construct(InPropertyInfo);
+		const FLinearColor LabelClr = FLinearColor(1.f, 1.f, 1.f, 0.4f);
+
+		ChildSlot[
+			SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot()
+				.Padding(2).HAlign(HAlign_Fill)
+				[
+					SNew(SNumericEntryBox<float>)
+						.LabelVAlign(VAlign_Center)
+						.Label()
+						[
+							SNew(STextBlock)
+								.Text(LOCTEXT("Lable_X", "X"))
+								.ColorAndOpacity(LabelClr)
+						]
+						.Value(this, &SPropertyWidgetVector4::GetPropertyValue_X)
+						.AllowSpin(true)
+						.OnValueChanged(this, &SPropertyWidgetVector4::OnValueChanged_X)
+						.OnValueCommitted(this, &SPropertyWidgetVector4::OnValueCommitted_X)
+				]
+				+ SHorizontalBox::Slot()
+				.Padding(2).HAlign(HAlign_Fill)
+				[
+					SNew(SNumericEntryBox<float>)
+						.LabelVAlign(VAlign_Center)
+						.Label()
+						[
+							SNew(STextBlock)
+								.Text(LOCTEXT("Lable_Y", "Y"))
+								.ColorAndOpacity(LabelClr)
+						]
+						.Value(this, &SPropertyWidgetVector4::GetPropertyValue_Y)
+						.AllowSpin(true)
+						.OnValueChanged(this, &SPropertyWidgetVector4::OnValueChanged_Y)
+						.OnValueCommitted(this, &SPropertyWidgetVector4::OnValueCommitted_Y)
+				]
+				+ SHorizontalBox::Slot()
+				.Padding(2).HAlign(HAlign_Fill)
+				[
+					SNew(SNumericEntryBox<float>)
+						.LabelVAlign(VAlign_Center)
+						.Label()
+						[
+							SNew(STextBlock)
+								.Text(LOCTEXT("Lable_Z", "Z"))
+								.ColorAndOpacity(LabelClr)
+						]
+						.Value(this, &SPropertyWidgetVector4::GetPropertyValue_Z)
+						.AllowSpin(true)
+						.OnValueChanged(this, &SPropertyWidgetVector4::OnValueChanged_Z)
+						.OnValueCommitted(this, &SPropertyWidgetVector4::OnValueCommitted_Z)
+				]
+				+ SHorizontalBox::Slot()
+				.Padding(2).HAlign(HAlign_Fill)
+				[
+					SNew(SNumericEntryBox<float>)
+						.LabelVAlign(VAlign_Center)
+						.Label()
+						[
+							SNew(STextBlock)
+								.Text(LOCTEXT("Lable_W", "W"))
+								.ColorAndOpacity(LabelClr)
+						]
+						.Value(this, &SPropertyWidgetVector4::GetPropertyValue_W)
+						.AllowSpin(true)
+						.OnValueChanged(this, &SPropertyWidgetVector4::OnValueChanged_W)
+						.OnValueCommitted(this, &SPropertyWidgetVector4::OnValueCommitted_W)
+				]
+		];
+	}
+
+	TOptional<float> SPropertyWidgetVector4::GetPropertyValue_X() const
+	{
+		FVector4 Value;
+		GetExecutor()->Accessor->Get(Value);
+		return Value.X;
+	}
+
+	TOptional<float> SPropertyWidgetVector4::GetPropertyValue_Y() const
+	{
+		FVector4 Value;
+		GetExecutor()->Accessor->Get(Value);
+		return Value.Y;
+	}
+
+
+	TOptional<float> SPropertyWidgetVector4::GetPropertyValue_Z() const
+	{
+		FVector4 Value;
+		GetExecutor()->Accessor->Get(Value);
+		return Value.Z;
+	}
+
+	TOptional<float> SPropertyWidgetVector4::GetPropertyValue_W() const
+	{
+		FVector4 Value;
+		GetExecutor()->Accessor->Get(Value);
+		return Value.W;
+	}
+
+
+	void SPropertyWidgetVector4::OnValueCommitted_X(float NewValue, ETextCommit::Type CommitType)
+	{
+		GetExecutor()->Accessor->Set(FVector4(
+			NewValue,
+			GetPropertyValue_Y().Get(0),
+			GetPropertyValue_Z().Get(0),
+			GetPropertyValue_W().Get(0)
+		));
+	}
+
+	void SPropertyWidgetVector4::OnValueCommitted_Y(float NewValue, ETextCommit::Type CommitType)
+	{
+		GetExecutor()->Accessor->Set(FVector4(
+			GetPropertyValue_X().Get(0),
+			NewValue,
+			GetPropertyValue_Z().Get(0),
+			GetPropertyValue_W().Get(0)
+		));
+	}
+
+
+	void SPropertyWidgetVector4::OnValueCommitted_Z(float NewValue, ETextCommit::Type CommitType)
+	{
+		GetExecutor()->Accessor->Set(FVector4(
+			GetPropertyValue_X().Get(0),
+			GetPropertyValue_Y().Get(0),
+			NewValue,
+			GetPropertyValue_W().Get(0)
+		));
+	}
+
+	void SPropertyWidgetVector4::OnValueCommitted_W(float NewValue, ETextCommit::Type CommitType)
+	{
+		GetExecutor()->Accessor->Set(FVector4(
+			GetPropertyValue_X().Get(0),
+			GetPropertyValue_Y().Get(0),
+			GetPropertyValue_Z().Get(0),
+			NewValue
+		));
+	}
+
+
+	void SPropertyWidgetVector4::OnValueChanged_X(float NewValue)
+	{
+		GetExecutor()->Accessor->Set(FVector4(
+			NewValue,
+			GetPropertyValue_Y().Get(0),
+			GetPropertyValue_Z().Get(0),
+			GetPropertyValue_W().Get(0)
+		));
+	}
+
+	void SPropertyWidgetVector4::OnValueChanged_Y(float NewValue)
+	{
+		GetExecutor()->Accessor->Set(FVector4(
+			GetPropertyValue_X().Get(0),
+			NewValue,
+			GetPropertyValue_Z().Get(0),
+			GetPropertyValue_W().Get(0)
+		));
+	}
+
+
+	void SPropertyWidgetVector4::OnValueChanged_Z(float NewValue)
+	{
+		GetExecutor()->Accessor->Set(FVector4(
+			GetPropertyValue_X().Get(0),
+			GetPropertyValue_Y().Get(0),
+			NewValue,
+			GetPropertyValue_W().Get(0)
+		));
+	}
+
+	void SPropertyWidgetVector4::OnValueChanged_W(float NewValue)
+	{
+		GetExecutor()->Accessor->Set(FVector4(
+			GetPropertyValue_X().Get(0),
+			GetPropertyValue_Y().Get(0),
+			GetPropertyValue_Z().Get(0),
+			NewValue
+		));
+	}
+
+	TSharedPtr<SWidget> FWidgetCreaterVector4::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
+	{
+		TSharedPtr<FPropertyTreeNode> PropertyTreeNode = StaticCastSharedPtr<FPropertyTreeNode>(TreeNode);
+		return SNew(SPropertyWidgetVector4, PropertyTreeNode->PropertyInfo);
+	}
+
+	TArray<FString> FWidgetCreaterVector4::SupportTypes()
+	{
+		return { TEXT("FVector4"), TEXT("Vector4"), TEXT("vector4") };
+	}
+
+#undef LOCTEXT_NAMESPACE
+}
+

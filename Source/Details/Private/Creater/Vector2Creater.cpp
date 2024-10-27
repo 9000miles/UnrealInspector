@@ -21,7 +21,6 @@ namespace DETAILS_VIEWER
 						.Label()
 						[
 							SNew(STextBlock)
-								.Font(FAppStyle::GetFontStyle("Graph.VectorEditableTextBox"))
 								.Text(LOCTEXT("VectorNodeXAxisValueLabel", "X"))
 								.ColorAndOpacity(LabelClr)
 						]
@@ -29,7 +28,6 @@ namespace DETAILS_VIEWER
 						.AllowSpin(true)
 						.OnValueChanged(this, &SPropertyWidgetVector2::OnValueChanged_X)
 						.OnValueCommitted(this, &SPropertyWidgetVector2::OnValueCommitted_X)
-						//.DisplayToggle(true)
 				]
 				+ SHorizontalBox::Slot()
 				//.AutoWidth()
@@ -40,7 +38,6 @@ namespace DETAILS_VIEWER
 						.Label()
 						[
 							SNew(STextBlock)
-								.Font(FAppStyle::GetFontStyle("Graph.VectorEditableTextBox"))
 								.Text(LOCTEXT("VectorNodeYAxisValueLabel", "Y"))
 								.ColorAndOpacity(LabelClr)
 						]
@@ -48,14 +45,9 @@ namespace DETAILS_VIEWER
 						.AllowSpin(true)
 						.OnValueChanged(this, &SPropertyWidgetVector2::OnValueChanged_Y)
 						.OnValueCommitted(this, &SPropertyWidgetVector2::OnValueCommitted_Y)
-						//.DisplayToggle(true)
 				]
 		];
 	}
-
-	//TOptional<float> SPropertyWidgetVector2::GetPropertyValue() 
-	//{
-	//}
 
 	TOptional<float> SPropertyWidgetVector2::GetPropertyValue_X() const
 	{

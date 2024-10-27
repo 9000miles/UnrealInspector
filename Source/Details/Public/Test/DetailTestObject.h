@@ -53,6 +53,10 @@ public:
 
 	UPROPERTY()
 	FVector2D Vector2D_1 = FVector2D(34, 534);
+	UPROPERTY()
+	FVector Vector_1 = FVector(34, 534, 744);
+	UPROPERTY()
+	FVector4 Vector4_1 = FVector4(34, 534, 67, 100);
 
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomPropertyBuilder"))
 	int32 _PropertyBuilder = 456;

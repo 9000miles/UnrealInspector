@@ -39,17 +39,9 @@ namespace DETAILS_VIEWER
 			void Set(FName Value) { SetValue<FName, FNameProperty>(Value); }
 			void Set(FText Value) { SetValue<FText, FTextProperty>(Value); }
 			//void Set(FVector Value) { SetValue<FVector, FStructProperty>(Value); }
-			void Set(FVector2D Value) {
-				if (!Object.IsValid() || Property == nullptr) return;
-
-				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
-				UScriptStruct* StructType = StructProperty->Struct;
-				check(StructType == TBaseStructure<FVector2D>::Get());
-
-				StructProperty->SetValue_InContainer(Object.Get(), &Value);
-
-				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
-			}
+			void Set(FVector2D Value) { SetStructValue<FVector2D>(Value); }
+			void Set(FVector Value) { SetStructValue<FVector>(Value); }
+			void Set(FVector4 Value) { SetStructValue<FVector4>(Value); }
 			void Set(uint16 Value) { SetValue<uint16, FUInt16Property>(Value); }
 			void Set(uint32 Value) { SetValue<uint32, FUInt32Property>(Value); }
 			void Set(uint64 Value) { SetValue<uint64, FUInt64Property>(Value); }
@@ -84,6 +76,7 @@ namespace DETAILS_VIEWER
 			}
 			DEFINE_SET_FUNC_MAP(FMapProperty);
 
+
 			//* ============================== Get ================================= *//
 			void Get(bool& Out) { GetValue<bool, FBoolProperty>(Out); }
 			void Get(float& Out) { GetValue<float, FFloatProperty>(Out); }
@@ -92,15 +85,9 @@ namespace DETAILS_VIEWER
 			void Get(FString& Out) { GetValue<FString, FStrProperty>(Out); }
 			void Get(FName& Out) { GetValue<FName, FNameProperty>(Out); }
 			void Get(FText& Out) { GetValue<FText, FTextProperty>(Out); }
-			void Get(FVector2D& Out) {
-				if (!Object.IsValid() || Property == nullptr) return;
-
-				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
-				UScriptStruct* StructType = StructProperty->Struct;
-				check(StructType == TBaseStructure<FVector2D>::Get());
-
-				StructProperty->GetValue_InContainer(Object.Get(), &Out);
-			}
+			void Get(FVector2D& Out) { GetStructValue<FVector2D>(Out); }
+			void Get(FVector& Out) { GetStructValue<FVector>(Out); }
+			void Get(FVector4& Out) { GetStructValue<FVector4>(Out); }
 
 			//* ============================== Reset ================================= *//
 			void Reset() {
@@ -129,6 +116,20 @@ namespace DETAILS_VIEWER
 
 				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
 			}
+			template<typename TValue>
+			void SetStructValue(TValue Value)
+			{
+				if (!Object.IsValid() || Property == nullptr) return;
+
+				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
+				UScriptStruct* StructType = StructProperty->Struct;
+				check(StructType == TBaseStructure<TValue>::Get());
+
+				StructProperty->SetValue_InContainer(Object.Get(), &Value);
+
+				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
+			}
+
 
 			template<typename TValue, typename TPropertyType>
 			void GetValue(TValue& Out) {
@@ -136,6 +137,18 @@ namespace DETAILS_VIEWER
 
 				TPropertyType* Ptr = CastField<TPropertyType>(Property);
 				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Object.Get());
+			}
+
+			template<typename TValue>
+			void GetStructValue(TValue& Out)
+			{
+				if (!Object.IsValid() || Property == nullptr) return;
+
+				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
+				UScriptStruct* StructType = StructProperty->Struct;
+				check(StructType == TBaseStructure<TValue>::Get());
+
+				StructProperty->GetValue_InContainer(Object.Get(), &Out);
 			}
 
 		private:
