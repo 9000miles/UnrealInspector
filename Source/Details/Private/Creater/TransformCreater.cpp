@@ -21,8 +21,7 @@ namespace DETAILS_VIEWER
 						+ SHorizontalBox::Slot()
 						.AutoWidth()
 						[
-							SNew(SBox).WidthOverride(Width).VAlign(VAlign_Center).HAlign(HAlign_Center)
-								[SNew(STextBlock).Text(LOCTEXT("Lable_Translation", "Translation"))]
+							MakeNameWidget(LOCTEXT("Lable_Translation", "Translation"))
 						]
 						+ SHorizontalBox::Slot()
 						[
@@ -35,8 +34,7 @@ namespace DETAILS_VIEWER
 						+ SHorizontalBox::Slot()
 						.AutoWidth()
 						[
-							SNew(SBox).WidthOverride(Width).VAlign(VAlign_Center).HAlign(HAlign_Center)
-								[SNew(STextBlock).Text(LOCTEXT("Lable_Rotation", "Rotation"))]
+							MakeNameWidget(LOCTEXT("Lable_Rotation", "Rotation"))
 						]
 						+ SHorizontalBox::Slot()
 						[
@@ -49,8 +47,7 @@ namespace DETAILS_VIEWER
 						+ SHorizontalBox::Slot()
 						.AutoWidth()
 						[
-							SNew(SBox).WidthOverride(Width).VAlign(VAlign_Center).HAlign(HAlign_Center)
-								[SNew(STextBlock).Text(LOCTEXT("Lable_Scale3D", "Scale3D"))]
+							MakeNameWidget(LOCTEXT("Lable_Scale3D", "Scale3D"))
 						]
 						+ SHorizontalBox::Slot()
 						[
@@ -122,6 +119,18 @@ namespace DETAILS_VIEWER
 			];
 	}
 
+
+	TSharedRef<SWidget> SPropertyWidgetTransform::MakeNameWidget(FText Text)
+	{
+		const float Width = 80.f;
+		return SNew(SBox)
+			.WidthOverride(Width)
+			.VAlign(VAlign_Center)
+			.HAlign(HAlign_Center)
+			[
+				SNew(STextBlock).Text(Text)
+			];
+	}
 
 	TSharedRef<SWidget> SPropertyWidgetTransform::MakeRotationWidget(const FLinearColor LabelClr)
 	{

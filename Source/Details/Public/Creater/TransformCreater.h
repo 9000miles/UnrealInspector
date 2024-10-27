@@ -22,6 +22,8 @@ namespace DETAILS_VIEWER
 		/** Constructs this widget with InArgs */
 		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyInfo> InPropertyInfo);
 
+		TSharedRef<SWidget> MakeNameWidget(FText Text);
+
 		TSharedRef<SWidget> MakeTranslationWidget(const FLinearColor LabelClr);
 		TSharedRef<SWidget> MakeRotationWidget(const FLinearColor LabelClr);
 		TSharedRef<SWidget> MakeScale3DWidget(const FLinearColor LabelClr);
