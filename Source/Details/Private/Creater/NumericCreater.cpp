@@ -40,10 +40,4 @@ namespace DETAILS_VIEWER
 			TEXT("double")
 		};
 	}
-
-	FString FWidgetCreaterNumeric::GetTypeName()
-	{
-		return FWidgetCreaterNumeric::TypeName();
-	}
-
 }

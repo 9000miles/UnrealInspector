@@ -147,6 +147,7 @@ namespace DETAILS_VIEWER
 			virtual void Set(const FName Value) = 0;
 			virtual void Set(const FText Value) = 0;
 			//virtual void Set(const FVector Value) = 0;
+			virtual void Set(const FVector2D Value) = 0;
 
 			virtual void Get(bool& Out) = 0;
 			virtual void Get(float& Out) = 0;
@@ -159,6 +160,7 @@ namespace DETAILS_VIEWER
 			virtual void Get(FName& Out) = 0;
 			virtual void Get(FText& Out) = 0;
 			//virtual void Get(FVector& Out) = 0;
+			virtual void Get(FVector2D& Out) = 0;
 
 			virtual void Reset() = 0;
 

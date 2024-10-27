@@ -31,12 +31,11 @@ namespace DETAILS_VIEWER
 
 	class DETAILSVIEWER_API FWidgetCreaterBool : public FPropertyWidgetCreater
 	{
+		IMPLEMENT_ITYPENAME(FWidgetCreaterBool)
 	public:
 		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
 		TArray<FString> SupportTypes() override;
 
-		static FString TypeName() { return TEXT("WidgetCreaterBool"); }
-		FString GetTypeName() override;
 		static bool IsSupport(TSharedPtr<FPropertyInfo> PropertyInfo)
 		{
 			const TArray<FString> Typies = Factory::Get<IDetailWidgetCreater>(FWidgetCreaterBool::TypeName())->SupportTypes();

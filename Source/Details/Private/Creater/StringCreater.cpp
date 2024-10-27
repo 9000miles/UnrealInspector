@@ -109,10 +109,4 @@ namespace DETAILS_VIEWER
 	{
 		return { TEXT("FString") ,TEXT("string"), TEXT("FName"), TEXT("FText") };
 	}
-
-	FString FWidgetCreaterString::GetTypeName()
-	{
-		return FWidgetCreaterString::TypeName();
-	}
-
 }

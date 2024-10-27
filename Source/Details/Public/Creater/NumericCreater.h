@@ -90,13 +90,11 @@ namespace DETAILS_VIEWER
 	 */
 	class DETAILSVIEWER_API FWidgetCreaterNumeric : public FPropertyWidgetCreater
 	{
+		IMPLEMENT_ITYPENAME(FWidgetCreaterNumeric)
 	public:
 		FWidgetCreaterNumeric();
 		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
 		TArray<FString> SupportTypes() override;
-		static FString TypeName() { return TEXT("WidgetCreaterInteger"); }
-
-		FString GetTypeName() override;
 
 	private:
 	};

@@ -45,10 +45,4 @@ namespace DETAILS_VIEWER
 	{
 		return { TEXT("bool"), TEXT("Bool"), TEXT("boolean") };
 	}
-
-	FString FWidgetCreaterBool::GetTypeName()
-	{
-		return FWidgetCreaterBool::TypeName();
-	}
-
 }

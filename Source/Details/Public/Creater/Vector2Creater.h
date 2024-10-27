@@ -7,41 +7,35 @@
 #include "Core/PropertyHolder.h"
 #include "Core/DetailInfo.h"
 
-class SPropertyWidgetString;
 namespace DETAILS_VIEWER
 {
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API SPropertyWidgetString :public SPropertyWidget
+	class DETAILSVIEWER_API SPropertyWidgetVector2 :public SPropertyWidget
 	{
 	public:
-		SLATE_BEGIN_ARGS(SPropertyWidgetString)
+		SLATE_BEGIN_ARGS(SPropertyWidgetVector2)
 			{}
 		SLATE_END_ARGS()
 
 		/** Constructs this widget with InArgs */
 		void Construct(const FArguments& InArgs, TSharedPtr<FPropertyInfo> InPropertyInfo);
+		TOptional<float> GetPropertyValue_X() const;
+		TOptional<float> GetPropertyValue_Y() const;
+		void OnValueCommitted_X(float NewValue, ETextCommit::Type CommitType);
+		void OnValueCommitted_Y(float NewValue, ETextCommit::Type CommitType);
+		void OnValueChanged_X(float NewValue);
+		void OnValueChanged_Y(float NewValue);
 
-		void OnTextCommitted(const FText& Text, ETextCommit::Type Type);
-
-		FText GetText() const;
-
-		FText GetHintText();
-		FText GetPropertyValue() const;
-		void SetPropertyValue(FText Text);
-
-	private:
-		TSharedPtr<SEditableTextBox> EditableTextBoxPtr;
 	};
 	/**
 	 *
 	 */
-	class DETAILSVIEWER_API FWidgetCreaterString : public FPropertyWidgetCreater
+	class DETAILSVIEWER_API FWidgetCreaterVector2 : public FPropertyWidgetCreater
 	{
-		IMPLEMENT_ITYPENAME(FWidgetCreaterString)
+		IMPLEMENT_ITYPENAME(FWidgetCreaterVector2)
 	public:
-		FWidgetCreaterString();
 		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
 		TArray<FString> SupportTypes() override;
 

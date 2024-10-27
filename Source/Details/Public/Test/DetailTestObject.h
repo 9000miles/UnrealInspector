@@ -52,7 +52,7 @@ public:
 	float float_Min_Max;
 
 	UPROPERTY()
-	FVector2D Vector2D_1;
+	FVector2D Vector2D_1 = FVector2D(34, 534);
 
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomPropertyBuilder"))
 	int32 _PropertyBuilder = 456;

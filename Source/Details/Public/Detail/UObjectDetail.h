@@ -35,30 +35,41 @@ namespace DETAILS_VIEWER
 			virtual ~FUEPropertyAccessor() {}
 
 			//* ============================== Set ================================= *//
-			void Set(FString value) { SetValue<FString, FStrProperty>(value); }
-			void Set(FName value) { SetValue<FName, FNameProperty>(value); }
-			void Set(FText value) { SetValue<FText, FTextProperty>(value); }
-			//void Set(FVector value) { SetValue<FVector, FStructProperty>(value); }
-			void Set(uint16 value) { SetValue<uint16, FUInt16Property>(value); }
-			void Set(uint32 value) { SetValue<uint32, FUInt32Property>(value); }
-			void Set(uint64 value) { SetValue<uint64, FUInt64Property>(value); }
-			void Set(int8 value) { SetValue<int8, FInt8Property>(value); }
-			void Set(int16 value) { SetValue<int16, FInt16Property>(value); }
-			void Set(int32 value) { SetValue<int32, FIntProperty>(value); }
-			void Set(int64 value) { SetValue<int64, FInt64Property>(value); }
-			void Set(bool value) { SetValue<bool, FBoolProperty>(value); }
-			void Set(uint8 value) { SetValue<uint8, FByteProperty>(value); }
-			void Set(float value) { SetValue<float, FFloatProperty>(value); }
-			void Set(double value) { SetValue<double, FDoubleProperty>(value); }
-			void Set(UObject* value) { SetValue<UObject*, FObjectProperty>(value); }
-			void Set(UClass* value) { SetValue<UClass*, FClassProperty>(value); }
+			void Set(FString Value) { SetValue<FString, FStrProperty>(Value); }
+			void Set(FName Value) { SetValue<FName, FNameProperty>(Value); }
+			void Set(FText Value) { SetValue<FText, FTextProperty>(Value); }
+			//void Set(FVector Value) { SetValue<FVector, FStructProperty>(Value); }
+			void Set(FVector2D Value) {
+				if (!Object.IsValid() || Property == nullptr) return;
+
+				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
+				UScriptStruct* StructType = StructProperty->Struct;
+				check(StructType == TBaseStructure<FVector2D>::Get());
+
+				StructProperty->SetValue_InContainer(Object.Get(), &Value);
+
+				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
+			}
+			void Set(uint16 Value) { SetValue<uint16, FUInt16Property>(Value); }
+			void Set(uint32 Value) { SetValue<uint32, FUInt32Property>(Value); }
+			void Set(uint64 Value) { SetValue<uint64, FUInt64Property>(Value); }
+			void Set(int8 Value) { SetValue<int8, FInt8Property>(Value); }
+			void Set(int16 Value) { SetValue<int16, FInt16Property>(Value); }
+			void Set(int32 Value) { SetValue<int32, FIntProperty>(Value); }
+			void Set(int64 Value) { SetValue<int64, FInt64Property>(Value); }
+			void Set(bool Value) { SetValue<bool, FBoolProperty>(Value); }
+			void Set(uint8 Value) { SetValue<uint8, FByteProperty>(Value); }
+			void Set(float Value) { SetValue<float, FFloatProperty>(Value); }
+			void Set(double Value) { SetValue<double, FDoubleProperty>(Value); }
+			void Set(UObject* Value) { SetValue<UObject*, FObjectProperty>(Value); }
+			void Set(UClass* Value) { SetValue<UClass*, FClassProperty>(Value); }
 
 #define DEFINE_SET_FUNC_CONTAINER(Type, PropType) \
 			template<typename T> \
-			void Set(const Type<T>& value) { \
+			void Set(const Type<T>& Value) { \
 				if (!Object.IsValid() || Property == nullptr) return; \
 				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), Value); \
 			}
 			DEFINE_SET_FUNC_CONTAINER(TArray, FArrayProperty);
 			DEFINE_SET_FUNC_CONTAINER(TSet, FSetProperty);
@@ -66,10 +77,10 @@ namespace DETAILS_VIEWER
 			// 宏定义 Map 类型
 #define DEFINE_SET_FUNC_MAP(PropType) \
 			template<typename K, typename V> \
-			void Set(const TMap<K, V>& value) {\
+			void Set(const TMap<K, V>& Value) {\
 				if (!Object.IsValid() || Property == nullptr) return; \
 				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value); \
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), Value); \
 			}
 			DEFINE_SET_FUNC_MAP(FMapProperty);
 
@@ -81,6 +92,15 @@ namespace DETAILS_VIEWER
 			void Get(FString& Out) { GetValue<FString, FStrProperty>(Out); }
 			void Get(FName& Out) { GetValue<FName, FNameProperty>(Out); }
 			void Get(FText& Out) { GetValue<FText, FTextProperty>(Out); }
+			void Get(FVector2D& Out) {
+				if (!Object.IsValid() || Property == nullptr) return;
+
+				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
+				UScriptStruct* StructType = StructProperty->Struct;
+				check(StructType == TBaseStructure<FVector2D>::Get());
+
+				StructProperty->GetValue_InContainer(Object.Get(), &Out);
+			}
 
 			//* ============================== Reset ================================= *//
 			void Reset() {
@@ -101,11 +121,11 @@ namespace DETAILS_VIEWER
 
 		protected:
 			template<typename TValue, typename TPropertyType>
-			void SetValue(TValue value) {
+			void SetValue(TValue Value) {
 				if (!Object.IsValid() || Property == nullptr) return;
 
 				TPropertyType* Ptr = CastField<TPropertyType>(Property);
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), value);
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), Value);
 
 				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
 			}
