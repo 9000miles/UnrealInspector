@@ -38,7 +38,7 @@ namespace DETAILS_VIEWER
 			void Set(FString Value) { SetValue<FString, FStrProperty>(Value); }
 			void Set(FName Value) { SetValue<FName, FNameProperty>(Value); }
 			void Set(FText Value) { SetValue<FText, FTextProperty>(Value); }
-			//void Set(FVector Value) { SetValue<FVector, FStructProperty>(Value); }
+			void Set(FGuid Value) { SetStructValue<FGuid>(Value); }
 			void Set(FVector2D Value) { SetStructValue<FVector2D>(Value); }
 			void Set(FVector Value) { SetStructValue<FVector>(Value); }
 			void Set(FVector4 Value) { SetStructValue<FVector4>(Value); }
@@ -85,6 +85,7 @@ namespace DETAILS_VIEWER
 			void Get(FString& Out) { GetValue<FString, FStrProperty>(Out); }
 			void Get(FName& Out) { GetValue<FName, FNameProperty>(Out); }
 			void Get(FText& Out) { GetValue<FText, FTextProperty>(Out); }
+			void Get(FGuid& Out) { GetStructValue<FGuid>(Out); }
 			void Get(FVector2D& Out) { GetStructValue<FVector2D>(Out); }
 			void Get(FVector& Out) { GetStructValue<FVector>(Out); }
 			void Get(FVector4& Out) { GetStructValue<FVector4>(Out); }

@@ -58,6 +58,9 @@ public:
 	UPROPERTY()
 	FVector4 Vector4_1 = FVector4(34, 534, 67, 100);
 
+	UPROPERTY()
+	FGuid Guid_1;
+
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomPropertyBuilder"))
 	int32 _PropertyBuilder = 456;
 	UPROPERTY(meta = (PropertyBuilder = "/Script/RuntimeDetail.CustomDetailRowWidget"))

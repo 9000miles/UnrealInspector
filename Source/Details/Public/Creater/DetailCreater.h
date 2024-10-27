@@ -62,6 +62,14 @@ namespace DETAILS_VIEWER
 
 	private:
 		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
+
+	protected:
+		template<typename T>
+		TSharedPtr<SWidget> MakePropertyWidget(TSharedPtr<FTreeNode> TreeNode)
+		{
+			TSharedPtr<FPropertyTreeNode> PropertyTreeNode = StaticCastSharedPtr<FPropertyTreeNode>(TreeNode);
+			return SNew(T, PropertyTreeNode->PropertyInfo);
+		}
 	protected:
 		TSharedPtr<PROPERTY::IExecutor> Executor;
 	};

@@ -13,6 +13,7 @@
 #include "Creater/Vector2Creater.h"
 #include "Creater/Vector4Creater.h"
 #include "Creater/Vector3Creater.h"
+#include "Creater/GuidCreater.h"
 
 #define LOCTEXT_NAMESPACE "FPropertyInspectorModule"
 
@@ -28,6 +29,7 @@ void FDetailsViewerModule::StartupModule()
 	Factory::Register<FWidgetCreaterVector2>();
 	Factory::Register<FWidgetCreaterVector>();
 	Factory::Register<FWidgetCreaterVector4>();
+	Factory::Register<FWidgetCreaterGuid>();
 
 	Factory::Register<FDetailMaker>();
 	Factory::Register<FCustomDetailMaker>();
