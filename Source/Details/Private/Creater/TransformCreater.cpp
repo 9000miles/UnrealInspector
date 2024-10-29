@@ -462,6 +462,10 @@ namespace DETAILS_VIEWER
 
 	TSharedPtr<SWidget> FWidgetCreaterTransform::MakeWidget(TSharedPtr<FTreeNode> TreeNode)
 	{
+		//	TSharedPtr<FPropertyInfo> TranslationInfo ;
+		//TSharedPtr<FPropertyTreeNode> TranslationNode = MakeShareable(new FPropertyTreeNode(TranslationInfo));
+		//TreeNode->AddChild();
+		return SNullWidget::NullWidget;
 		return MakePropertyWidget<SPropertyWidgetTransform>(TreeNode);
 	}
 

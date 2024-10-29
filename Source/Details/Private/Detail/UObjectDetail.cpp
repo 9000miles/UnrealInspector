@@ -185,21 +185,55 @@ namespace DETAILS_VIEWER
 				CategoryList->Add(ExistCategory);
 			}
 
-			TSharedPtr<FPropertyInfo> Parameter = MakeShareable(new FPropertyInfo());
-
-			Parameter->Name = PropertyName;
-			Parameter->DisplayName = DisplayName;
-			Parameter->Description = Property->GetMetaData(TEXT("Description"));
-			Parameter->Type = Property->GetCPPType();
-			Parameter->Category = Category;
-			Parameter->Advanced = Property->HasMetaData(TEXT("AdvancedDisplay"));
-			Parameter->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(InObject, Property));
-			Parameter->Metadata = MakeShareable(new PROPERTY::FUEPropertyMetadata(Property));
-
-			ExistCategory->Add(Parameter);
+			TSharedPtr<FPropertyInfo> PropertyInfo = MakePropertyInfo(PropertyName, DisplayName, Property, Category, InObject);
+			ExistCategory->Add(PropertyInfo);
 		}
 
 		CategoryList->Sort();
+	}
+
+	TSharedPtr<DETAILS_VIEWER::FPropertyInfo> FUObjectDetailHolder::MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, FString Category, TWeakObjectPtr<UObject> InObject)
+	{
+		TSharedPtr<FPropertyInfo> PropertyInfo = MakeShareable(new FPropertyInfo());
+
+		PropertyInfo->Name = PropertyName;
+		PropertyInfo->DisplayName = DisplayName;
+		PropertyInfo->Description = Property->GetMetaData(TEXT("Description"));
+		PropertyInfo->Type = Property->GetCPPType();
+		PropertyInfo->Category = Category;
+		PropertyInfo->Advanced = Property->HasMetaData(TEXT("AdvancedDisplay"));
+		PropertyInfo->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(InObject, Property));
+		PropertyInfo->Metadata = MakeShareable(new PROPERTY::FUEPropertyMetadata(Property));
+
+		if (Property->IsA<FStructProperty>())
+		{
+			//判断是不是FTransform结构体类型的属性
+			FStructProperty* StructProperty = CastFieldChecked<FStructProperty>(Property);
+			TObjectPtr<class UScriptStruct> Struct = StructProperty->Struct;
+			if (Struct->GetStructCPPName() == TEXT("FTransform"))
+			{
+				FString Name;
+				UE_Property* InProperty = nullptr;
+
+				Name = TEXT("Translation");
+				InProperty = Struct->FindPropertyByName(*Name);
+				TSharedPtr<FPropertyInfo> Translation = MakePropertyInfo(Name, Name, InProperty, TEXT(""), InObject);
+				PropertyInfo->Children.Add(Translation);
+
+				Name = TEXT("Rotation");
+				InProperty = Struct->FindPropertyByName(*Name);
+				TSharedPtr<FPropertyInfo> Rotation = MakePropertyInfo(Name, Name, InProperty, TEXT(""), InObject);
+				PropertyInfo->Children.Add(Rotation);
+
+				Name = TEXT("Scale3D");
+				InProperty = Struct->FindPropertyByName(*Name);
+				TSharedPtr<FPropertyInfo> Scale3D = MakePropertyInfo(Name, Name, InProperty, TEXT(""), InObject);
+				PropertyInfo->Children.Add(Scale3D);
+			}
+		}
+
+
+		return PropertyInfo;
 	}
 
 	void FUObjectDetailHolder::SetDetailInfo(TSharedPtr<FDetailInfo> Info)

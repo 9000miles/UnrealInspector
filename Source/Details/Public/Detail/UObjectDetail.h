@@ -306,6 +306,8 @@ namespace DETAILS_VIEWER
 		void SetObject();
 		void IteratorField(TWeakObjectPtr<UObject> InObject, TSharedPtr<FCategoryList> CategoryList);
 
+		TSharedPtr<FPropertyInfo> MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, FString Category, TWeakObjectPtr<UObject> InObject);
+
 		static FString TypeName() { return TEXT("UObjectDetail"); }
 		FString GetTypeName() override { return FUObjectDetailHolder::TypeName(); }
 

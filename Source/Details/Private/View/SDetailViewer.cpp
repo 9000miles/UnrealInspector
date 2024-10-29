@@ -214,6 +214,12 @@ namespace DETAILS_VIEWER
 					{
 						TSharedPtr<FPropertyTreeNode> Node = MakeShareable(new FPropertyTreeNode(PropertyInfo));
 						CategoryNode->AddChild(Node);
+
+						for (TSharedPtr<FPropertyInfo> Child : PropertyInfo->Children)
+						{
+							TSharedPtr<FPropertyTreeNode> InNode = MakeShareable(new FPropertyTreeNode(Child));
+							Node->AddChild(InNode);
+						}
 					});
 			});
 	}

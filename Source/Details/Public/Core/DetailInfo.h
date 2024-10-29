@@ -350,6 +350,7 @@ namespace DETAILS_VIEWER
 		bool Advanced;
 		TSharedPtr<PROPERTY::IExecutor> Executor;
 		TSharedPtr<PROPERTY::FMetadata> Metadata;
+		TArray<TSharedPtr<FPropertyInfo>> Children;
 
 	};
 
