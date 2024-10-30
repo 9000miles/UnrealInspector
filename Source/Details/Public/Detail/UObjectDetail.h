@@ -26,9 +26,9 @@ namespace DETAILS_VIEWER
 		class FUEPropertyAccessor :public IPropertyAccessor
 		{
 		public:
-			FUEPropertyAccessor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+			FUEPropertyAccessor(void* InContainer, UE_Property* InProperty)
 				:Property(InProperty),
-				Object(InObject)
+				Container(InContainer)
 			{
 
 			}
@@ -60,9 +60,9 @@ namespace DETAILS_VIEWER
 #define DEFINE_SET_FUNC_CONTAINER(Type, PropType) \
 			template<typename T> \
 			void Set(const Type<T>& Value) { \
-				if (!Object.IsValid() || Property == nullptr) return; \
+				if (!Container || Property == nullptr) return; \
 				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), Value); \
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Container, Value); \
 			}
 			DEFINE_SET_FUNC_CONTAINER(TArray, FArrayProperty);
 			DEFINE_SET_FUNC_CONTAINER(TSet, FSetProperty);
@@ -71,9 +71,9 @@ namespace DETAILS_VIEWER
 #define DEFINE_SET_FUNC_MAP(PropType) \
 			template<typename K, typename V> \
 			void Set(const TMap<K, V>& Value) {\
-				if (!Object.IsValid() || Property == nullptr) return; \
+				if (!Container || Property == nullptr) return; \
 				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), Value); \
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Container, Value); \
 			}
 			DEFINE_SET_FUNC_MAP(FMapProperty);
 
@@ -94,13 +94,13 @@ namespace DETAILS_VIEWER
 
 			//* ============================== Reset ================================= *//
 			void Reset() {
-				if (!Object.IsValid()) return;
+				if (!Container) return;
 
-				UObject* CDO = Object->GetClass()->ClassDefaultObject.Get();
-				if (CDO == nullptr || Property == nullptr) return;
+				//UObject* CDO = Container->GetClass()->ClassDefaultObject.Get();
+				//if (CDO == nullptr || Property == nullptr) return;
 
-				FString DefaultValue = FUEPropertyHelper::PropertyToJson(CDO, Property->GetFName());
-				FUEPropertyHelper::JsonToProperty(Object.Get(), Property->GetFName(), DefaultValue);
+				//FString DefaultValue = FUEPropertyHelper::PropertyToJson(CDO, Property->GetFName());
+				//FUEPropertyHelper::JsonToProperty(Container, Property->GetFName(), DefaultValue);
 			}
 
 			//* ============================== OnPropertyChanged ================================= *//
@@ -112,23 +112,23 @@ namespace DETAILS_VIEWER
 		protected:
 			template<typename TValue, typename TPropertyType>
 			void SetValue(TValue Value) {
-				if (!Object.IsValid() || Property == nullptr) return;
+				if (!Container || Property == nullptr) return;
 
 				TPropertyType* Ptr = CastField<TPropertyType>(Property);
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Object.Get(), Value);
+				if (Ptr) Ptr->SetPropertyValue_InContainer(Container, Value);
 
 				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
 			}
 			template<typename TValue>
 			void SetStructValue(TValue Value)
 			{
-				if (!Object.IsValid() || Property == nullptr) return;
+				if (!Container || Property == nullptr) return;
 
 				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
 				UScriptStruct* StructType = StructProperty->Struct;
 				check(StructType == TBaseStructure<TValue>::Get());
 
-				StructProperty->SetValue_InContainer(Object.Get(), &Value);
+				StructProperty->SetValue_InContainer(Container, &Value);
 
 				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
 			}
@@ -136,27 +136,28 @@ namespace DETAILS_VIEWER
 
 			template<typename TValue, typename TPropertyType>
 			void GetValue(TValue& Out) {
-				if (!Object.IsValid() || Property == nullptr) return;
+				if (!Container || Property == nullptr) return;
 
 				TPropertyType* Ptr = CastField<TPropertyType>(Property);
-				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Object.Get());
+				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Container);
 			}
 
 			template<typename TValue>
 			void GetStructValue(TValue& Out)
 			{
-				if (!Object.IsValid() || Property == nullptr) return;
+				if (!Container || Property == nullptr) return;
 
 				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
 				UScriptStruct* StructType = StructProperty->Struct;
 				check(StructType == TBaseStructure<TValue>::Get());
 
-				StructProperty->GetValue_InContainer(Object.Get(), &Out);
+				StructProperty->GetValue_InContainer(Container, &Out);
 			}
 
 		private:
 			UE_Property* Property;
-			TWeakObjectPtr<UObject> Object;
+			void* Container;
+			TWeakObjectPtr<UObject> OwnerObject;
 		};
 
 		class FUEPropertyEditable :public IEditable
@@ -260,11 +261,12 @@ namespace DETAILS_VIEWER
 		class FUObjectParameterExecutor :public IExecutor
 		{
 		public:
-			FUObjectParameterExecutor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
-				:Property(InProperty),
-				Object(InObject)
+			FUObjectParameterExecutor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty, void* InContainer)
+			:Object(InObject),
+			Property(InProperty),
+			Container(InContainer)
 			{
-				Accessor = MakeShareable(new PROPERTY::FUEPropertyAccessor(Object, Property));
+				Accessor = MakeShareable(new PROPERTY::FUEPropertyAccessor(Container, Property));
 				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable(Property));
 				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible(Property));
 				WidgetMaker = MakeShareable(new PROPERTY::FUEPropertyWidgetMaker(Property));
@@ -278,6 +280,7 @@ namespace DETAILS_VIEWER
 
 		protected:
 			UE_Property* Property;
+			void* Container;
 			TWeakObjectPtr<UObject> Object;
 		};
 
@@ -306,7 +309,7 @@ namespace DETAILS_VIEWER
 		void SetObject();
 		void IteratorField(TWeakObjectPtr<UObject> InObject, TSharedPtr<FCategoryList> CategoryList);
 
-		TSharedPtr<FPropertyInfo> MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, FString Category, TWeakObjectPtr<UObject> InObject);
+		TSharedPtr<FPropertyInfo> MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, FString Category, TWeakObjectPtr<UObject> InObject, void* Container);
 
 		static FString TypeName() { return TEXT("UObjectDetail"); }
 		FString GetTypeName() override { return FUObjectDetailHolder::TypeName(); }

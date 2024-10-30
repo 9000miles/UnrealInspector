@@ -39,6 +39,7 @@ TStatId UDetailTestObject::GetStatId() const
 
 void UDetailTestObject::PrintPropertyValue()
 {
+return;
 #define PRINT_VALUE(Name, Format, Value) \
     UE_LOG(LogTemp, Log, TEXT(#Name ": " Format), Value);
 
