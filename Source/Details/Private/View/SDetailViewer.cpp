@@ -205,23 +205,43 @@ namespace DETAILS_VIEWER
 
 	void SDetailViewer::GenerateTreeNodes()
 	{
+		// 清空现有节点
+		TreeNodes.Empty();
+
+		// 遍历所有分类信息
 		DetailInfo->CategoryList->Enumerate([this](TSharedPtr<FCategoryInfo> CategoryInfo)
 			{
+				// 创建分类节点
 				TSharedPtr<FCategoryTreeNode> CategoryNode = MakeShareable(new FCategoryTreeNode(CategoryInfo));
 				TreeNodes.Add(CategoryNode);
 
+				// 遍历分类中的所有属性信息
 				CategoryInfo->PropertyList->Enumerate([CategoryNode](TSharedPtr<FPropertyInfo> PropertyInfo)
 					{
-						TSharedPtr<FPropertyTreeNode> Node = MakeShareable(new FPropertyTreeNode(PropertyInfo));
-						CategoryNode->AddChild(Node);
+						// 创建属性节点
+						TSharedPtr<FPropertyTreeNode> PropertyNode = MakeShareable(new FPropertyTreeNode(PropertyInfo));
+						CategoryNode->AddChild(PropertyNode);
 
-						for (TSharedPtr<FPropertyInfo> Child : PropertyInfo->Children)
-						{
-							TSharedPtr<FPropertyTreeNode> InNode = MakeShareable(new FPropertyTreeNode(Child));
-							Node->AddChild(InNode);
-						}
+						// 递归创建子属性节点
+						PropertyInfo->Enumerate([PropertyNode](TSharedPtr<FPropertyInfo> SubPropertyInfo)
+							{
+								TSharedPtr<FPropertyTreeNode> SubPropertyNode = MakeShareable(new FPropertyTreeNode(SubPropertyInfo));
+								PropertyNode->AddChild(SubPropertyNode);
+							});
 					});
 			});
+
+		// 这里可以添加额外的逻辑，例如排序或过滤树节点等
+	}
+
+	void SDetailViewer::GenChildPropertyNode(TSharedPtr<FPropertyInfo> ChildProperty)
+	{
+		//TSharedPtr<FPropertyTreeNode> InNode = MakeShareable(new FPropertyTreeNode(ChildProperty));
+		//Node->AddChild(InNode);
+		//if (ChildProperty->Children.Num() > 0)
+		//{
+
+		//}
 	}
 
 	//TSharedPtr<FTreeNode> SDetailView::GenerateNode(UObject* Object, UE_Property* Property)

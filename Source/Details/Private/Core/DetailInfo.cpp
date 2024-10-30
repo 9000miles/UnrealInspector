@@ -175,6 +175,20 @@ namespace DETAILS_VIEWER
 		return JsonObject;
 	}
 
+	void FPropertyInfo::Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func)
+	{
+		// 先对当前节点执行 Func
+		//Func(AsShared());
+
+		// 对所有子节点递归执行 Func
+		for (TSharedPtr<FPropertyInfo> Item : Children)
+		{
+			Func(Item);
+
+			Item->Enumerate(Func);
+		}
+	}
+
 	void PROPERTY::IExecutor::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 	}

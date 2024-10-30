@@ -332,7 +332,7 @@ namespace DETAILS_VIEWER
 
 
 
-	class FPropertyInfo :public IJsonable
+	class FPropertyInfo :public TSharedFromThis<FPropertyInfo>, public IJsonable
 	{
 	public:
 		virtual ~FPropertyInfo()
@@ -340,6 +340,9 @@ namespace DETAILS_VIEWER
 		}
 		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
+
+	public:
+		void Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func);
 
 	public:
 		FString Name;

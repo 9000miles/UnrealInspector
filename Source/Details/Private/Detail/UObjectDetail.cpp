@@ -197,7 +197,7 @@ namespace DETAILS_VIEWER
 		TSharedPtr<FPropertyInfo> PropertyInfo = MakeShareable(new FPropertyInfo());
 
 		PropertyInfo->Name = PropertyName;
-		PropertyInfo->DisplayName = DisplayName;
+		PropertyInfo->DisplayName = DisplayName.IsEmpty() ? PropertyName : DisplayName;
 		PropertyInfo->Description = Property->GetMetaData(TEXT("Description"));
 		PropertyInfo->Type = Property->GetCPPType();
 		PropertyInfo->Category = Category;
@@ -207,38 +207,25 @@ namespace DETAILS_VIEWER
 
 		if (Property->IsA<FStructProperty>())
 		{
-			//判断是不是FTransform结构体类型的属性
 			FStructProperty* StructProperty = CastFieldChecked<FStructProperty>(Property);
 			TObjectPtr<class UScriptStruct> Struct = StructProperty->Struct;
+			// Iterate over sub-properties of the struct
 			for (TFieldIterator<UE_Property> It(Struct); It; ++It)
 			{
-				UE_Property* InProperty = *It;
-				TSharedPtr<FPropertyInfo> SubPropertyInfo = MakePropertyInfo(InProperty->GetName(), InProperty->GetName(), InProperty, TEXT(""), InObject, Struct);
+				UE_Property* SubProperty = *It;
+
+				// Create sub-property info and add it to children list
+				TSharedPtr<FPropertyInfo> SubPropertyInfo = MakePropertyInfo(
+					SubProperty->GetName(),
+					SubProperty->GetName(),
+					SubProperty,
+					TEXT(""),
+					InObject,
+					StructProperty->ContainerPtrToValuePtr<void>(Container)
+				);
 				PropertyInfo->Children.Add(SubPropertyInfo);
 			}
-
-			//if (Struct->GetStructCPPName() == TEXT("FTransform"))
-			//{
-			//	FString Name;
-			//	UE_Property* InProperty = nullptr;
-
-			//	Name = TEXT("Translation");
-			//	InProperty = Struct->FindPropertyByName(*Name);
-			//	TSharedPtr<FPropertyInfo> Translation = MakePropertyInfo(Name, Name, InProperty, TEXT(""), InObject);
-			//	PropertyInfo->Children.Add(Translation);
-
-			//	Name = TEXT("Rotation");
-			//	InProperty = Struct->FindPropertyByName(*Name);
-			//	TSharedPtr<FPropertyInfo> Rotation = MakePropertyInfo(Name, Name, InProperty, TEXT(""), InObject);
-			//	PropertyInfo->Children.Add(Rotation);
-
-			//	Name = TEXT("Scale3D");
-			//	InProperty = Struct->FindPropertyByName(*Name);
-			//	TSharedPtr<FPropertyInfo> Scale3D = MakePropertyInfo(Name, Name, InProperty, TEXT(""), InObject);
-			//	PropertyInfo->Children.Add(Scale3D);
-			//}
 		}
-
 
 		return PropertyInfo;
 	}
