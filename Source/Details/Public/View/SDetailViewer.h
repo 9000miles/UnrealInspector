@@ -32,7 +32,6 @@ namespace DETAILS_VIEWER
 		void Construct(const FArguments& InArgs);
 
 		void InitByOptions(FDetailOptions Options);
-		void GenChildPropertyNode(TSharedPtr<FPropertyInfo> ChildProperty);
 		//void SetObject(UObject* Object);
 
 	private:

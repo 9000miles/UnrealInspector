@@ -178,14 +178,23 @@ namespace DETAILS_VIEWER
 	void FPropertyInfo::Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func)
 	{
 		// 先对当前节点执行 Func
-		//Func(AsShared());
+		Func(AsShared());
 
 		// 对所有子节点递归执行 Func
 		for (TSharedPtr<FPropertyInfo> Item : Children)
 		{
-			Func(Item);
-
 			Item->Enumerate(Func);
+		}
+	}
+
+	void FPropertyInfo::MakeTreeNode(TSharedPtr<FTreeNode> ParentNode)
+	{
+		TSharedPtr<FPropertyTreeNode> TreeNode = MakeShareable(new FPropertyTreeNode(AsShared()));
+		ParentNode->AddChild(TreeNode);
+
+		for (TSharedPtr<FPropertyInfo> Child : Children)
+		{
+			Child->MakeTreeNode(TreeNode);
 		}
 	}
 

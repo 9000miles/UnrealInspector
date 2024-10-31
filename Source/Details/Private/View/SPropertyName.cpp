@@ -14,8 +14,13 @@ namespace DETAILS_VIEWER
 
 		ChildSlot
 			[
-				SNew(STextBlock)
-					.Text(FText::FromString(Name))
+				SNew(SBorder)
+					.BorderImage(FAppStyle::GetNoBrush())
+					.VAlign(VAlign_Center)
+					[
+						SNew(STextBlock)
+							.Text(FText::FromString(Name))
+					]
 			];
 
 	}

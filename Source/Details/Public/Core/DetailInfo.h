@@ -7,6 +7,8 @@
 #include "Interface/ITypeName.h"
 #include "Interface/IJsonable.h"
 
+namespace DETAILS_VIEWER { class FPropertyTreeNode; }
+
 namespace DETAILS_VIEWER { class FTreeNode; }
 
 namespace DETAILS_VIEWER
@@ -344,6 +346,7 @@ namespace DETAILS_VIEWER
 	public:
 		void Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func);
 
+		void MakeTreeNode(TSharedPtr<FTreeNode> Node);
 	public:
 		FString Name;
 		FString Description;

@@ -48,7 +48,7 @@ namespace DETAILS_VIEWER
 							[
 								// 显示名称
 								SNew(STextBlock)
-								.Text(FText::FromString(DetailInfo->Name))
+									.Text(FText::FromString(DetailInfo->Name))
 							]
 							+ SVerticalBox::Slot()
 							//.FillHeight()
@@ -218,45 +218,12 @@ namespace DETAILS_VIEWER
 				// 遍历分类中的所有属性信息
 				CategoryInfo->PropertyList->Enumerate([CategoryNode](TSharedPtr<FPropertyInfo> PropertyInfo)
 					{
-						// 创建属性节点
-						TSharedPtr<FPropertyTreeNode> PropertyNode = MakeShareable(new FPropertyTreeNode(PropertyInfo));
-						CategoryNode->AddChild(PropertyNode);
-
-						// 递归创建子属性节点
-						PropertyInfo->Enumerate([PropertyNode](TSharedPtr<FPropertyInfo> SubPropertyInfo)
-							{
-								TSharedPtr<FPropertyTreeNode> SubPropertyNode = MakeShareable(new FPropertyTreeNode(SubPropertyInfo));
-								PropertyNode->AddChild(SubPropertyNode);
-							});
+						PropertyInfo->MakeTreeNode(CategoryNode);
 					});
 			});
 
 		// 这里可以添加额外的逻辑，例如排序或过滤树节点等
 	}
-
-	void SDetailViewer::GenChildPropertyNode(TSharedPtr<FPropertyInfo> ChildProperty)
-	{
-		//TSharedPtr<FPropertyTreeNode> InNode = MakeShareable(new FPropertyTreeNode(ChildProperty));
-		//Node->AddChild(InNode);
-		//if (ChildProperty->Children.Num() > 0)
-		//{
-
-		//}
-	}
-
-	//TSharedPtr<FTreeNode> SDetailView::GenerateNode(UObject* Object, UE_Property* Property)
-	//{
-	//	if (Property->IsA(FArrayProperty::StaticClass()))
-	//		return MakeShareable(new FArrayNode(Object, Property));
-	//	else if (Property->IsA(FMapProperty::StaticClass()))
-	//		return MakeShareable(new FMapNode(Object, Property));
-	//	else if (Property->IsA(FSetProperty::StaticClass()))
-	//		return MakeShareable(new FSetNode(Object, Property));
-	//	else if (Property->IsA(FStructProperty::StaticClass()))
-	//		return MakeShareable(new FStructNode(Object, Property));
-
-	//	return MakeShareable(new FNormalNode(Object, Property));
-	//}
 
 	void SDetailViewer::OnSplitterSlotResized(int32 Index, float Size)
 	{
