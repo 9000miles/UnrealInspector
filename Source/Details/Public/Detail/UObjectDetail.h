@@ -262,9 +262,9 @@ namespace DETAILS_VIEWER
 		{
 		public:
 			FUObjectParameterExecutor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty, void* InContainer)
-			:Object(InObject),
-			Property(InProperty),
-			Container(InContainer)
+				:Property(InProperty),
+				Container(InContainer),
+				Object(InObject)
 			{
 				Accessor = MakeShareable(new PROPERTY::FUEPropertyAccessor(Container, Property));
 				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable(Property));

@@ -36,6 +36,7 @@ namespace DETAILS_VIEWER
 	{
 	public:
 		FTreeNode(ENodeType	InNodeType) {};
+		virtual ~FTreeNode(){}
 		virtual FString GetName() { return TEXT("TreeNode"); };
 		virtual FString GetDisplayName() { return TEXT("TreeNode"); };
 		virtual TSharedPtr<SWidget> GetWidget();
@@ -61,6 +62,7 @@ namespace DETAILS_VIEWER
 		FCategoryTreeNode(TSharedPtr<FCategoryInfo> Item) :FTreeNode(ENodeType::Category), CategoryInfo(Item)
 		{
 		}
+		virtual ~FCategoryTreeNode(){}
 
 	public:
 		static FString TypeName() { return TEXT("CategoryTreeNode"); }
@@ -80,6 +82,7 @@ namespace DETAILS_VIEWER
 		{
 			// @TODO 实现复杂属性的子属性创建，数组，结构体，等等
 		}
+		virtual ~FPropertyTreeNode(){}
 
 	public:
 		static FString TypeName() { return TEXT("PropertyTreeNode"); }
