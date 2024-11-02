@@ -25,7 +25,7 @@ namespace DETAILS_VIEWER
 
 		FString GetTypeName() override;
 		void Initalized() override;
-
+		virtual bool IsAllowHasChildren();
 	};
 
 	/**

@@ -26,6 +26,13 @@ namespace DETAILS_VIEWER
 
 		FText GetPropertyValue() const;
 		FReply OnButtonClicked();
+
+		void OnSelectionChanged(FName InSelectedItem, ESelectInfo::Type SelectInfo);
+		TSharedRef<SWidget> OnGenerateComboWidget(FName InComboString);
+
+	private:
+		EGuidFormats GuidFormat;
+		TMap<FName, EGuidFormats> GuidFormatMap;
 	};
 	/**
 	 *
@@ -35,6 +42,8 @@ namespace DETAILS_VIEWER
 		IMPLEMENT_ITYPENAME(FWidgetCreaterGuid)
 	public:
 		TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> TreeNode) override;
+
+		bool IsAllowHasChildren() override { return false; }
 		TArray<FString> SupportTypes() override;
 
 	private:

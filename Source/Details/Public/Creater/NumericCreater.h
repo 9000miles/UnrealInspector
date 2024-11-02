@@ -67,17 +67,17 @@ namespace DETAILS_VIEWER
 
 		void OnValueChanged(NumericType Value)
 		{
-			GetExecutor()->Accessor->Set(Value);
+			GetAccessor()->Set(Value);
 		}
 		void OnValueCommitted(NumericType Value, ETextCommit::Type CommitType)
 		{
-			GetExecutor()->Accessor->Set(Value);
+			GetAccessor()->Set(Value);
 		}
 
 		NumericType GetPropertyValue() const
 		{
 			NumericType Value;
-			GetExecutor()->Accessor->Get(Value);
+			GetAccessor()->Get(Value);
 			return Value;
 		}
 

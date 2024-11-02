@@ -52,35 +52,35 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetVector2::GetPropertyValue_X() const
 	{
 		FVector2D Value;
-		GetExecutor()->Accessor->Get(Value);
+		GetAccessor()->Get(Value);
 		return Value.X;
 	}
 
 	TOptional<float> SPropertyWidgetVector2::GetPropertyValue_Y() const
 	{
 		FVector2D Value;
-		GetExecutor()->Accessor->Get(Value);
+		GetAccessor()->Get(Value);
 		return Value.Y;
 	}
 
 	void SPropertyWidgetVector2::OnValueCommitted_X(float NewValue, ETextCommit::Type CommitType)
 	{
-		GetExecutor()->Accessor->Set(FVector2D(NewValue, GetPropertyValue_Y().Get(0)));
+		GetAccessor()->Set(FVector2D(NewValue, GetPropertyValue_Y().Get(0)));
 	}
 
 	void SPropertyWidgetVector2::OnValueCommitted_Y(float NewValue, ETextCommit::Type CommitType)
 	{
-		GetExecutor()->Accessor->Set(FVector2D(GetPropertyValue_X().Get(0), NewValue));
+		GetAccessor()->Set(FVector2D(GetPropertyValue_X().Get(0), NewValue));
 	}
 
 	void SPropertyWidgetVector2::OnValueChanged_X(float NewValue)
 	{
-		GetExecutor()->Accessor->Set(FVector2D(NewValue, GetPropertyValue_Y().Get(0)));
+		GetAccessor()->Set(FVector2D(NewValue, GetPropertyValue_Y().Get(0)));
 	}
 
 	void SPropertyWidgetVector2::OnValueChanged_Y(float NewValue)
 	{
-		GetExecutor()->Accessor->Set(FVector2D(GetPropertyValue_X().Get(0), NewValue));
+		GetAccessor()->Set(FVector2D(GetPropertyValue_X().Get(0), NewValue));
 	}
 
 	TSharedPtr<SWidget> FWidgetCreaterVector2::MakeWidget(TSharedPtr<FTreeNode> TreeNode)

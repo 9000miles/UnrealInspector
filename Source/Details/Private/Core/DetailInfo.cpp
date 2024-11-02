@@ -192,6 +192,10 @@ namespace DETAILS_VIEWER
 		TSharedPtr<FPropertyTreeNode> TreeNode = MakeShareable(new FPropertyTreeNode(AsShared()));
 		ParentNode->AddChild(TreeNode);
 
+		TSharedPtr<IDetailWidgetCreater> WidgetCreater = FWidgetCreaterFactory::Get().FindCreater(Type);
+		if (WidgetCreater.IsValid() && !WidgetCreater->IsAllowHasChildren())
+			return;
+
 		for (TSharedPtr<FPropertyInfo> Child : Children)
 		{
 			Child->MakeTreeNode(TreeNode);

@@ -49,25 +49,25 @@
 //		if (Type == TEXT("FString"))
 //		{
 //			FString Result;
-//			GetExecutor()->Accessor->Get(Result);
+//			GetAccessor()->Get(Result);
 //			return FText::FromString(Result);
 //		}
 //		else if (Type == TEXT("string"))
 //		{
 //			FString Result;
-//			GetExecutor()->Accessor->Get(Result);
+//			GetAccessor()->Get(Result);
 //			return FText::FromString(Result);
 //		}
 //		else if (Type == TEXT("FName"))
 //		{
 //			FName Result;
-//			GetExecutor()->Accessor->Get(Result);
+//			GetAccessor()->Get(Result);
 //			return FText::FromString(Result.ToString());
 //		}
 //		else if (Type == TEXT("FText"))
 //		{
 //			FText Result;
-//			GetExecutor()->Accessor->Get(Result);
+//			GetAccessor()->Get(Result);
 //			return Result;
 //		}
 //
@@ -79,19 +79,19 @@
 //		const FString Type = PropertyInfo->Type;
 //		if (Type == TEXT("FString"))
 //		{
-//			GetExecutor()->Accessor->Set(Text.ToString());
+//			GetAccessor()->Set(Text.ToString());
 //		}
 //		else if (Type == TEXT("string"))
 //		{
-//			GetExecutor()->Accessor->Set(Text.ToString());
+//			GetAccessor()->Set(Text.ToString());
 //		}
 //		else if (Type == TEXT("FName"))
 //		{
-//			GetExecutor()->Accessor->Set(FName(*Text.ToString()));
+//			GetAccessor()->Set(FName(*Text.ToString()));
 //		}
 //		else if (Type == TEXT("FText"))
 //		{
-//			GetExecutor()->Accessor->Set(Text);
+//			GetAccessor()->Set(Text);
 //		}
 //	}
 //

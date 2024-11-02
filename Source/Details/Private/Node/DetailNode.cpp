@@ -107,11 +107,6 @@ namespace DETAILS_VIEWER
 		return SNullWidget::NullWidget;
 	}
 
-	FString FTreeNode::GetTypeName()
-	{
-		return TEXT("TreeNode");
-	}
-
 	void FTreeNode::AddChild(TSharedPtr<FTreeNode> Node)
 	{
 		Children.Add(Node);

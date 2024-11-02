@@ -82,14 +82,14 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetVector4::GetPropertyValue_X() const
 	{
 		FVector4 Value;
-		GetExecutor()->Accessor->Get(Value);
+		GetAccessor()->Get(Value);
 		return Value.X;
 	}
 
 	TOptional<float> SPropertyWidgetVector4::GetPropertyValue_Y() const
 	{
 		FVector4 Value;
-		GetExecutor()->Accessor->Get(Value);
+		GetAccessor()->Get(Value);
 		return Value.Y;
 	}
 
@@ -97,21 +97,21 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetVector4::GetPropertyValue_Z() const
 	{
 		FVector4 Value;
-		GetExecutor()->Accessor->Get(Value);
+		GetAccessor()->Get(Value);
 		return Value.Z;
 	}
 
 	TOptional<float> SPropertyWidgetVector4::GetPropertyValue_W() const
 	{
 		FVector4 Value;
-		GetExecutor()->Accessor->Get(Value);
+		GetAccessor()->Get(Value);
 		return Value.W;
 	}
 
 
 	void SPropertyWidgetVector4::OnValueCommitted_X(float NewValue, ETextCommit::Type CommitType)
 	{
-		GetExecutor()->Accessor->Set(FVector4(
+		GetAccessor()->Set(FVector4(
 			NewValue,
 			GetPropertyValue_Y().Get(0),
 			GetPropertyValue_Z().Get(0),
@@ -121,7 +121,7 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetVector4::OnValueCommitted_Y(float NewValue, ETextCommit::Type CommitType)
 	{
-		GetExecutor()->Accessor->Set(FVector4(
+		GetAccessor()->Set(FVector4(
 			GetPropertyValue_X().Get(0),
 			NewValue,
 			GetPropertyValue_Z().Get(0),
@@ -132,7 +132,7 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetVector4::OnValueCommitted_Z(float NewValue, ETextCommit::Type CommitType)
 	{
-		GetExecutor()->Accessor->Set(FVector4(
+		GetAccessor()->Set(FVector4(
 			GetPropertyValue_X().Get(0),
 			GetPropertyValue_Y().Get(0),
 			NewValue,
@@ -142,7 +142,7 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetVector4::OnValueCommitted_W(float NewValue, ETextCommit::Type CommitType)
 	{
-		GetExecutor()->Accessor->Set(FVector4(
+		GetAccessor()->Set(FVector4(
 			GetPropertyValue_X().Get(0),
 			GetPropertyValue_Y().Get(0),
 			GetPropertyValue_Z().Get(0),
@@ -153,7 +153,7 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetVector4::OnValueChanged_X(float NewValue)
 	{
-		GetExecutor()->Accessor->Set(FVector4(
+		GetAccessor()->Set(FVector4(
 			NewValue,
 			GetPropertyValue_Y().Get(0),
 			GetPropertyValue_Z().Get(0),
@@ -163,7 +163,7 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetVector4::OnValueChanged_Y(float NewValue)
 	{
-		GetExecutor()->Accessor->Set(FVector4(
+		GetAccessor()->Set(FVector4(
 			GetPropertyValue_X().Get(0),
 			NewValue,
 			GetPropertyValue_Z().Get(0),
@@ -174,7 +174,7 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetVector4::OnValueChanged_Z(float NewValue)
 	{
-		GetExecutor()->Accessor->Set(FVector4(
+		GetAccessor()->Set(FVector4(
 			GetPropertyValue_X().Get(0),
 			GetPropertyValue_Y().Get(0),
 			NewValue,
@@ -184,7 +184,7 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetVector4::OnValueChanged_W(float NewValue)
 	{
-		GetExecutor()->Accessor->Set(FVector4(
+		GetAccessor()->Set(FVector4(
 			GetPropertyValue_X().Get(0),
 			GetPropertyValue_Y().Get(0),
 			GetPropertyValue_Z().Get(0),

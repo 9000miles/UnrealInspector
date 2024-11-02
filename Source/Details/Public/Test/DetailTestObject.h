@@ -51,15 +51,15 @@ public:
 	UPROPERTY(meta = (UIMin = 0.55, UIMax = 50.1))
 	float float_Min_Max;
 
-	//UPROPERTY()
-	//FVector2D Vector2D_1 = FVector2D(34, 534);
-	//UPROPERTY()
-	//FVector Vector_1 = FVector(34, 534, 744);
-	//UPROPERTY()
-	//FVector4 Vector4_1 = FVector4(34, 534, 67, 100);
+	UPROPERTY()
+	FVector2D Vector2D_1 = FVector2D(34, 534);
+	UPROPERTY()
+	FVector Vector_1 = FVector(34, 534, 744);
+	UPROPERTY()
+	FVector4 Vector4_1 = FVector4(34, 534, 67, 100);
 
-	//UPROPERTY()
-	//FGuid Guid_1;
+	UPROPERTY()
+	FGuid Guid_1;
 	UPROPERTY()
 	FTransform Transform;
 

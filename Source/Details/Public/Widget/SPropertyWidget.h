@@ -25,6 +25,7 @@ namespace DETAILS_VIEWER
 
 	protected:
 		TSharedPtr<PROPERTY::IExecutor> GetExecutor() const { return PropertyInfo->Executor; }
+		TSharedPtr<PROPERTY::IPropertyAccessor> GetAccessor() const { return GetExecutor()->Accessor; }
 
 
 	protected:

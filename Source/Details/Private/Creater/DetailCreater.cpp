@@ -80,4 +80,10 @@ namespace DETAILS_VIEWER
 		FWidgetCreaterFactory::Get().RegisterCreater(AsShared());
 	}
 
+
+	bool IDetailWidgetCreater::IsAllowHasChildren()
+	{
+		return true;
+	}
+
 }

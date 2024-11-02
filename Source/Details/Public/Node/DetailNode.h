@@ -34,9 +34,10 @@ namespace DETAILS_VIEWER
 
 	class FTreeNode :public TSharedFromThis<FTreeNode>, public ITypeName
 	{
+		IMPLEMENT_ITYPENAME(FTreeNode)
 	public:
 		FTreeNode(ENodeType	InNodeType) {};
-		virtual ~FTreeNode(){}
+		virtual ~FTreeNode() {}
 		virtual FString GetName() { return TEXT("TreeNode"); };
 		virtual FString GetDisplayName() { return TEXT("TreeNode"); };
 		virtual TSharedPtr<SWidget> GetWidget();
@@ -49,8 +50,6 @@ namespace DETAILS_VIEWER
 	protected:
 		TSharedPtr<FTreeNode> Parent;
 		TArray<TSharedPtr<FTreeNode>> Children;
-	public:
-		FString GetTypeName() override;
 
 	protected:
 		TSharedPtr<PROPERTY::IExecutor> Executor;
@@ -62,7 +61,7 @@ namespace DETAILS_VIEWER
 		FCategoryTreeNode(TSharedPtr<FCategoryInfo> Item) :FTreeNode(ENodeType::Category), CategoryInfo(Item)
 		{
 		}
-		virtual ~FCategoryTreeNode(){}
+		virtual ~FCategoryTreeNode() {}
 
 	public:
 		static FString TypeName() { return TEXT("CategoryTreeNode"); }
@@ -77,16 +76,15 @@ namespace DETAILS_VIEWER
 
 	class FPropertyTreeNode :public FTreeNode
 	{
+		IMPLEMENT_ITYPENAME(FPropertyTreeNode)
 	public:
 		FPropertyTreeNode(TSharedPtr<FPropertyInfo> InPropertyInfo) :FTreeNode(ENodeType::General), PropertyInfo(InPropertyInfo)
 		{
 			// @TODO 实现复杂属性的子属性创建，数组，结构体，等等
 		}
-		virtual ~FPropertyTreeNode(){}
+		virtual ~FPropertyTreeNode() {}
 
 	public:
-		static FString TypeName() { return TEXT("PropertyTreeNode"); }
-		FString GetTypeName() override { return FPropertyTreeNode::TypeName(); }
 		FString GetName() override;
 		FString GetDisplayName() override;
 		TSharedPtr<SWidget> GetWidget() override;
