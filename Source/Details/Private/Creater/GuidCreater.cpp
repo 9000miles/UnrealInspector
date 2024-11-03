@@ -1,4 +1,5 @@
 #include "Creater/GuidCreater.h"
+
 namespace DETAILS_VIEWER
 {
 	TArray<FName> GuidFormatNames = {
@@ -85,11 +86,11 @@ namespace DETAILS_VIEWER
 	void SPropertyWidgetGuid::OnSelectionChanged(FName InSelectedItem, ESelectInfo::Type SelectInfo)
 	{
 		EGuidFormats* Format = GuidFormatMap.Find(InSelectedItem);
-		if (Format)
-		{
-			GuidFormat = *Format;
-			GetAccessor()->Set(FGuid::NewGuid().ToString(GuidFormat));
-		}
+
+		check(Format);
+		if (!Format) return;
+
+		GuidFormat = *Format;
 	}
 
 	TSharedRef<SWidget> SPropertyWidgetGuid::OnGenerateComboWidget(FName InComboString)

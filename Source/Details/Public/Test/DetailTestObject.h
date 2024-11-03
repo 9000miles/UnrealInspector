@@ -36,6 +36,12 @@ public:
 	FSWidgetHandle Property_FuncPropertyRow_RowWidget(FPropertyHandle Property);
 
 public:
+	UPROPERTY(EditAnywhere, Category = "AAA")
+	FDepthFieldGlowInfo DepthFieldGlowInfo;
+
+	UPROPERTY(EditAnywhere, Category = "AAA")
+	ESpawnActorCollisionHandlingMethod Method;
+
 	UPROPERTY(EditAnywhere, Category = "AAA", meta = (DisplayName = "窝窝屎"))
 	bool Bool_1 = true;
 	UPROPERTY(EditAnywhere, meta = (HintText = "This is FString Property"))

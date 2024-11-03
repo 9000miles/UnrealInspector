@@ -26,9 +26,10 @@ namespace DETAILS_VIEWER
 		class FUEPropertyAccessor :public IPropertyAccessor
 		{
 		public:
-			FUEPropertyAccessor(void* InContainer, UE_Property* InProperty)
+			FUEPropertyAccessor(void* InContainer, UE_Property* InProperty, void* DefaultValue)
 				:Property(InProperty),
-				Container(InContainer)
+				Container(InContainer),
+				DefaultValuePtr(DefaultValue)
 			{
 
 			}
@@ -52,6 +53,22 @@ namespace DETAILS_VIEWER
 			void Set(int64 Value) { SetValue<int64, FInt64Property>(Value); }
 			void Set(bool Value) { SetValue<bool, FBoolProperty>(Value); }
 			void Set(uint8 Value) { SetValue<uint8, FByteProperty>(Value); }
+			void Set(FEnumValue Value) {
+				if (!Container || Property == nullptr) return;
+
+				FEnumProperty* Ptr = CastField<FEnumProperty>(Property);
+				check(Ptr);
+
+				UEnum* Enum = Ptr->GetEnum();
+				const uint8 NewEnumValue = Value.Value;
+				if (NewEnumValue < 0 || NewEnumValue >= Enum->NumEnums())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Invalid enum value: %d"), NewEnumValue);
+					return;
+				}
+				uint8* EnumValuePtr = Ptr->ContainerPtrToValuePtr<uint8>(Container);
+				*EnumValuePtr = NewEnumValue;
+			}
 			void Set(float Value) { SetValue<float, FFloatProperty>(Value); }
 			void Set(double Value) { SetValue<double, FDoubleProperty>(Value); }
 			void Set(UObject* Value) { SetValue<UObject*, FObjectProperty>(Value); }
@@ -82,6 +99,16 @@ namespace DETAILS_VIEWER
 			void Get(bool& Out) { GetValue<bool, FBoolProperty>(Out); }
 			void Get(float& Out) { GetValue<float, FFloatProperty>(Out); }
 			void Get(double& Out) { GetValue<double, FDoubleProperty>(Out); }
+			void Get(uint8& Out) { GetValue<uint8, FByteProperty>(Out); }
+			void Get(FEnumValue& Out) {
+				if (!Container || Property == nullptr) return;
+
+				FEnumProperty* Ptr = CastField<FEnumProperty>(Property);
+				check(Ptr);
+
+				uint8* EnumValuePtr = Ptr->ContainerPtrToValuePtr<uint8>(Container);
+				Out.Value = *EnumValuePtr;
+			}
 			void Get(int32& Out) { GetValue<int32, FIntProperty>(Out); }
 			void Get(FString& Out) { GetValue<FString, FStrProperty>(Out); }
 			void Get(FName& Out) { GetValue<FName, FNameProperty>(Out); }
@@ -96,12 +123,12 @@ namespace DETAILS_VIEWER
 			void Reset() {
 				if (!Container) return;
 
-				//UObject* CDO = Container->GetClass()->ClassDefaultObject.Get();
-				//if (CDO == nullptr || Property == nullptr) return;
+				void* ValuePtr = Property->ContainerPtrToValuePtr<void>(Container);
+				if (!ValuePtr || !DefaultValuePtr) return; // 检查指针是否为空
 
-				//FString DefaultValue = FUEPropertyHelper::PropertyToJson(CDO, Property->GetFName());
-				//FUEPropertyHelper::JsonToProperty(Container, Property->GetFName(), DefaultValue);
-			}
+				// 使用 memcpy 进行内存拷贝，避免直接解引用 void* 指针
+				memcpy(ValuePtr, DefaultValuePtr, Property->GetSize());
+            }
 
 			//* ============================== OnPropertyChanged ================================= *//
 			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action)
@@ -115,6 +142,7 @@ namespace DETAILS_VIEWER
 				if (!Container || Property == nullptr) return;
 
 				TPropertyType* Ptr = CastField<TPropertyType>(Property);
+				check(Ptr);
 				if (Ptr) Ptr->SetPropertyValue_InContainer(Container, Value);
 
 				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
@@ -139,6 +167,7 @@ namespace DETAILS_VIEWER
 				if (!Container || Property == nullptr) return;
 
 				TPropertyType* Ptr = CastField<TPropertyType>(Property);
+				check(Ptr);
 				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Container);
 			}
 
@@ -157,6 +186,7 @@ namespace DETAILS_VIEWER
 		private:
 			UE_Property* Property;
 			void* Container;
+			void* DefaultValuePtr;
 			TWeakObjectPtr<UObject> OwnerObject;
 		};
 
@@ -261,12 +291,13 @@ namespace DETAILS_VIEWER
 		class FUObjectParameterExecutor :public IExecutor
 		{
 		public:
-			FUObjectParameterExecutor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty, void* InContainer)
+			FUObjectParameterExecutor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty, void* InContainer, void* DefaultValue)
 				:Property(InProperty),
 				Container(InContainer),
+				DefaultValuePtr(DefaultValue),
 				Object(InObject)
 			{
-				Accessor = MakeShareable(new PROPERTY::FUEPropertyAccessor(Container, Property));
+				Accessor = MakeShareable(new PROPERTY::FUEPropertyAccessor(Container, Property, DefaultValuePtr));
 				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable(Property));
 				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible(Property));
 				WidgetMaker = MakeShareable(new PROPERTY::FUEPropertyWidgetMaker(Property));
@@ -281,6 +312,7 @@ namespace DETAILS_VIEWER
 		protected:
 			UE_Property* Property;
 			void* Container;
+			void* DefaultValuePtr;
 			TWeakObjectPtr<UObject> Object;
 		};
 
@@ -309,7 +341,8 @@ namespace DETAILS_VIEWER
 		void SetObject();
 		void IteratorField(TWeakObjectPtr<UObject> InObject, TSharedPtr<FCategoryList> CategoryList);
 
-		TSharedPtr<FPropertyInfo> MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, FString Category, TWeakObjectPtr<UObject> InObject, void* Container);
+		FString GetPropertyType(UE_Property* Property);
+		TSharedPtr<FPropertyInfo> MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, void* DefaultValuePtr, FString Category, TWeakObjectPtr<UObject> InObject, void* Container);
 
 		static FString TypeName() { return TEXT("UObjectDetail"); }
 		FString GetTypeName() override { return FUObjectDetailHolder::TypeName(); }

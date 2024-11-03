@@ -135,6 +135,13 @@ namespace DETAILS_VIEWER
 			ArrayClear,
 			Duplicate,
 		};
+
+		struct FEnumValue
+		{
+			FEnumValue(uint8 InValue = 0) :Value(InValue) {}
+			uint8 Value = 0;
+		};
+
 		class IPropertyAccessor :public IJsonable
 		{
 		public:
@@ -142,8 +149,8 @@ namespace DETAILS_VIEWER
 			virtual void Set(const float Value) = 0;
 			virtual void Set(const double Value) = 0;
 			//virtual void Set(const int Value) = 0;
-			//virtual void Set(const uint8 Value) = 0;
-			//virtual void Set(const int8 Value) = 0;
+			virtual void Set(const uint8 Value) = 0;
+			virtual void Set(const FEnumValue Value) = 0;
 			virtual void Set(const int32 Value) = 0;
 			virtual void Set(const FString Value) = 0;
 			virtual void Set(const FName Value) = 0;
@@ -158,8 +165,8 @@ namespace DETAILS_VIEWER
 			virtual void Get(float& Out) = 0;
 			virtual void Get(double& Out) = 0;
 			//virtual void Get(int& Out) = 0;
-			//virtual void Get(uint8& Out) = 0;
-			//virtual void Get(int8& Out) = 0;
+			virtual void Get(uint8& Out) = 0;
+			virtual void Get(FEnumValue& Out) = 0;
 			virtual void Get(int32& Out) = 0;
 			virtual void Get(FString& Out) = 0;
 			virtual void Get(FName& Out) = 0;
@@ -258,6 +265,10 @@ namespace DETAILS_VIEWER
 						T Element;
 						if constexpr (std::is_same_v<T, FString>)
 							Element = Value->AsString();
+						else if constexpr (std::is_same_v<T, FName>)
+							Element = *Value->AsString();
+						else if constexpr (std::is_same_v<T, FText>)
+							Element = FText::FromString(Value->AsString());
 						else if constexpr (std::is_same_v<T, bool>)
 							Element = Value->AsBool();
 						else
@@ -280,10 +291,19 @@ namespace DETAILS_VIEWER
 			FText Get(const FString& Key) { return FText::FromString(GetValue<FString>(Key)); }
 
 			template<>
+			FName Get(const FString& Key) { return *GetValue<FString>(Key); }
+
+			template<>
 			bool Get(const FString& Key) { return GetValue<bool>(Key); }
 
 			template<>
 			TArray<FString> Get(const FString& Key) { return GetArray<FString>(Key); }
+
+			template<>
+			TArray<FText> Get(const FString& Key) { return GetArray<FText>(Key); }
+
+			template<>
+			TArray<FName> Get(const FString& Key) { return GetArray<FName>(Key); }
 
 			template<>
 			TSharedPtr<FJsonObject> Get(const FString& Key) { return Metadata->GetObjectField(Key); }

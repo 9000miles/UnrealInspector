@@ -25,7 +25,7 @@ namespace DETAILS_VIEWER
 			TSharedPtr<FPropertyTreeNode> PropertyNode = StaticCastSharedPtr<FPropertyTreeNode>(Node);
 
 
-			FString Type = Property->GetCPPType();
+			FString Type = PropertyNode->PropertyInfo->Type;
 			TSharedPtr<IDetailWidgetCreater> WidgetCreater = FWidgetCreaterFactory::Get().FindCreater(Type);
 			if (!WidgetCreater.IsValid())
 			{
@@ -166,6 +166,7 @@ namespace DETAILS_VIEWER
 		check(InObject.IsValid());
 
 		UClass* Class = InObject->GetClass();
+		UObject* CDO = Class->ClassDefaultObject.Get();
 		for (TFieldIterator<UE_Property> PropertyIt(Class, EFieldIteratorFlags::IncludeSuper); PropertyIt; ++PropertyIt)
 		{
 			auto Property = *PropertyIt;
@@ -185,24 +186,41 @@ namespace DETAILS_VIEWER
 				CategoryList->Add(ExistCategory);
 			}
 
-			TSharedPtr<FPropertyInfo> PropertyInfo = MakePropertyInfo(PropertyName, DisplayName, Property, Category, InObject, InObject.Get());
+			void* DefaultValuePtr = Property->ContainerPtrToValuePtr<void>(CDO);
+
+			TSharedPtr<FPropertyInfo> PropertyInfo = MakePropertyInfo(
+				PropertyName,
+				DisplayName,
+				Property,
+				DefaultValuePtr,
+				Category,
+				InObject,
+				InObject.Get()
+			);
+
 			ExistCategory->Add(PropertyInfo);
 		}
 
 		CategoryList->Sort();
 	}
 
-	TSharedPtr<DETAILS_VIEWER::FPropertyInfo> FUObjectDetailHolder::MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, FString Category, TWeakObjectPtr<UObject> InObject, void* Container)
+	FString FUObjectDetailHolder::GetPropertyType(UE_Property* Property)
+	{
+		if (Property->IsA<FEnumProperty>())	return "Enum";
+		return Property->GetCPPType();
+	}
+
+	TSharedPtr<DETAILS_VIEWER::FPropertyInfo> FUObjectDetailHolder::MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, void* DefaultValuePtr, FString Category, TWeakObjectPtr<UObject> InObject, void* Container)
 	{
 		TSharedPtr<FPropertyInfo> PropertyInfo = MakeShareable(new FPropertyInfo());
 
 		PropertyInfo->Name = PropertyName;
 		PropertyInfo->DisplayName = DisplayName.IsEmpty() ? PropertyName : DisplayName;
 		PropertyInfo->Description = Property->GetMetaData(TEXT("Description"));
-		PropertyInfo->Type = Property->GetCPPType();
+		PropertyInfo->Type = GetPropertyType(Property);
 		PropertyInfo->Category = Category;
 		PropertyInfo->Advanced = Property->HasMetaData(TEXT("AdvancedDisplay"));
-		PropertyInfo->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(InObject, Property, Container));
+		PropertyInfo->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(InObject, Property, Container, DefaultValuePtr));
 		PropertyInfo->Metadata = MakeShareable(new PROPERTY::FUEPropertyMetadata(Property));
 
 		if (Property->IsA<FStructProperty>())
@@ -213,18 +231,37 @@ namespace DETAILS_VIEWER
 			for (TFieldIterator<UE_Property> It(Struct); It; ++It)
 			{
 				UE_Property* SubProperty = *It;
+				void* SubDefaultValuePtr = SubProperty->ContainerPtrToValuePtr<void>(DefaultValuePtr);
 
 				// Create sub-property info and add it to children list
 				TSharedPtr<FPropertyInfo> SubPropertyInfo = MakePropertyInfo(
 					SubProperty->GetName(),
 					SubProperty->GetName(),
 					SubProperty,
+					SubDefaultValuePtr,
 					TEXT(""),
 					InObject,
 					StructProperty->ContainerPtrToValuePtr<void>(Container)
 				);
 				PropertyInfo->Children.Add(SubPropertyInfo);
 			}
+		}
+		else if (Property->IsA<FEnumProperty>())
+		{
+			FEnumProperty* EnumProperty = CastFieldChecked<FEnumProperty>(Property);
+			UEnum* Enum = EnumProperty->GetEnum();
+
+			TSharedPtr<FJsonObject> Metadata = PropertyInfo->Metadata->GetMetadata();
+			TArray<TSharedPtr<FJsonValue>> EnumNames;
+			// Add enum values and their display names to the property info
+			for (int32 i = 0; i < Enum->NumEnums() - 1; ++i)
+			{
+				FString EnumValueDisplayName = Enum->GetNameStringByIndex(i);
+				//FString EnumValueDisplayName = Enum->GetDisplayNameTextByIndex(i).ToString();
+
+				EnumNames.Add(MakeShareable(new FJsonValueString(EnumValueDisplayName)));
+			}
+			Metadata->SetArrayField(TEXT("EnumNames"), EnumNames);
 		}
 
 		return PropertyInfo;

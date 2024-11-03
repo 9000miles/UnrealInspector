@@ -15,6 +15,7 @@
 #include "Creater/Vector3Creater.h"
 #include "Creater/GuidCreater.h"
 #include "Creater/TransformCreater.h"
+#include "Creater/EnumCreater.h"
 
 #define LOCTEXT_NAMESPACE "FPropertyInspectorModule"
 
@@ -32,6 +33,7 @@ void FDetailsViewerModule::StartupModule()
 	Factory::Register<FWidgetCreaterVector4>();
 	Factory::Register<FWidgetCreaterTransform>();
 	Factory::Register<FWidgetCreaterGuid>();
+	Factory::Register<FWidgetCreaterEnum>();
 
 	Factory::Register<FDetailMaker>();
 	Factory::Register<FCustomDetailMaker>();
