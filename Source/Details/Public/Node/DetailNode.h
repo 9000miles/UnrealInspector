@@ -42,6 +42,9 @@ namespace DETAILS_VIEWER
 		virtual FString GetDisplayName() { return TEXT("TreeNode"); };
 		virtual TSharedPtr<SWidget> GetWidget();
 
+		virtual void Copy() {}
+		virtual void Paste() {}
+
 		TArray<TSharedPtr<FTreeNode>> GetChildren() { return Children; }
 		TSharedPtr<FTreeNode> GetParent() { return Parent; }
 		void AddChild(TSharedPtr<FTreeNode> Node);
@@ -63,6 +66,10 @@ namespace DETAILS_VIEWER
 		}
 		virtual ~FCategoryTreeNode() {}
 
+
+		void Copy() override;
+		void Paste() override;
+
 	public:
 		static FString TypeName() { return TEXT("CategoryTreeNode"); }
 		FString GetTypeName() override { return FCategoryTreeNode::TypeName(); }
@@ -80,9 +87,12 @@ namespace DETAILS_VIEWER
 	public:
 		FPropertyTreeNode(TSharedPtr<FPropertyInfo> InPropertyInfo) :FTreeNode(ENodeType::General), PropertyInfo(InPropertyInfo)
 		{
-			// @TODO ÊµÏÖ¸´ÔÓÊôÐÔµÄ×ÓÊôÐÔ´´½¨£¬Êý×é£¬½á¹¹Ìå£¬µÈµÈ
+			// @TODO Êµï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é£¬ï¿½á¹¹ï¿½å£¬ï¿½Èµï¿½
 		}
 		virtual ~FPropertyTreeNode() {}
+
+		void Copy() override;
+		void Paste() override;
 
 	public:
 		FString GetName() override;

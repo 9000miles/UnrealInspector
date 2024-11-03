@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "View/SDetailViewer.h"
@@ -19,7 +19,7 @@
 
 namespace DETAILS_VIEWER
 {
-
+#define LOCTEXT_NAMESPACE "SDetailViewer"
 	void SDetailViewer::Construct(const FArguments& InArgs)
 	{
 		DetailInfo = InArgs._DetailInfo;
@@ -31,6 +31,7 @@ namespace DETAILS_VIEWER
 			.OnGenerateRow(this, &SDetailViewer::OnGenerateRow)
 			.OnGetChildren(this, &SDetailViewer::OnGetChildren)
 			.SelectionMode(ESelectionMode::SingleToggle)
+			.OnContextMenuOpening(this, &SDetailViewer::OnContextMenuOpening)
 			;
 
 		DetailContentBoxPtr = SNew(SBox)
@@ -46,14 +47,14 @@ namespace DETAILS_VIEWER
 							+ SVerticalBox::Slot()
 							.AutoHeight()
 							[
-								// ÏÔÊ¾Ãû³Æ
+								// æ˜¾ç¤ºåç§°
 								SNew(STextBlock)
 									.Text(FText::FromString(DetailInfo->Name))
 							]
 							+ SVerticalBox::Slot()
 							//.FillHeight()
 							[
-								// ÏÔÊ¾ÊôÐÔÊ÷
+								// æ˜¾ç¤ºå±žæ€§æ ‘
 								TreeView.ToSharedRef()
 							]
 					]
@@ -65,6 +66,41 @@ namespace DETAILS_VIEWER
 	void SDetailViewer::InitByOptions(FDetailOptions Options)
 	{
 
+	}
+
+	TSharedPtr<SWidget> SDetailViewer::OnContextMenuOpening()
+	{
+		TSharedPtr< const FUICommandList > CommandList;
+
+		TArray<TSharedPtr<FTreeNode>> SelectedItems;
+		const int32 SelectedCount = TreeView->GetSelectedItems(SelectedItems);
+		if (SelectedCount <= 0) return SNullWidget::NullWidget;
+
+		TSharedPtr<FTreeNode> SelectedItem = SelectedItems[0];
+		FMenuBuilder MenuBuilder(true, CommandList);
+
+		MenuBuilder.AddMenuEntry(
+			LOCTEXT("Copy", "Copy"),
+			LOCTEXT("CopyTooltip", "Copy the value to the clipboard"),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateSP(this, &SDetailViewer::Copy, SelectedItem))
+		);
+
+		MenuBuilder.AddMenuEntry(
+			LOCTEXT("Paste", "Paste"),
+			LOCTEXT("PasteTooltip", "Paste the value from the clipboard"),
+			FSlateIcon(),
+			FUIAction(FExecuteAction::CreateSP(this, &SDetailViewer::Paste, SelectedItem))
+		);
+
+		return MenuBuilder.MakeWidget();
+	}
+
+	void SDetailViewer::Copy(TSharedPtr<FTreeNode> Node)
+	{
+		Node->Copy();
+
+		UE_LOG(LogTemp, Warning, TEXT("Copy the value to the clipboard"));
 	}
 
 	//void SDetailView::SetObject(UObject* Object)
@@ -151,6 +187,12 @@ namespace DETAILS_VIEWER
 	}
 
 
+	void SDetailViewer::Paste(TSharedPtr<FTreeNode> Node)
+	{
+		Node->Paste();
+		UE_LOG(LogTemp, Warning, TEXT("Paste the value from the clipboard"));
+	}
+
 	//TSharedPtr<SWidget> SDetailView::CreateCustomDetailRowWidget(TSharedPtr<FTreeNode> Node, FString& OutCustomType, bool& bOutOverrideRowWidget)
 	//{
 	//	TSharedPtr<FPropertyHolder> Proxy = Node->GetPropertyHolder();
@@ -205,24 +247,24 @@ namespace DETAILS_VIEWER
 
 	void SDetailViewer::GenerateTreeNodes()
 	{
-		// Çå¿ÕÏÖÓÐ½Úµã
+		// æ¸…ç©ºçŽ°æœ‰èŠ‚ç‚¹
 		TreeNodes.Empty();
 
-		// ±éÀúËùÓÐ·ÖÀàÐÅÏ¢
+		// éåŽ†æ‰€æœ‰åˆ†ç±»ä¿¡æ¯
 		DetailInfo->CategoryList->Enumerate([this](TSharedPtr<FCategoryInfo> CategoryInfo)
 			{
-				// ´´½¨·ÖÀà½Úµã
+				// åˆ›å»ºåˆ†ç±»èŠ‚ç‚¹
 				TSharedPtr<FCategoryTreeNode> CategoryNode = MakeShareable(new FCategoryTreeNode(CategoryInfo));
 				TreeNodes.Add(CategoryNode);
 
-				// ±éÀú·ÖÀàÖÐµÄËùÓÐÊôÐÔÐÅÏ¢
+				// éåŽ†åˆ†ç±»ä¸­çš„æ‰€æœ‰å±žæ€§ä¿¡æ¯
 				CategoryInfo->PropertyList->Enumerate([CategoryNode](TSharedPtr<FPropertyInfo> PropertyInfo)
 					{
 						PropertyInfo->MakeTreeNode(CategoryNode);
 					});
 			});
 
-		// ÕâÀï¿ÉÒÔÌí¼Ó¶îÍâµÄÂß¼­£¬ÀýÈçÅÅÐò»ò¹ýÂËÊ÷½ÚµãµÈ
+		// è¿™é‡Œå¯ä»¥æ·»åŠ é¢å¤–çš„é€»è¾‘ï¼Œä¾‹å¦‚æŽ’åºæˆ–è¿‡æ»¤æ ‘èŠ‚ç‚¹ç­‰
 	}
 
 	void SDetailViewer::OnSplitterSlotResized(int32 Index, float Size)
@@ -234,5 +276,5 @@ namespace DETAILS_VIEWER
 			DetialItem->SetSplitterSlotSize(Index, Size);
 		}
 	}
-
+#undef LOCTEXT_NAMESPACE
 }

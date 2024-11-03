@@ -43,11 +43,13 @@ namespace DETAILS_VIEWER
 
 		const FString FUEPropertyCopier::Execute()
 		{
+			// @TODO: 不能使用Object
 			return FUEPropertyHelper::PropertyToJson(Object.Get(), Property->GetFName());
 		}
 
 		void FUEPropertyPaster::Execute(const FString String)
 		{
+			// @TODO: 不能使用Object
 			FUEPropertyHelper::JsonToProperty(Object.Get(), Property->GetFName(), String);
 		}
 

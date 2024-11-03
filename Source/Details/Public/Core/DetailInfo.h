@@ -215,8 +215,8 @@ namespace DETAILS_VIEWER
 			TSharedPtr<IEditable> Editable;
 			TSharedPtr<IVisible> Visible;
 			TSharedPtr<IWidgetMaker> WidgetMaker;
-			TSharedPtr<ICopier> CopyExecutor;
-			TSharedPtr<IPaster> PasteExecutor;
+			TSharedPtr<ICopier> Copier;
+			TSharedPtr<IPaster> Paster;
 		};
 
 		class FMetadata :public IJsonable
@@ -363,6 +363,9 @@ namespace DETAILS_VIEWER
 		void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
 		TSharedPtr<FJsonObject> ToJson() override;
 
+		FString Copy();
+		void Paste(const FString& String);
+
 	public:
 		void Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func);
 
@@ -395,6 +398,10 @@ namespace DETAILS_VIEWER
 		virtual void Sort();
 		void Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func);
 
+		FString Copy();
+		void Paste(const FString& String);
+
+		FString ConvertJsonValueToString(TSharedPtr<FJsonValue> JsonValue);
 	private:
 		TArray<TSharedPtr<FPropertyInfo>> Parameters;
 	};
@@ -410,6 +417,9 @@ namespace DETAILS_VIEWER
 
 		void Add(TSharedPtr<FPropertyInfo> Parameter);
 		virtual void Sort();
+
+		FString Copy();
+		void Paste(const FString& String);
 
 	public:
 		FString Name;

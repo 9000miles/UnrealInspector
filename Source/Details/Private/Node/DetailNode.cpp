@@ -2,6 +2,7 @@
 #include "Core/DetailDefine.h"
 #include "Core/DetailFactory.h"
 #include "Creater/BoolCreater.h"
+#include "Windows/WindowsPlatformApplicationMisc.h"
 
 namespace DETAILS_VIEWER
 {
@@ -40,6 +41,19 @@ namespace DETAILS_VIEWER
 	//	//TSharedPtr<IDetailWidgetCreater> PropertyBuilder = FDetailFactory::Get().FindCreater(PropertyType);
 	//	//if (PropertyBuilder == nullptr) return nullptr;
 
+	void FCategoryTreeNode::Copy()
+	{
+		const FString String = CategoryInfo->Copy();
+		FPlatformApplicationMisc::ClipboardCopy(*String);
+	}
+
+	void FCategoryTreeNode::Paste()
+	{
+		FString String;
+		FPlatformApplicationMisc::ClipboardPaste(String);
+		CategoryInfo->Paste(String);
+	}
+
 	//	//return PropertyBuilder->MakeWidget();
 	//	return SNullWidget::NullWidget;
 	//}
@@ -68,6 +82,19 @@ namespace DETAILS_VIEWER
 			[
 			]*/
 			;
+	}
+
+	void FPropertyTreeNode::Copy()
+	{
+		const FString String = PropertyInfo->Copy();
+		FPlatformApplicationMisc::ClipboardCopy(*String);
+	}
+
+	void FPropertyTreeNode::Paste()
+	{
+		FString String;
+		FPlatformApplicationMisc::ClipboardPaste(String);
+		PropertyInfo->Paste(String);
 	}
 
 	FString FPropertyTreeNode::GetName()

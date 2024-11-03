@@ -28,11 +28,14 @@ namespace DETAILS_VIEWER
 			SLATE_ARGUMENT(TSharedPtr<FDetailInfo>, DetailInfo)
 		SLATE_END_ARGS()
 
+		TSharedPtr<SWidget> OnContextMenuOpening();
 		/** Constructs this widget with InArgs */
 		void Construct(const FArguments& InArgs);
 
 		void InitByOptions(FDetailOptions Options);
 		//void SetObject(UObject* Object);
+		void Copy(TSharedPtr<FTreeNode> Node);
+		void Paste(TSharedPtr<FTreeNode> Node);
 
 	private:
 		void GenerateTreeNodes();

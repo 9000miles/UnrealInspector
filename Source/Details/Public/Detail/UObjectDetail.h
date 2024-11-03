@@ -301,8 +301,8 @@ namespace DETAILS_VIEWER
 				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable(Property));
 				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible(Property));
 				WidgetMaker = MakeShareable(new PROPERTY::FUEPropertyWidgetMaker(Property));
-				CopyExecutor = MakeShareable(new PROPERTY::FUEPropertyCopier(Object, Property));
-				PasteExecutor = MakeShareable(new PROPERTY::FUEPropertyPaster(Object, Property));
+				Copier = MakeShareable(new PROPERTY::FUEPropertyCopier(Object, Property));
+				Paster = MakeShareable(new PROPERTY::FUEPropertyPaster(Object, Property));
 			}
 			virtual ~FUObjectParameterExecutor()
 			{

@@ -155,6 +155,17 @@ namespace DETAILS_VIEWER
 		PropertyList->Sort();
 	}
 
+	FString FCategoryInfo::Copy()
+	{
+		const FString JsonString = PropertyList->Copy();
+		return FString::Printf(TEXT("{%s}"), *JsonString);
+	}
+
+	void FCategoryInfo::Paste(const FString& String)
+	{
+		PropertyList->Paste(String);
+	}
+
 	void FPropertyInfo::FromJson(TSharedPtr<FJsonObject> JsonObject)
 	{
 	}
@@ -175,12 +186,22 @@ namespace DETAILS_VIEWER
 		return JsonObject;
 	}
 
+	FString FPropertyInfo::Copy()
+	{
+		return Executor->Copier->Execute();
+	}
+
+	void FPropertyInfo::Paste(const FString& String)
+	{
+		Executor->Paster->Execute(String);
+	}
+
 	void FPropertyInfo::Enumerate(TFunction<void(TSharedPtr<FPropertyInfo>)> Func)
 	{
-		// ÏÈ¶Ôµ±Ç°½ÚµãÖ´ÐÐ Func
+		// ï¿½È¶Ôµï¿½Ç°ï¿½Úµï¿½Ö´ï¿½ï¿½ Func
 		Func(AsShared());
 
-		// ¶ÔËùÓÐ×Ó½ÚµãµÝ¹éÖ´ÐÐ Func
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½Úµï¿½Ý¹ï¿½Ö´ï¿½ï¿½ Func
 		for (TSharedPtr<FPropertyInfo> Item : Children)
 		{
 			Item->Enumerate(Func);
@@ -325,4 +346,96 @@ namespace DETAILS_VIEWER
 		}
 	}
 
+	FString FPropertyList::Copy()
+	{
+		FString Result;
+		for (TSharedPtr<FPropertyInfo> Item : Parameters)
+		{
+			Result += FString::Printf(TEXT("\"%s\":%s,"), *Item->Name, *Item->Copy());
+		}
+		// Remove last comma
+		Result.RemoveFromEnd(",");
+		return Result;
+	}
+
+	void FPropertyList::Paste(const FString& String)
+	{
+		// ï¿½ï¿½ï¿½ï¿½ JSON ï¿½Ö·ï¿½ï¿½ï¿½
+		TSharedPtr<FJsonObject> JsonObject;
+		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(String);
+
+		if (!FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON string: %s"), *String);
+			return;
+		}
+
+		for (TSharedPtr<FPropertyInfo> Item : Parameters)
+		{
+			FString PropertyName = Item->Name;
+			if (!JsonObject->HasField(PropertyName)) continue;
+
+			// ï¿½ï¿½È¡ JSON ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Öµ
+			TSharedPtr<FJsonValue> JsonValue = JsonObject->TryGetField(PropertyName);
+
+			if (!JsonValue.IsValid()) continue;
+
+			FString Value = ConvertJsonValueToString(JsonValue);
+
+			// ï¿½ï¿½ï¿½ï¿½ FPropertyInfo ï¿½ï¿½ Paste ï¿½ï¿½ï¿½ï¿½
+			Item->Paste(Value);
+		}
+	}
+
+	FString FPropertyList::ConvertJsonValueToString(TSharedPtr<FJsonValue> JsonValue)
+	{
+		FString Value;
+
+		switch (JsonValue->Type)
+		{
+		case EJson::Boolean:
+			Value = JsonValue->AsBool() ? TEXT("true") : TEXT("false");
+			break;
+		case EJson::Number:
+			Value = FString::SanitizeFloat(JsonValue->AsNumber());
+			break;
+		case EJson::String:
+			Value = JsonValue->AsString();
+			break;
+		case EJson::Object:
+		{
+			// ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½×µÄ½á¹¹ï¿½ï¿½
+			TSharedPtr<FJsonObject> NestedObject = JsonValue->AsObject();
+			if (NestedObject.IsValid())
+			{
+				// ï¿½ï¿½Ç¶ï¿½×µï¿½ JSON ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½Ö·ï¿½ï¿½ï¿½
+				FString NestedJsonString;
+				TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> JsonWriter = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&NestedJsonString, /*Indent=*/0);
+				FJsonSerializer::Serialize(NestedObject.ToSharedRef(), JsonWriter);
+				Value = NestedJsonString;
+			}
+			break;
+		}
+		case EJson::Array:
+		{
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			TArray<TSharedPtr<FJsonValue>> ArrayValues = JsonValue->AsArray();
+			FString ArrayString;
+			for (const TSharedPtr<FJsonValue>& ArrayValue : ArrayValues)
+			{
+				if (ArrayString.Len() > 0)
+				{
+					ArrayString += TEXT(",");
+				}
+				ArrayString += ConvertJsonValueToString(ArrayValue);
+			}
+			Value = TEXT("[") + ArrayString + TEXT("]");
+			break;
+		}
+		default:
+			break;
+		}
+
+		return Value;
+	}
 }

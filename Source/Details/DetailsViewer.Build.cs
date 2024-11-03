@@ -43,6 +43,7 @@ public class DetailsViewer : ModuleRules
 				"SlateCore",
                 "UMG",
                 "InputCore",
+                "ApplicationCore",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
