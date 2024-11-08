@@ -110,4 +110,3 @@ namespace DETAILS_VIEWER
 	}
 #undef LOCTEXT_NAMESPACE
 }
-

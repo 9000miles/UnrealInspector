@@ -34,6 +34,16 @@
 			"Name": "Preview",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "ScriptWidget",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "JsVM",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	]
 }
