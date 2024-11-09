@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "JsObject.h"
+#include "ScriptWidget.h"
 #include "ScriptWidgetFunction.generated.h"
 
 /**
@@ -14,6 +15,10 @@ class UScriptWidgetFunction : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
+	/**
+	 * FJsObject Widget需要改成 v8::FunctionCallbackInfo<v8::Value>& Info
+	 * 纯C++函数
+	 */
 	UFUNCTION(BlueprintCallable, Category = "ScriptWidget")
 	static void SetWidgetToWindow(FJsObject Widget)
 	{
@@ -29,27 +34,23 @@ public:
 		createWidget(Type, Widget);
 
 	}
+	/**
+	 * 
+	 */
 	//static void SetWidgetToWindow(UScriptWidgetProxy* WidgetProxy);
 
 	static void createWidget(FString Type, FJsObject JsObject)
 	{
+		/**
+		 * 根据传过来的类名，创建对应的Widget
+		 */
 		TSharedPtr<SWidget> Widget;
 		if (Type == TEXT("Button"))
 		{
-			Widget = SNew(SButton)
-				.Text_Lambda([JsObject]()
-					{
-						std::string text = JsObject.Get<std::string>("text");
-						return FText::FromString(UTF8_TO_TCHAR(text.c_str()));
-					})
-				.OnClicked_Lambda([JsObject]()
-					{
-						//const FJsObject func = JsObject.Get<FJsObject>("onClick");
-						//func.Action("onClick");
-						UE_LOG(LogTemp, Warning, TEXT("callback: "));
-						return FReply::Handled();
-					})
+			Widget = SNew(SCRIPT_WIDGET::$SButton, JsObject)
+
 				;
+
 		}
 
 		GEngine->GameViewport->AddViewportWidgetContent(Widget.ToSharedRef());
