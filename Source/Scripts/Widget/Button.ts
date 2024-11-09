@@ -1,6 +1,7 @@
 import { Widget } from "./Widget";
 import { EHAlign, EVAlign, TAttribute, WidgetProps } from "./IType";
 import { MultiEvent } from "../Core/MultiEvent";
+import * as UE from "ue";
 
 export class Button extends Widget {
     text: TAttribute<string>
@@ -25,4 +26,13 @@ export class Button extends Widget {
         this.content = content;
     }
 
+    /**
+     * 鼠标移动
+     * @param geometry
+     * @param mouseEvent
+     * @virtual
+     */
+    OnMouseMove(geometry: UE.Geometry, mouseEvent: UE.PointerEvent) {
+        console.log("OnMouseMove")
+    }
 }
