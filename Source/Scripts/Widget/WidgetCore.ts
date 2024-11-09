@@ -1,4 +1,5 @@
 import { Widget } from "./Widget";
+// @ts-ignore
 import * as UE from "ue";
 import { WidgetCollector } from "./WidgetCollector";
 
