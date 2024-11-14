@@ -203,49 +203,46 @@ namespace DETAILS_VIEWER
 		protected:
 			bool EvaluateCondition(const FString& Expression)
 			{
-				bool bAndExpression = false;
-
-				TArray<FString> Split;
-				FString SplitSymbol = TEXT("");
-				if (Expression.Contains(TEXT("&&"))) { SplitSymbol = TEXT("&&"); bAndExpression = true; }
-				else if (Expression.Contains(TEXT("||"))) SplitSymbol = TEXT("||");
-				Expression.ParseIntoArray(Split, *SplitSymbol, true);
+				bool bIsAndExpression = Expression.Contains(TEXT("&&"));
+				const FString SplitSymbol = bIsAndExpression ? TEXT("&&") : TEXT("||");
 
 				TArray<FString> Conditions;
-				if (Split.IsEmpty()) Conditions.Add(Expression);
-				else Conditions = Split;
+				Expression.ParseIntoArray(Conditions, *SplitSymbol, true);
+				if (Conditions.IsEmpty()) Conditions.Add(Expression);
 
 				for (FString& Condition : Conditions)
 				{
 					if (Condition.IsEmpty()) continue;
 
-					EType Type = EType::Bool;
-					if (Condition.Equals(TEXT("true"), ESearchCase::IgnoreCase)) return true;
-					else if (Condition.Equals(TEXT("false"), ESearchCase::IgnoreCase)) if (bAndExpression) return false;
-					else if (Condition.Contains(TEXT("=="))) Type = EType::Equal;
-					else if (Condition.Contains(TEXT("!="))) Type = EType::NotEqual;
-					else if (Condition.Contains(TEXT("<="))) Type = EType::LessEqual;
-					else if (Condition.Contains(TEXT(">="))) Type = EType::GreaterEqual;
-					else if (Condition.Contains(TEXT(">"))) Type = EType::Greater;
-					else if (Condition.Contains(TEXT("<"))) Type = EType::Less;
-					else if (Condition.Contains(TEXT("="))) Type = EType::Equal;
+                    Condition.TrimStartAndEndInline();
 
 					bool bNotValue = false;
 					if (Condition.StartsWith(TEXT("!"))) {
 						bNotValue = true;
-						Condition = Condition.RightChop(1);
+						Condition = Condition.RightChop(1).TrimStart();
 					}
 
-					bool Result = EvaluateSingleCondition(Condition, Type);
+					EType ComparisionType = EType::Bool;
+					if (Condition.Equals(TEXT("true"), ESearchCase::IgnoreCase)) return true;
+					else if (Condition.Equals(TEXT("false"), ESearchCase::IgnoreCase)) if (bIsAndExpression) return false;
+					else if (Condition.Contains(TEXT("=="))) ComparisionType = EType::Equal;
+					else if (Condition.Contains(TEXT("!="))) ComparisionType = EType::NotEqual;
+					else if (Condition.Contains(TEXT("<="))) ComparisionType = EType::LessEqual;
+					else if (Condition.Contains(TEXT(">="))) ComparisionType = EType::GreaterEqual;
+					else if (Condition.Contains(TEXT(">"))) ComparisionType = EType::Greater;
+					else if (Condition.Contains(TEXT("<"))) ComparisionType = EType::Less;
+					else if (Condition.Contains(TEXT("="))) ComparisionType = EType::Equal;
+
+					bool Result = EvaluateSingleCondition(Condition, ComparisionType);
 					if (bNotValue) Result = !Result;
 
 					// && 只要有一个为false，就返回false
-					if (bAndExpression) { if (!Result) return false; }
+					if (bIsAndExpression) { if (!Result) return false; }
 					// || 只要有一个为true，就返回true
 					else { if (Result) return true; }
 				}
 
-				return bAndExpression ? true : false;
+				return bIsAndExpression ? true : false;
 			}
 
 		public:
