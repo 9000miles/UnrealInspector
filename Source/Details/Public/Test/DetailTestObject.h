@@ -36,7 +36,7 @@ public:
 	FSWidgetHandle Property_FuncPropertyRow_RowWidget(FPropertyHandle Property);
 
 public:
-	UPROPERTY(EditAnywhere, Category = "AAA", meta = (EditCondition = "!Bool_1"))
+	UPROPERTY(EditAnywhere, Category = "AAA", meta = (VisibleCondition = "!Bool_1"))
 	FDepthFieldGlowInfo DepthFieldGlowInfo;
 
 	UPROPERTY(EditAnywhere, Category = "AAA")

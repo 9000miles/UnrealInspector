@@ -62,6 +62,7 @@ namespace DETAILS_VIEWER
 
 	class FCategoryTreeNode :public FTreeNode
 	{
+		IMPLEMENT_ITYPENAME(FCategoryTreeNode)
 	public:
 		FCategoryTreeNode(TSharedPtr<FCategoryInfo> Item) :FTreeNode(ENodeType::Category), CategoryInfo(Item)
 		{
@@ -73,8 +74,6 @@ namespace DETAILS_VIEWER
 		void Paste() override;
 
 	public:
-		static FString TypeName() { return TEXT("CategoryTreeNode"); }
-		FString GetTypeName() override { return FCategoryTreeNode::TypeName(); }
 		FString GetName() override;
 		FString GetDisplayName() override;
 		TSharedPtr<SWidget> GetWidget() override;

@@ -183,6 +183,7 @@ namespace DETAILS_VIEWER
 			[
 				RowWidget.ToSharedRef()
 			]
+			.Visibility(this, &SDetailViewer::IsCanVisible, Node)
 			;
 	}
 
@@ -191,6 +192,15 @@ namespace DETAILS_VIEWER
 	{
 		Node->Paste();
 		UE_LOG(LogTemp, Warning, TEXT("Paste the value from the clipboard"));
+	}
+
+	EVisibility SDetailViewer::IsCanVisible(TSharedPtr<FTreeNode> Node) const
+	{
+		if (Node->GetTypeName() == FCategoryTreeNode::TypeName()) return EVisibility::Visible;
+
+		TSharedPtr< FPropertyTreeNode> PropertyNode = StaticCastSharedPtr<FPropertyTreeNode>(Node);
+		const bool bVisible = PropertyNode->PropertyInfo->Executor->Condition->CanVisible();
+		return bVisible ? EVisibility::Visible : EVisibility::Collapsed;
 	}
 
 	//TSharedPtr<SWidget> SDetailView::CreateCustomDetailRowWidget(TSharedPtr<FTreeNode> Node, FString& OutCustomType, bool& bOutOverrideRowWidget)

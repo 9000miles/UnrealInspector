@@ -36,6 +36,7 @@ namespace DETAILS_VIEWER
 		//void SetObject(UObject* Object);
 		void Copy(TSharedPtr<FTreeNode> Node);
 		void Paste(TSharedPtr<FTreeNode> Node);
+		EVisibility IsCanVisible(TSharedPtr<FTreeNode> Node) const;
 
 	private:
 		void GenerateTreeNodes();
