@@ -10,14 +10,106 @@ namespace DETAILS_VIEWER
 
 #define LOCTEXT_NAMESPACE "DETAILS_VIEWER"
 
-		bool FUEPropertyEditable::CanEdit()
+		bool FUEConditionEvaluator::CanEdit()
 		{
-			return true;
+			/**
+			* 表达式类型大楷有如下这几种
+				UPROPERTY(config, EditAnywhere, Category = "Animation Settings", meta = (EditCondition = "!bHideControlShapes"))
+				UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Bake", meta = (ClampMin = "1", UIMin = "1", EditCondition = "BakingKeySettings == EBakingKeySettings::AllFrames"))
+				UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Bake", meta = (EditCondition = "BakingKeySettings == EBakingKeySettings::AllFrames || bReduceKeys"))
+				UPROPERTY(EditAnywhere, Category=ResourceDescription, meta=(EditCondition="ComponentBinding != nullptr", HideEditConditionToggle))
+				UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Goal, meta=(NeverAsPin, EditCondition=false, EditConditionHides))
+				UPROPERTY(EditAnywhere, Category = AnimationSharing, meta = (EditCondition = "bOnDemand", UIMin="0.0", UIMax="1.0", ClampMin = "0.0", ClampMax = "1.0"))
+				UPROPERTY(EditAnywhere, meta = (DisplayName = "Target Space", Input, EditCondition = "Weight > 0.0" ), Category = "AimTarget")
+				UPROPERTY(config, EditAnywhere, Category = "Enhanced Input|World Subsystem", meta = (editCondition = "bEnableDefaultMappingContexts && bEnableWorldSubsystem"))
+				UPROPERTY(EditAnywhere, Category = Default, BlueprintReadWrite, meta = (EditCondition = "bEnabled && bUseCustomRange", EditConditionHides))
+				UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Limits, meta = (EditCondition = "bLimitTranslation || bLimitRotation || bLimitScale"))
+			**/
+			const FString Condition = Property->GetMetaData("EditCondition");
+			return Condition.IsEmpty() ? true : EvaluateCondition(Condition);
 		}
 
-		bool FUEPropertyVisible::CanVisible()
+		bool FUEConditionEvaluator::EvaluateSingleCondition(const FString& Condition, IConditionEvaluator::EType Type/* = EType::None*/)
 		{
-			return true;
+			switch (Type)
+			{
+			case DETAILS_VIEWER::PROPERTY::IConditionEvaluator::None:
+				return true;
+			case DETAILS_VIEWER::PROPERTY::IConditionEvaluator::Bool: {
+				bool bNot = false;
+				FString PropertyName = Condition;
+
+				//UObject* Object = Property->GetOwnerUObject();
+				UClass* Class = Object->GetClass();
+				UE_Property* Ptr = Class->FindPropertyByName(*PropertyName);
+				if (!Ptr) return false;
+
+				const FString ValueStr = FUEPropertyHelper::PropertyToJson(Object.Get(), Ptr->GetFName());
+				bool Result = ValueStr.Equals(TEXT("true"), ESearchCase::IgnoreCase);
+				return bNot ? !Result : Result;
+			}
+			case DETAILS_VIEWER::PROPERTY::IConditionEvaluator::Equal: {
+				TArray<FString> Conditions;
+				Condition.ParseIntoArray(Conditions, TEXT("=="), true);
+				if (Conditions.Num() != 2) return false;
+
+				const FString& PropertyName = Conditions[0].TrimStartAndEnd();
+				FString ConditionValue = Conditions[1].TrimStartAndEnd();
+
+				//UObject* Object = Property->GetOwnerUObject();
+				UClass* Class = Object->GetClass();
+				UE_Property* Ptr = Class->FindPropertyByName(*PropertyName);
+				if (!Ptr) return false;
+
+				if (Ptr->IsA<FEnumProperty>()) {
+					FEnumProperty* EnumProperty = CastFieldChecked<FEnumProperty>(Ptr);
+					UEnum* Enum = EnumProperty->GetEnum();
+					int64 EnumValue = Enum->GetValueByNameString(ConditionValue);
+					uint8* EnumValuePtr = Ptr->ContainerPtrToValuePtr<uint8>(Object.Get());
+					return EnumValuePtr && *EnumValuePtr == EnumValue;
+				}
+
+				const FString ValueStr = FUEPropertyHelper::PropertyToJson(Object.Get(), Ptr->GetFName());
+				return ValueStr.Equals(ConditionValue, ESearchCase::IgnoreCase);
+			}
+			case DETAILS_VIEWER::PROPERTY::IConditionEvaluator::NotEqual: {
+				TArray<FString> Conditions;
+				Condition.ParseIntoArray(Conditions, TEXT("!="), true);
+				if (Conditions.Num() != 2) return false;
+
+				const FString& PropertyName = Conditions[0].TrimStartAndEnd();
+				FString ConditionValue = Conditions[1].TrimStartAndEnd();
+
+				//UObject* Object = Property->GetOwnerUObject();
+				UClass* Class = Object->GetClass();
+				UE_Property* Ptr = Class->FindPropertyByName(*PropertyName);
+				if (!Ptr) return false;
+
+				if (Ptr->IsA<FEnumProperty>()) {
+					FEnumProperty* EnumProperty = CastFieldChecked<FEnumProperty>(Ptr);
+					UEnum* Enum = EnumProperty->GetEnum();
+					int64 EnumValue = Enum->GetValueByNameString(ConditionValue);
+					uint8* EnumValuePtr = Ptr->ContainerPtrToValuePtr<uint8>(Object.Get());
+					return EnumValuePtr && *EnumValuePtr != EnumValue;
+				}
+
+				const FString ValueStr = FUEPropertyHelper::PropertyToJson(Object.Get(), Ptr->GetFName());
+				return !ValueStr.Equals(ConditionValue, ESearchCase::IgnoreCase);
+			}
+			case DETAILS_VIEWER::PROPERTY::IConditionEvaluator::Less:
+			case DETAILS_VIEWER::PROPERTY::IConditionEvaluator::Greater:
+			case DETAILS_VIEWER::PROPERTY::IConditionEvaluator::LessEqual:
+			case DETAILS_VIEWER::PROPERTY::IConditionEvaluator::GreaterEqual:
+				return EvaluateCompareCondition(Condition, Type);
+			default:
+				return true;
+			}
+		}
+
+		bool FUEConditionEvaluator::CanVisible()
+		{
+			const FString Condition = Property->GetMetaData("VisibleCondition");
+			return Condition.IsEmpty() ? true : EvaluateCondition(Condition);
 		}
 
 		TSharedRef<SWidget> FUEPropertyWidgetMaker::MakeWidget(TSharedPtr<FTreeNode> Node)

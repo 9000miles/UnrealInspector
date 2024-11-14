@@ -41,6 +41,7 @@ namespace DETAILS_VIEWER
 		virtual FString GetName() { return TEXT("TreeNode"); };
 		virtual FString GetDisplayName() { return TEXT("TreeNode"); };
 		virtual TSharedPtr<SWidget> GetWidget();
+		virtual int32 GetDepth() { return Depth; }
 
 		virtual void Copy() {}
 		virtual void Paste() {}
@@ -48,9 +49,10 @@ namespace DETAILS_VIEWER
 		TArray<TSharedPtr<FTreeNode>> GetChildren() { return Children; }
 		TSharedPtr<FTreeNode> GetParent() { return Parent; }
 		void AddChild(TSharedPtr<FTreeNode> Node);
-		void SetParent(TSharedPtr<FTreeNode> Node) { Parent = Node; }
+		void SetParent(TSharedPtr<FTreeNode> Node) { Parent = Node; Depth = Node->GetDepth() + 1; }
 
 	protected:
+		int32 Depth = 0;
 		TSharedPtr<FTreeNode> Parent;
 		TArray<TSharedPtr<FTreeNode>> Children;
 

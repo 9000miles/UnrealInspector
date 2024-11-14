@@ -182,16 +182,78 @@ namespace DETAILS_VIEWER
 			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action) = 0;
 		};
 
-		class IEditable :public IJsonable
+		class IConditionEvaluator :public IJsonable
 		{
+		public:
+			enum EType
+			{
+				None,
+				Bool,//bool求值
+				Equal,//值相等
+				NotEqual,//值不相等
+				Less,//小于
+				Greater,//大于
+				LessEqual,//小于等于
+				GreaterEqual,//大于等于
+			};
+
+			void FromJson(TSharedPtr<FJsonObject> JsonObject) override;
+			TSharedPtr<FJsonObject> ToJson() override;
+
+		protected:
+			bool EvaluateCondition(const FString& Expression)
+			{
+				bool bAndExpression = false;
+
+				TArray<FString> Split;
+				FString SplitSymbol = TEXT("");
+				if (Expression.Contains(TEXT("&&"))) { SplitSymbol = TEXT("&&"); bAndExpression = true; }
+				else if (Expression.Contains(TEXT("||"))) SplitSymbol = TEXT("||");
+				Expression.ParseIntoArray(Split, *SplitSymbol, true);
+
+				TArray<FString> Conditions;
+				if (Split.IsEmpty()) Conditions.Add(Expression);
+				else Conditions = Split;
+
+				for (FString& Condition : Conditions)
+				{
+					if (Condition.IsEmpty()) continue;
+
+					EType Type = EType::Bool;
+					if (Condition.Equals(TEXT("true"), ESearchCase::IgnoreCase)) return true;
+					else if (Condition.Equals(TEXT("false"), ESearchCase::IgnoreCase)) return false;
+					else if (Condition.Contains(TEXT("=="))) Type = EType::Equal;
+					else if (Condition.Contains(TEXT("!="))) Type = EType::NotEqual;
+					else if (Condition.Contains(TEXT("<="))) Type = EType::LessEqual;
+					else if (Condition.Contains(TEXT(">="))) Type = EType::GreaterEqual;
+					else if (Condition.Contains(TEXT(">"))) Type = EType::Greater;
+					else if (Condition.Contains(TEXT("<"))) Type = EType::Less;
+					else if (Condition.Contains(TEXT("="))) Type = EType::Equal;
+
+					bool bNotValue = false;
+					if (Condition.StartsWith(TEXT("!"))) {
+						bNotValue = true;
+						Condition = Condition.RightChop(1);
+					}
+
+					bool Result = EvaluateSingleCondition(Condition, Type);
+					if (bNotValue) Result = !Result;
+
+					// && 只要有一个为false，就返回false
+					if (bAndExpression) { if (!Result) return false; }
+					// || 只要有一个为true，就返回true
+					else { if (Result) return true; }
+				}
+
+				return bAndExpression ? true : false;
+			}
+
 		public:
 			virtual bool CanEdit() = 0;
-		};
-		class IVisible :public IJsonable
-		{
-		public:
 			virtual bool CanVisible() = 0;
+			virtual bool EvaluateSingleCondition(const FString& Condition, EType Type) = 0;
 		};
+
 		class IWidgetMaker :public IJsonable
 		{
 		public:
@@ -212,8 +274,7 @@ namespace DETAILS_VIEWER
 
 		public:
 			TSharedPtr<IPropertyAccessor> Accessor;
-			TSharedPtr<IEditable> Editable;
-			TSharedPtr<IVisible> Visible;
+			TSharedPtr<IConditionEvaluator> Condition;
 			TSharedPtr<IWidgetMaker> WidgetMaker;
 			TSharedPtr<ICopier> Copier;
 			TSharedPtr<IPaster> Paster;

@@ -20,10 +20,12 @@ namespace DETAILS_VIEWER
 
 
 
+		//SplitterSlotSize = 0.3f - (NodePtr->GetDepth() * 0.005f);
 		SplitterSlotSize = 0.3f;
 
 
 		TSharedPtr<SBox> Box = SNew(SBox)
+			.HAlign(HAlign_Fill)
 			;
 
 		TSharedPtr<SWidget> CustomDetailRowWidget = InWidget;
@@ -70,6 +72,7 @@ namespace DETAILS_VIEWER
 							.Padding(FMargin(5, 0, 3, 0))
 							[
 								SNew(SHorizontalBox)
+									.IsEnabled(this, &SDetailProperty::IsCanEditable)
 									+ SHorizontalBox::Slot()
 									.HAlign(HAlign_Fill)
 									.VAlign(VAlign_Center)
@@ -143,13 +146,14 @@ namespace DETAILS_VIEWER
 
 	void SDetailProperty::SetSplitterSlotSize(int32 Index, float Size)
 	{
+		//Size = Size + (NodePtr->GetDepth() * 0.005f);
 		SSplitter::FSlot& Slot = Splitter->SlotAt(Index);
 		Slot.SetSizeValue(Size);
 	}
 
 	float SDetailProperty::GetSlotSize() const
 	{
-		return SplitterSlotSize;
+		return SplitterSlotSize;//- (NodePtr->GetDepth() * 0.1f);
 	}
 
 	FReply SDetailProperty::OnResetClicked()
@@ -162,4 +166,16 @@ namespace DETAILS_VIEWER
 	{
 		return Splitter.IsValid();
 	}
+
+	float SDetailProperty::GetSplitterSlotSize()
+	{
+		return SplitterSlotSize - (NodePtr->GetDepth() * 0.1f);
+	}
+
+	bool SDetailProperty::IsCanEditable() const
+	{
+		TSharedPtr< FPropertyTreeNode> Node = GetNode<FPropertyTreeNode>();
+		return Node->PropertyInfo->Executor->Condition->CanEdit();
+	}
+
 }

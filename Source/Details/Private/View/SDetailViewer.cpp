@@ -272,6 +272,9 @@ namespace DETAILS_VIEWER
 		for (TSharedPtr<SDetailTreeItem> DetialItem : HasSplitterWidgets)
 		{
 			if (!DetialItem->HasSplitter()) continue;
+			//Size = Size - (DetialItem->GetNode<FTreeNode>()->GetDepth() * 0.005f);
+			//Size = DetialItem->GetSplitterSlotSize();
+
 
 			DetialItem->SetSplitterSlotSize(Index, Size);
 		}

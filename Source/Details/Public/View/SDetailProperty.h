@@ -30,6 +30,8 @@ namespace DETAILS_VIEWER
 		void SplitterSlotResized(float Size, int32 Index);
 		virtual void SetSplitterSlotSize(int32 Index, float Size) override;
 		virtual bool HasSplitter() override;
+		virtual float GetSplitterSlotSize() override;
+		bool IsCanEditable()  const;
 
 		float GetSlotSize() const;
 		FReply OnResetClicked();

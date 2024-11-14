@@ -39,7 +39,7 @@ TStatId UDetailTestObject::GetStatId() const
 
 void UDetailTestObject::PrintPropertyValue()
 {
-//return;
+return;
 #define PRINT_VALUE(Name, Format, Value) \
     UE_LOG(LogTemp, Log, TEXT(#Name ": " Format), Value);
 
@@ -62,7 +62,7 @@ void UDetailTestObject::TickChangeProperty()
 
 	Bool_1 = !Bool_1;
 	String_1 = FString::Printf(TEXT("String_%d"), FMath::Rand());
-	Text_1 = FText::FromString(FString::Printf(TEXT("Text_%d"), FMath::Rand()));
+	//Text_1 = FText::FromString(FString::Printf(TEXT("Text_%d"), FMath::Rand()));
 	Name_1 = *FString::Printf(TEXT("Name_%d"), FMath::Rand());
 }
 

@@ -212,6 +212,7 @@ namespace DETAILS_VIEWER
 	{
 		TSharedPtr<FPropertyTreeNode> TreeNode = MakeShareable(new FPropertyTreeNode(AsShared()));
 		ParentNode->AddChild(TreeNode);
+		TreeNode->SetParent(ParentNode);
 
 		TSharedPtr<IDetailWidgetCreater> WidgetCreater = FWidgetCreaterFactory::Get().FindCreater(Type);
 		if (WidgetCreater.IsValid() && !WidgetCreater->IsAllowHasChildren())
@@ -232,8 +233,7 @@ namespace DETAILS_VIEWER
 		TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 
 		JsonObject->SetObjectField(TEXT("Setter"), Accessor->ToJson());
-		JsonObject->SetObjectField(TEXT("Editable"), Editable->ToJson());
-		JsonObject->SetObjectField(TEXT("Visible"), Visible->ToJson());
+		JsonObject->SetObjectField(TEXT("Editable"), Condition->ToJson());
 		JsonObject->SetObjectField(TEXT("WidgetMaker"), WidgetMaker->ToJson());
 
 		return JsonObject;
@@ -438,4 +438,14 @@ namespace DETAILS_VIEWER
 
 		return Value;
 	}
+
+	void PROPERTY::IConditionEvaluator::FromJson(TSharedPtr<FJsonObject> JsonObject)
+	{
+	}
+
+	TSharedPtr<FJsonObject> PROPERTY::IConditionEvaluator::ToJson()
+	{
+		return MakeShared<FJsonObject>();
+	}
+
 }

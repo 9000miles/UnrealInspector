@@ -36,25 +36,26 @@ public:
 	FSWidgetHandle Property_FuncPropertyRow_RowWidget(FPropertyHandle Property);
 
 public:
-	UPROPERTY(EditAnywhere, Category = "AAA")
+	UPROPERTY(EditAnywhere, Category = "AAA", meta = (EditCondition = "!Bool_1"))
 	FDepthFieldGlowInfo DepthFieldGlowInfo;
 
 	UPROPERTY(EditAnywhere, Category = "AAA")
 	ESpawnActorCollisionHandlingMethod Method;
 
+	//UPROPERTY(EditAnywhere, Category = "AAA")
 	UPROPERTY(EditAnywhere, Category = "AAA", meta = (DisplayName = "窝窝屎"))
 	bool Bool_1 = true;
-	UPROPERTY(EditAnywhere, meta = (HintText = "This is FString Property"))
+	UPROPERTY(EditAnywhere, meta = (HintText = "This is FString Property", EditCondition = "int32_Min_Max>4"))
 	FString String_1 = TEXT("sjoifwoeo");
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta = (EditCondition = "Method == ESpawnActorCollisionHandlingMethod::AlwaysSpawn && int32_Min_Max > 5"))
 	FText Text_1;
-	UPROPERTY()
+	UPROPERTY(meta = (EditCondition = "Method == ESpawnActorCollisionHandlingMethod::AlwaysSpawn || Method == ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding"))
 	FName Name_1;
 	UPROPERTY(meta = (UIMin = 0, UIMax = 100))
 	int32 int32_Min_Max;
 
 
-	UPROPERTY(meta = (UIMin = 0.55, UIMax = 50.1))
+	UPROPERTY(meta = (UIMin = 0.55, UIMax = 50.1, EditCondition = "int32_Min_Max <= 22"))
 	float float_Min_Max;
 
 	UPROPERTY()

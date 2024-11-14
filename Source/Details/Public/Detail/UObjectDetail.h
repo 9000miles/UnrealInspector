@@ -128,7 +128,7 @@ namespace DETAILS_VIEWER
 
 				// 使用 memcpy 进行内存拷贝，避免直接解引用 void* 指针
 				memcpy(ValuePtr, DefaultValuePtr, Property->GetSize());
-            }
+			}
 
 			//* ============================== OnPropertyChanged ================================= *//
 			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action)
@@ -190,33 +190,91 @@ namespace DETAILS_VIEWER
 			TWeakObjectPtr<UObject> OwnerObject;
 		};
 
-		class FUEPropertyEditable :public IEditable
+		class FUEConditionEvaluator :public IConditionEvaluator
 		{
 		public:
-			FUEPropertyEditable(UE_Property* InProperty)
-				:Property(InProperty)
+			FUEConditionEvaluator(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
+				:Object(InObject),
+				Property(InProperty)
 			{
 
 			}
-			virtual ~FUEPropertyEditable() {}
+			virtual ~FUEConditionEvaluator() {}
 			bool CanEdit() override;
-
-		private:
-			UE_Property* Property;
-		};
-
-		class FUEPropertyVisible :public IVisible
-		{
-		public:
-			FUEPropertyVisible(UE_Property* InProperty)
-				:Property(InProperty)
-			{
-
-			}
-			virtual ~FUEPropertyVisible() {}
 			bool CanVisible() override;
 
 		private:
+			bool EvaluateSingleCondition(const FString& Condition, IConditionEvaluator::EType Type = EType::None) override;
+			bool EvaluateCompareCondition(const FString& Condition, IConditionEvaluator::EType ComparisonType) const
+			{
+				TArray<FString> Parts;
+				Condition.ParseIntoArray(Parts, *GetComparisonOperator(ComparisonType), true);
+				if (Parts.Num() != 2) return false;
+
+				const FString& PropertyName = Parts[0].TrimStartAndEnd();
+				FString ConditionValue = Parts[1].TrimStartAndEnd();
+
+				//UObject* Object = Property->GetOwnerUObject();
+				UClass* Class = Object->GetClass();
+				UE_Property* Ptr = Class->FindPropertyByName(*PropertyName);
+				if (!Ptr) return false;
+
+				const FString ValueStr = FUEPropertyHelper::PropertyToJson(Object.Get(), Ptr->GetFName());
+
+				if (Ptr->IsA<FDoubleProperty>())
+				{
+					const double cValue = FCString::Atod(*ConditionValue);
+					const double Value = FCString::Atod(*ValueStr);
+					return CompareValues(Value, cValue, ComparisonType);
+				}
+				else if (Ptr->IsA<FIntProperty>())
+				{
+					const int32 cValue = FCString::Atoi(*ConditionValue);
+					const int32 Value = FCString::Atoi(*ValueStr);
+					return CompareValues(Value, cValue, ComparisonType);
+				}
+				else if (Ptr->IsA<FFloatProperty>())
+				{
+					const float cValue = FCString::Atof(*ConditionValue);
+					const float Value = FCString::Atof(*ValueStr);
+					return CompareValues(Value, cValue, ComparisonType);
+				}
+				else if (Ptr->IsA<FInt64Property>())
+				{
+					const int64 cValue = FCString::Atoi64(*ConditionValue);
+					const int64 Value = FCString::Atoi64(*ValueStr);
+					return CompareValues(Value, cValue, ComparisonType);
+				}
+
+				return false;
+			}
+			FString GetComparisonOperator(IConditionEvaluator::EType ComparisonType) const
+			{
+				switch (ComparisonType)
+				{
+				case IConditionEvaluator::EType::Less: return TEXT("<");
+				case IConditionEvaluator::EType::Greater: return TEXT(">");
+				case IConditionEvaluator::EType::LessEqual: return TEXT("<=");
+				case IConditionEvaluator::EType::GreaterEqual: return TEXT(">=");
+				default: return TEXT("");
+				}
+			}
+
+			template<typename T>
+			bool CompareValues(T Value, T ConditionValue, IConditionEvaluator::EType ComparisonType) const
+			{
+				switch (ComparisonType)
+				{
+				case IConditionEvaluator::EType::Less: return Value < ConditionValue;
+				case IConditionEvaluator::EType::Greater: return Value > ConditionValue;
+				case IConditionEvaluator::EType::LessEqual: return Value <= ConditionValue;
+				case IConditionEvaluator::EType::GreaterEqual: return Value >= ConditionValue;
+				default: return false;
+				}
+			}
+
+		private:
+			TWeakObjectPtr<UObject> Object;
 			UE_Property* Property;
 		};
 
@@ -298,8 +356,7 @@ namespace DETAILS_VIEWER
 				Object(InObject)
 			{
 				Accessor = MakeShareable(new PROPERTY::FUEPropertyAccessor(Container, Property, DefaultValuePtr));
-				Editable = MakeShareable(new PROPERTY::FUEPropertyEditable(Property));
-				Visible = MakeShareable(new PROPERTY::FUEPropertyVisible(Property));
+				Condition = MakeShareable(new PROPERTY::FUEConditionEvaluator(Object, Property));
 				WidgetMaker = MakeShareable(new PROPERTY::FUEPropertyWidgetMaker(Property));
 				Copier = MakeShareable(new PROPERTY::FUEPropertyCopier(Object, Property));
 				Paster = MakeShareable(new PROPERTY::FUEPropertyPaster(Object, Property));

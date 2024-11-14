@@ -23,8 +23,9 @@ namespace DETAILS_VIEWER
 		void Construct(TSharedPtr<FTreeNode> DetailNode);
 		virtual bool HasSplitter() { return false; };
 		virtual void SetSplitterSlotSize(int32 Index, float Size) {};
+		virtual float GetSplitterSlotSize() { return 0.1f; };
 		template<typename T>
-		TSharedPtr<T> GetNode() { return StaticCastSharedPtr<T>(NodePtr); };
+		TSharedPtr<T> GetNode() const { return StaticCastSharedPtr<T>(NodePtr); };
 
 	protected:
 		TSharedPtr<FTreeNode> NodePtr;
