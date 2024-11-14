@@ -221,7 +221,7 @@ namespace DETAILS_VIEWER
 
 					EType Type = EType::Bool;
 					if (Condition.Equals(TEXT("true"), ESearchCase::IgnoreCase)) return true;
-					else if (Condition.Equals(TEXT("false"), ESearchCase::IgnoreCase)) return false;
+					else if (Condition.Equals(TEXT("false"), ESearchCase::IgnoreCase)) if (bAndExpression) return false;
 					else if (Condition.Contains(TEXT("=="))) Type = EType::Equal;
 					else if (Condition.Contains(TEXT("!="))) Type = EType::NotEqual;
 					else if (Condition.Contains(TEXT("<="))) Type = EType::LessEqual;
