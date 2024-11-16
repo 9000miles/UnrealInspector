@@ -37,6 +37,8 @@ namespace DETAILS_VIEWER
 		void Copy(TSharedPtr<FTreeNode> Node);
 		void Paste(TSharedPtr<FTreeNode> Node);
 		EVisibility IsCanVisible(TSharedPtr<FTreeNode> Node) const;
+		void OnSearchTextCommitted(const FText& Text, ETextCommit::Type CommitType);
+		void OnSearchTextChanged(const FText& Text);
 
 	private:
 		void GenerateTreeNodes();

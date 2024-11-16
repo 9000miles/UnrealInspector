@@ -45,6 +45,9 @@ namespace DETAILS_VIEWER
 
 		virtual void Copy() {}
 		virtual void Paste() {}
+		virtual void OnSearch(const FText& Text);
+		virtual bool IsCanEditable() { return true; }
+		virtual bool IsCanVisible() { return true; }
 
 		TArray<TSharedPtr<FTreeNode>> GetChildren() { return Children; }
 		TSharedPtr<FTreeNode> GetParent() { return Parent; }
@@ -94,6 +97,10 @@ namespace DETAILS_VIEWER
 
 		void Copy() override;
 		void Paste() override;
+		void OnSearch(const FText& Text) override;
+
+		bool IsCanEditable() override;
+		bool IsCanVisible() override;
 
 	public:
 		FString GetName() override;
@@ -102,5 +109,9 @@ namespace DETAILS_VIEWER
 
 	public:
 		TSharedPtr<FPropertyInfo> PropertyInfo;
+
+		bool bInSearching = false;
+		bool bSearchByName;
+		bool bSearchByDisplayName;
 	};
 }

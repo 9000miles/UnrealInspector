@@ -97,6 +97,34 @@ namespace DETAILS_VIEWER
 		PropertyInfo->Paste(String);
 	}
 
+
+	void FPropertyTreeNode::OnSearch(const FText& Text)
+	{
+		bInSearching = !Text.IsEmpty();
+
+		if (Text.IsEmpty())
+		{
+			bSearchByName = false;
+			bSearchByDisplayName = false;
+			return;
+		}
+
+		bSearchByName = PropertyInfo->Name.Contains(*Text.ToString(), ESearchCase::IgnoreCase);
+		bSearchByDisplayName = PropertyInfo->DisplayName.Contains(*Text.ToString(), ESearchCase::IgnoreCase);
+	}
+
+	bool FPropertyTreeNode::IsCanEditable()
+	{
+		return PropertyInfo->Executor->Condition->IsCanEditable();
+	}
+
+	bool FPropertyTreeNode::IsCanVisible()
+	{
+		const bool bCanVisibale = PropertyInfo->Executor->Condition->IsCanVisible();
+		const bool bBySearched = bSearchByName || bSearchByDisplayName;
+		return bInSearching ? bCanVisibale && bBySearched : bCanVisibale;
+	}
+
 	FString FPropertyTreeNode::GetName()
 	{
 		return PropertyInfo->Name;
@@ -132,6 +160,15 @@ namespace DETAILS_VIEWER
 	TSharedPtr<SWidget> FTreeNode::GetWidget()
 	{
 		return SNullWidget::NullWidget;
+	}
+
+
+	void FTreeNode::OnSearch(const FText& Text)
+	{
+		for (auto& Child : Children)
+		{
+			Child->OnSearch(Text);
+		}
 	}
 
 	void FTreeNode::AddChild(TSharedPtr<FTreeNode> Node)

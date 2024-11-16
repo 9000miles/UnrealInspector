@@ -246,8 +246,8 @@ namespace DETAILS_VIEWER
 			}
 
 		public:
-			virtual bool CanEdit() = 0;
-			virtual bool CanVisible() = 0;
+			virtual bool IsCanEditable() = 0;
+			virtual bool IsCanVisible() = 0;
 			virtual bool EvaluateSingleCondition(const FString& Condition, EType Type) = 0;
 		};
 

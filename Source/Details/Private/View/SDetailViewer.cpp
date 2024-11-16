@@ -16,6 +16,7 @@
 #include "Node/SetNode.h"
 #include "Node/StructNode.h"
 #include "Node/GeneralNode.h"
+#include "Widgets/Input/SSearchBox.h"
 
 namespace DETAILS_VIEWER
 {
@@ -50,6 +51,13 @@ namespace DETAILS_VIEWER
 								// 显示名称
 								SNew(STextBlock)
 									.Text(FText::FromString(DetailInfo->Name))
+							]
+							+ SVerticalBox::Slot()
+							.AutoHeight()
+							[
+								SNew(SSearchBox)
+									.OnTextChanged(this, &SDetailViewer::OnSearchTextChanged)
+									.OnTextCommitted(this, &SDetailViewer::OnSearchTextCommitted)
 							]
 							+ SVerticalBox::Slot()
 							//.FillHeight()
@@ -188,6 +196,14 @@ namespace DETAILS_VIEWER
 	}
 
 
+	void SDetailViewer::OnSearchTextChanged(const FText& Text)
+	{
+		for (TSharedPtr<FTreeNode> Node : TreeNodes)
+		{
+			Node->OnSearch(Text);
+		}
+	}
+
 	void SDetailViewer::Paste(TSharedPtr<FTreeNode> Node)
 	{
 		Node->Paste();
@@ -196,10 +212,7 @@ namespace DETAILS_VIEWER
 
 	EVisibility SDetailViewer::IsCanVisible(TSharedPtr<FTreeNode> Node) const
 	{
-		if (Node->GetTypeName() == FCategoryTreeNode::TypeName()) return EVisibility::Visible;
-
-		TSharedPtr< FPropertyTreeNode> PropertyNode = StaticCastSharedPtr<FPropertyTreeNode>(Node);
-		const bool bVisible = PropertyNode->PropertyInfo->Executor->Condition->CanVisible();
+		const bool bVisible = Node->IsCanVisible();
 		return bVisible ? EVisibility::Visible : EVisibility::Collapsed;
 	}
 
@@ -275,6 +288,12 @@ namespace DETAILS_VIEWER
 			});
 
 		// 这里可以添加额外的逻辑，例如排序或过滤树节点等
+	}
+
+
+	void SDetailViewer::OnSearchTextCommitted(const FText& Text, ETextCommit::Type CommitType)
+	{
+
 	}
 
 	void SDetailViewer::OnSplitterSlotResized(int32 Index, float Size)

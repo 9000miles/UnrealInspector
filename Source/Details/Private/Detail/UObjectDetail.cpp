@@ -10,7 +10,7 @@ namespace DETAILS_VIEWER
 
 #define LOCTEXT_NAMESPACE "DETAILS_VIEWER"
 
-		bool FUEConditionEvaluator::CanEdit()
+		bool FUEConditionEvaluator::IsCanEditable()
 		{
 			/**
 			* 表达式类型大楷有如下这几种
@@ -106,7 +106,7 @@ namespace DETAILS_VIEWER
 			}
 		}
 
-		bool FUEConditionEvaluator::CanVisible()
+		bool FUEConditionEvaluator::IsCanVisible()
 		{
 			const FString Condition = Property->GetMetaData("VisibleCondition");
 			return Condition.IsEmpty() ? true : EvaluateCondition(Condition);

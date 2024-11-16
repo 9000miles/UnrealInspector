@@ -175,7 +175,7 @@ namespace DETAILS_VIEWER
 	bool SDetailProperty::IsCanEditable() const
 	{
 		TSharedPtr< FPropertyTreeNode> Node = GetNode<FPropertyTreeNode>();
-		return Node->PropertyInfo->Executor->Condition->CanEdit();
+		return Node->IsCanEditable();
 	}
 
 }

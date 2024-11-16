@@ -200,8 +200,8 @@ namespace DETAILS_VIEWER
 
 			}
 			virtual ~FUEConditionEvaluator() {}
-			bool CanEdit() override;
-			bool CanVisible() override;
+			bool IsCanEditable() override;
+			bool IsCanVisible() override;
 
 		private:
 			bool EvaluateSingleCondition(const FString& Condition, IConditionEvaluator::EType Type = EType::None) override;
