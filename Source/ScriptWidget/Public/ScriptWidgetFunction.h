@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "JsObject.h"
 #include "ScriptWidget.h"
+#include "Widgets/Text/STextBlock.h"
 #include "ScriptWidgetFunction.generated.h"
 
 /**
@@ -35,9 +36,9 @@ public:
 
 	}
 	/**
-	 * 
+	 *
 	 */
-	//static void SetWidgetToWindow(UScriptWidgetProxy* WidgetProxy);
+	 //static void SetWidgetToWindow(UScriptWidgetProxy* WidgetProxy);
 
 	static void createWidget(FString Type, FJsObject JsObject)
 	{
@@ -48,11 +49,25 @@ public:
 		if (Type == TEXT("Button"))
 		{
 			Widget = SNew(SCRIPT_WIDGET::$SButton, JsObject)
-
 				;
-
+		}
+		else if (Type == TEXT("TextBlock"))
+		{
+			Widget = SNew(SCRIPT_WIDGET::$STextBlock, JsObject)
+				;
 		}
 
 		GEngine->GameViewport->AddViewportWidgetContent(Widget.ToSharedRef());
 	}
 };
+
+namespace SCRIPT_WIDGET
+{
+	class $STextBlock : public STextBlock, public ITypeName
+	{
+		IMPLEMENT_ITYPENAME(STextBlock)
+	public:
+	
+	public:
+	};
+}
