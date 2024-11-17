@@ -54,6 +54,16 @@ namespace DETAILS_VIEWER
 		CategoryInfo->Paste(String);
 	}
 
+	bool FCategoryTreeNode::IsCanVisible()
+	{
+		for (auto& Child : Children)
+		{
+			if (Child->IsCanVisible()) return true;
+		}
+
+		return false;
+	}
+
 	//	//return PropertyBuilder->MakeWidget();
 	//	return SNullWidget::NullWidget;
 	//}

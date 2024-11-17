@@ -75,6 +75,8 @@ namespace DETAILS_VIEWER
 
 		void Copy() override;
 		void Paste() override;
+		bool IsCanVisible() override;
+
 
 	public:
 		FString GetName() override;
