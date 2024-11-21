@@ -31,6 +31,7 @@ namespace DETAILS_VIEWER
 		TSharedPtr<SWidget> OnContextMenuOpening();
 		/** Constructs this widget with InArgs */
 		void Construct(const FArguments& InArgs);
+		void SetDetailInfo(TSharedPtr<FDetailInfo> InDetailInfo);
 
 		void InitByOptions(FDetailOptions Options);
 		//void SetObject(UObject* Object);

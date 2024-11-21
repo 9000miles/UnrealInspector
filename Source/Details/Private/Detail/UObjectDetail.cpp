@@ -248,6 +248,11 @@ namespace DETAILS_VIEWER
 		DetailInfo->Commander = MakeShareable(new FUObjectDetailCommander());
 
 		IteratorField(Object, DetailInfo->CategoryList);
+
+		if (DetailViewer.IsValid())
+		{
+			DetailViewer->SetDetailInfo(DetailInfo);
+		}
 	}
 
 	void FUObjectDetailHolder::SetObject()
@@ -368,12 +373,17 @@ namespace DETAILS_VIEWER
 
 	TSharedPtr<SWidget> FUObjectDetailHolder::GetWidget()
 	{
-		if (!Object.IsValid())
-			return SNullWidget::NullWidget;
+		//if (!Object.IsValid())
+		//	return SNullWidget::NullWidget;
 
-		return SNew(SDetailViewer)
+		if (DetailViewer.IsValid())
+			return DetailViewer;
+
+		DetailViewer = SNew(SDetailViewer)
 			.DetailInfo(DetailInfo)
 			;
+
+		return DetailViewer;
 	}
 
 	void FUObjectDetailHolder::Init(TSharedPtr<FDetailOptions> Options)

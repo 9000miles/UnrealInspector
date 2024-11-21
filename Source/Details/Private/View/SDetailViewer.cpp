@@ -45,13 +45,13 @@ namespace DETAILS_VIEWER
 					.Padding(FMargin(3.0f))
 					[
 						SNew(SVerticalBox)
-							+ SVerticalBox::Slot()
-							.AutoHeight()
-							[
-								// 显示名称
-								SNew(STextBlock)
-									.Text(FText::FromString(DetailInfo->Name))
-							]
+							//+ SVerticalBox::Slot()
+							//.AutoHeight()
+							//[
+							//	// 显示名称
+							//	SNew(STextBlock)
+							//		.Text(FText::FromString(DetailInfo->Name))
+							//]
 							+ SVerticalBox::Slot()
 							.AutoHeight()
 							[
@@ -69,6 +69,13 @@ namespace DETAILS_VIEWER
 			];
 
 
+	}
+
+	void SDetailViewer::SetDetailInfo(TSharedPtr<FDetailInfo> InDetailInfo)
+	{
+		DetailInfo = InDetailInfo;
+		GenerateTreeNodes();
+		TreeView->RequestTreeRefresh();
 	}
 
 	void SDetailViewer::InitByOptions(FDetailOptions Options)
@@ -270,6 +277,8 @@ namespace DETAILS_VIEWER
 
 	void SDetailViewer::GenerateTreeNodes()
 	{
+		if (!DetailInfo.IsValid()) return;
+
 		// 清空现有节点
 		TreeNodes.Empty();
 

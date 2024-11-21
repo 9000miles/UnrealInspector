@@ -414,5 +414,6 @@ namespace DETAILS_VIEWER
 	private:
 		TWeakObjectPtr<UObject> Object;
 		TSharedPtr<FDetailInfo> DetailInfo;
+		TSharedPtr<SDetailViewer> DetailViewer;
 	};
 }
