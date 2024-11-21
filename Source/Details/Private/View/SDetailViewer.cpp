@@ -37,6 +37,10 @@ namespace DETAILS_VIEWER
 
 		DetailContentBoxPtr = SNew(SBox)
 			;
+		// 显示名称
+		NameWidget = SNew(STextBlock)
+			.Text(FText::FromString(DetailInfo.IsValid() ? DetailInfo->Name : TEXT("")))
+			;
 
 		ChildSlot
 			[
@@ -45,13 +49,11 @@ namespace DETAILS_VIEWER
 					.Padding(FMargin(3.0f))
 					[
 						SNew(SVerticalBox)
-							//+ SVerticalBox::Slot()
-							//.AutoHeight()
-							//[
-							//	// 显示名称
-							//	SNew(STextBlock)
-							//		.Text(FText::FromString(DetailInfo->Name))
-							//]
+							+ SVerticalBox::Slot()
+							.AutoHeight()
+							[
+								NameWidget.ToSharedRef()
+							]
 							+ SVerticalBox::Slot()
 							.AutoHeight()
 							[
@@ -74,6 +76,15 @@ namespace DETAILS_VIEWER
 	void SDetailViewer::SetDetailInfo(TSharedPtr<FDetailInfo> InDetailInfo)
 	{
 		DetailInfo = InDetailInfo;
+		if (DetailInfo.IsValid())
+		{
+			NameWidget->SetText(FText::FromString(DetailInfo->Name));
+		}
+		else
+		{
+			NameWidget->SetText(FText::FromString(""));
+		}
+
 		GenerateTreeNodes();
 		TreeView->RequestTreeRefresh();
 	}

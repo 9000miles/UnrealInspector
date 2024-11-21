@@ -125,14 +125,30 @@ namespace DETAILS_VIEWER
 
 	bool FPropertyTreeNode::IsCanEditable()
 	{
-		return PropertyInfo->Executor->Condition->IsCanEditable();
+		const bool bParentEditable = Parent.IsValid() && Parent->GetIsCanEditable();
+		if (!bParentEditable)
+		{
+			bIsCanEditable = false;
+			return false;
+		}
+
+		bIsCanEditable = PropertyInfo->Executor->Condition->IsCanEditable();
+		return bIsCanEditable;
 	}
 
 	bool FPropertyTreeNode::IsCanVisible()
 	{
+		const bool bParentVisible = Parent.IsValid() && Parent->GetIsCanVisible();
+		if (!bParentVisible)
+		{
+			bIsCanVisible = false;
+			return false;
+		}
+
 		const bool bCanVisibale = PropertyInfo->Executor->Condition->IsCanVisible();
 		const bool bBySearched = bSearchByName || bSearchByDisplayName;
-		return bInSearching ? bCanVisibale && bBySearched : bCanVisibale;
+		bIsCanVisible = bInSearching ? bCanVisibale && bBySearched : bCanVisibale;
+		return bIsCanVisible;
 	}
 
 	FString FPropertyTreeNode::GetName()

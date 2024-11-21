@@ -37,7 +37,7 @@ void FInspectorModule::StartupModule()
 									.Text(FText::FromString(Item->GetObjectInfo()->GetName()))
 							]
 							+ SHorizontalBox::Slot()
-							.AutoWidth()
+							.HAlign(HAlign_Right)
 							.Padding(2.0f)
 							[
 								SNew(STextBlock)
@@ -58,12 +58,13 @@ void FInspectorModule::StartupModule()
 		.MinHeight(300)
 		.Content()
 		[
-			SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot()
+			SNew(SSplitter)
+				+ SSplitter::Slot()
+                .Value(0.35f)
 				[
 					ObjectListView.ToSharedRef()
 				]
-				+ SHorizontalBox::Slot()
+				+ SSplitter::Slot()
 				[
 					DetailViewer.ToSharedRef()
 				]

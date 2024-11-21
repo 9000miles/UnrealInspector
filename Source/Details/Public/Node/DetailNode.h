@@ -54,8 +54,13 @@ namespace DETAILS_VIEWER
 		void AddChild(TSharedPtr<FTreeNode> Node);
 		void SetParent(TSharedPtr<FTreeNode> Node) { Parent = Node; Depth = Node->GetDepth() + 1; }
 
+		bool GetIsCanVisible() { return bIsCanVisible; }
+		bool GetIsCanEditable() { return bIsCanEditable; }
+
 	protected:
 		int32 Depth = 0;
+		bool bIsCanVisible = true;
+		bool bIsCanEditable = true;
 		TSharedPtr<FTreeNode> Parent;
 		TArray<TSharedPtr<FTreeNode>> Children;
 

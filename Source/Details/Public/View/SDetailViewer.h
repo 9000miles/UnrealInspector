@@ -59,6 +59,7 @@ namespace DETAILS_VIEWER
 		TArray<TSharedPtr<FTreeNode>> TreeNodes;
 
 		TArray<TSharedPtr<SDetailTreeItem>> HasSplitterWidgets;
+		TSharedPtr<STextBlock> NameWidget;
 	};
 
 }
