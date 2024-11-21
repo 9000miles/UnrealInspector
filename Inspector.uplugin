@@ -21,11 +21,6 @@
 			"LoadingPhase": "EarliestPossible"
 		},
 		{
-			"Name": "Inspector",
-			"Type": "Runtime",
-			"LoadingPhase": "EarliestPossible"
-		},
-		{
 			"Name": "DetailsViewer",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
@@ -42,6 +37,11 @@
 		},
 		{
 			"Name": "JsVM",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "Inspector",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

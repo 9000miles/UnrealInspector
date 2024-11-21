@@ -118,4 +118,8 @@ namespace UObjectCollector
 		return Result;
 	}
 
+	void FUObjectCollector::GetAll(TArray<TSharedPtr<FUObjectHolder>>& Out)
+	{
+		ObjectHolders.GenerateValueArray(Out);
+	}
 }

@@ -9,6 +9,7 @@
 namespace UObjectCollector
 {
 	FUObjectInfo::FUObjectInfo(UObject* InObjectPtr)
+		:ObjectPtr(InObjectPtr)
 	{
 		if (InObjectPtr == nullptr) return;
 
@@ -38,6 +39,12 @@ namespace UObjectCollector
 		{
 			Outer.Reset();
 			Outer = nullptr;
+		}
+
+		if (ObjectPtr.IsValid())
+		{
+			ObjectPtr.Reset();
+			ObjectPtr = nullptr;
 		}
 	}
 

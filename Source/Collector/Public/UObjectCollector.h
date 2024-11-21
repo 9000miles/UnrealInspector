@@ -7,14 +7,19 @@
 
 namespace UObjectCollector
 {
+	DECLARE_MULTICAST_DELEGATE_OneParam(FUObjectEvent, TSharedPtr<FUObjectHolder>);
+
 	/**
 	 * $Comment$
 	 */
-	class FUObjectCollector
+	class UOBJECTCOLLECTOR_API FUObjectCollector
 	{
 	public:
+		static FUObjectEvent OnObjectAddEvent;
+		static FUObjectEvent OnObjectDeleteEvent;
+
 		static FUObjectCollector& Get();
-		
+
 		void AddObject(UObjectBase* Object, int32 Index);
 		void RemoveObject(UObjectBase* Object, int32 Index);
 		void Shutdown();
@@ -27,6 +32,8 @@ namespace UObjectCollector
 		TArray<TWeakPtr<FUObjectHolder>> FindBySuperClass(const FString& ClassName);
 		TArray<TWeakPtr<FUObjectHolder>> FindByOuter(const FString& Outer);
 		TArray<TWeakPtr<FUObjectHolder>> FindByModule(const FString& Module);
+
+		void GetAll(TArray<TSharedPtr<FUObjectHolder>>& Out);
 
 	private:
 		TMap<int32, TSharedPtr<FUObjectHolder>> ObjectHolders;

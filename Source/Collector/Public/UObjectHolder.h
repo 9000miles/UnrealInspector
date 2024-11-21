@@ -10,7 +10,7 @@ namespace UObjectCollector
 	/**
 	 * $Comment$
 	 */
-	class FUObjectHolder
+	class UOBJECTCOLLECTOR_API FUObjectHolder
 	{
 	public:
 		FUObjectHolder(UObject* InObjectPtr);

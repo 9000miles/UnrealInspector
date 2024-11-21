@@ -8,7 +8,7 @@ class FJsonObject;
 
 namespace UObjectCollector
 {
-	class FUObjectInfo : public TSharedFromThis<FUObjectInfo>
+	class UOBJECTCOLLECTOR_API FUObjectInfo : public TSharedFromThis<FUObjectInfo>
 	{
 	public:
 		FUObjectInfo(UObject* InObjectPtr);
@@ -20,6 +20,23 @@ namespace UObjectCollector
 		inline FString GetClassName() const { return ClassName; }
 		inline FString GetClassPath() const { return ClassPath; }
 		inline FString GetObjectPath() const { return ObjectPath; }
+		inline TWeakObjectPtr<UObject> GetObject() const { return ObjectPtr; }
+		inline UObject* GetUObject() const { return ObjectPtr.Get(); }
+
+		inline bool IsValid() const { return ObjectPtr.IsValid(); }
+		inline bool IsNull() const { return ObjectPtr.IsValid() == false; }
+		inline bool IsValidIndex() const { return ObjectIndex != INDEX_NONE; }
+		inline bool IsNullIndex() const { return ObjectIndex == INDEX_NONE; }
+
+		inline bool operator==(const FUObjectInfo& Other) const
+		{
+			return ObjectPtr == Other.ObjectPtr;
+		}
+
+		inline bool operator!=(const FUObjectInfo& Other) const
+		{
+			return ObjectPtr != Other.ObjectPtr;
+		}
 
 		bool IsInModule(const FString& Module);
 
@@ -35,6 +52,7 @@ namespace UObjectCollector
 		FString ClassPath;
 		FString ObjectPath;
 
+		TWeakObjectPtr<UObject> ObjectPtr;
 		TSharedPtr<FUObjectInfo> Outer;
 	};
 }

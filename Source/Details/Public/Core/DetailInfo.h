@@ -23,7 +23,7 @@ namespace DETAILS_VIEWER
 		virtual void Execute() = 0;
 	};
 
-	class Factory
+	class DETAILSVIEWER_API Factory
 	{
 	public:
 		template<typename T> requires std::derived_from<T, ITypeName>

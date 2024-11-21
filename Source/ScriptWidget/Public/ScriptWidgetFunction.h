@@ -53,8 +53,8 @@ public:
 		}
 		else if (Type == TEXT("TextBlock"))
 		{
-			Widget = SNew(SCRIPT_WIDGET::$STextBlock, JsObject)
-				;
+			//Widget = SNew(SCRIPT_WIDGET::$STextBlock, JsObject)
+			//	;
 		}
 
 		GEngine->GameViewport->AddViewportWidgetContent(Widget.ToSharedRef());
@@ -63,11 +63,11 @@ public:
 
 namespace SCRIPT_WIDGET
 {
-	class $STextBlock : public STextBlock, public ITypeName
-	{
-		IMPLEMENT_ITYPENAME(STextBlock)
-	public:
-	
-	public:
-	};
+	//class $STextBlock : public STextBlock, public ITypeName
+	//{
+	//	IMPLEMENT_ITYPENAME(STextBlock)
+	//public:
+	//
+	//public:
+	//};
 }

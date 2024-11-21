@@ -40,6 +40,9 @@ public class Inspector : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+                "InputCore",
+                "UObjectCollector",
+                "DetailsViewer",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

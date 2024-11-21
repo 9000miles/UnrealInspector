@@ -388,7 +388,7 @@ namespace DETAILS_VIEWER
 	 * 设置对象
 	 * 获取Widget
 	 */
-	class FUObjectDetailHolder :public IDetailHolder
+	class DETAILSVIEWER_API FUObjectDetailHolder :public IDetailHolder
 	{
 	public:
 		FUObjectDetailHolder();
