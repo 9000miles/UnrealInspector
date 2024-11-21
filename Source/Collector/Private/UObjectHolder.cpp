@@ -17,4 +17,18 @@ namespace UObjectCollector
 		ObjectPtr.Reset();
 		ObjectPtr = nullptr;
 	}
+
+	void FUObjectHolder::OnSearch(const FText& Text)
+	{
+		if (!ObjectInfo.IsValid()) bVisible = false;
+
+		const FString& Name = ObjectInfo->GetName();
+		bVisible = Name.Contains(Text.ToString());
+	}
+
+	void FUObjectHolder::CloseSearch()
+	{
+		bVisible = true;
+	}
+
 }

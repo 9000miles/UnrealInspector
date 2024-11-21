@@ -7,6 +7,11 @@
 
 namespace UObjectCollector
 {
+
+	UObjectCollector::FUObjectEvent FUObjectCollector::OnObjectAddEvent;
+
+	UObjectCollector::FUObjectEvent FUObjectCollector::OnObjectDeleteEvent;
+
 	FUObjectCollector& FUObjectCollector::Get()
 	{
 		return TLazySingleton<FUObjectCollector>::Get();
@@ -19,6 +24,8 @@ namespace UObjectCollector
 		UObject* Object = StaticCast<UObject*>(ObjectBase);
 		TSharedPtr<FUObjectHolder> Holder = MakeShared<FUObjectHolder>(Object);
 		ObjectHolders.Add(Index, Holder);
+
+		OnObjectAddEvent.Broadcast(Holder);
 	}
 
 	void FUObjectCollector::RemoveObject(UObjectBase* ObjectBase, int32 Index)
@@ -26,8 +33,11 @@ namespace UObjectCollector
 		if (!ObjectBase->GetClass()->IsChildOf(UObject::StaticClass())) return;
 
 		UObject* Object = StaticCast<UObject*>(ObjectBase);
-		ObjectHolders[Index]->Reset();
+		TSharedPtr<FUObjectHolder> Holder = ObjectHolders[Index];
+		Holder->Reset();
 		ObjectHolders.Remove(Index);
+
+		OnObjectDeleteEvent.Broadcast(Holder);
 	}
 
 	void FUObjectCollector::Shutdown()

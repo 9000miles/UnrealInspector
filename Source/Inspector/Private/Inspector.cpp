@@ -6,45 +6,21 @@
 #include "Core/DetailDefine.h"
 #include "Detail/UObjectDetail.h"
 #include "UObjectCollector.h"
+#include "Widgets/Input/SSearchBox.h"
+#include "UObjectHolder.h"
 
 #define LOCTEXT_NAMESPACE "FInspectorModule"
 
 void FInspectorModule::StartupModule()
 {
-	//FUObjectCollector::OnObjectAddEvent.AddRaw(this, &FInspectorModule::OnObjectAdded);
-	//FUObjectCollector::OnObjectDeleteEvent.AddRaw(this, &FInspectorModule::OnObjectDeleted);
-
-	FDetialManager& Manager = FDetialManager::Get();
-
-	TSharedPtr<FDetailOptions> Options = MakeShared<FDetailOptions>();
-	DetailHolder = Manager.Create<FUObjectDetailHolder>(Options);
-	TSharedPtr<SWidget> DetailViewer = DetailHolder->GetWidget();
+	FUObjectCollector::OnObjectAddEvent.AddRaw(this, &FInspectorModule::OnObjectAdded);
+	FUObjectCollector::OnObjectDeleteEvent.AddRaw(this, &FInspectorModule::OnObjectDeleted);
 
 	FUObjectCollector::Get().GetAll(ObjectList);
 
 	ObjectListView = SNew(SListView<TSharedPtr<FUObjectHolder>>)
 		.ListItemsSource(&ObjectList)
-		.OnGenerateRow_Lambda([this](TSharedPtr<FUObjectHolder> Item, const TSharedRef<STableViewBase>& OwnerTable)
-			{
-				return SNew(STableRow<TSharedPtr<FUObjectHolder>>, OwnerTable)
-					[
-						SNew(SHorizontalBox)
-							+ SHorizontalBox::Slot()
-							.AutoWidth()
-							.Padding(2.0f)
-							[
-								SNew(STextBlock)
-									.Text(FText::FromString(Item->GetObjectInfo()->GetName()))
-							]
-							+ SHorizontalBox::Slot()
-							.HAlign(HAlign_Right)
-							.Padding(2.0f)
-							[
-								SNew(STextBlock)
-									.Text(FText::FromString(Item->GetObjectInfo()->GetClassName()))
-							]
-					];
-			})
+		.OnGenerateRow_Raw(this, &FInspectorModule::GenerateRowWidget)
 		.OnSelectionChanged_Lambda([this](TSharedPtr<FUObjectHolder> Item, ESelectInfo::Type SelectInfo)
 			{
 				DetailHolder->SetObject(Item->Get());
@@ -58,9 +34,58 @@ void FInspectorModule::StartupModule()
 		.MinHeight(300)
 		.Content()
 		[
+			MakeWidget()
+		]
+		;
+
+	FSlateApplication::Get().AddWindow(Window.ToSharedRef());
+}
+
+TSharedRef<class ITableRow> FInspectorModule::GenerateRowWidget(TSharedPtr<FUObjectHolder> Item, const TSharedRef<STableViewBase>& OwnerTable)
+{
+	return SNew(STableRow<TSharedPtr<FUObjectHolder>>, OwnerTable)
+		.Visibility_Raw(this, &FInspectorModule::GetRowVisible, Item)
+		[
+			SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(2.0f)
+				[
+					SNew(STextBlock)
+						.Text(FText::FromString(Item->GetObjectInfo()->GetName()))
+				]
+				+ SHorizontalBox::Slot()
+				.HAlign(HAlign_Right)
+				.Padding(2.0f)
+				[
+					SNew(STextBlock)
+						.Text(FText::FromString(Item->GetObjectInfo()->GetClassName()))
+				]
+		];
+}
+
+TSharedRef<SWidget> FInspectorModule::MakeWidget()
+{
+	FDetialManager& Manager = FDetialManager::Get();
+
+	TSharedPtr<FDetailOptions> Options = MakeShared<FDetailOptions>();
+	DetailHolder = Manager.Create<FUObjectDetailHolder>(Options);
+	TSharedPtr<SWidget> DetailViewer = DetailHolder->GetWidget();
+
+	TSharedPtr<SWidget> Widget =
+		SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		[
+			SNew(SSearchBox)
+				.OnTextChanged_Raw(this, &FInspectorModule::OnSearchTextChanged)
+		]
+		+ SVerticalBox::Slot()
+		.FillHeight(1.0f)
+		[
 			SNew(SSplitter)
 				+ SSplitter::Slot()
-                .Value(0.35f)
+				.Value(0.35f)
 				[
 					ObjectListView.ToSharedRef()
 				]
@@ -71,7 +96,7 @@ void FInspectorModule::StartupModule()
 		]
 		;
 
-	FSlateApplication::Get().AddWindow(Window.ToSharedRef());
+	return Widget.ToSharedRef();
 }
 
 void FInspectorModule::ShutdownModule()
@@ -80,13 +105,34 @@ void FInspectorModule::ShutdownModule()
 
 void FInspectorModule::OnObjectAdded(TSharedPtr<FUObjectHolder> ObjectInfo)
 {
-
-
+	ObjectList.Add(ObjectInfo);
+	ObjectListView->RequestListRefresh();
 }
 void FInspectorModule::OnObjectDeleted(TSharedPtr<FUObjectHolder> ObjectInfo)
 {
+	ObjectList.Remove(ObjectInfo);
+	ObjectListView->RequestListRefresh();
+}
 
+void FInspectorModule::OnSearchTextChanged(const FText& Text)
+{
+	const bool bIsEmpty = Text.IsEmpty();
 
+	for (const auto Holder : ObjectList)
+	{
+		if (bIsEmpty)
+			Holder->CloseSearch();
+		else
+			Holder->OnSearch(Text);
+	}
+}
+
+EVisibility FInspectorModule::GetRowVisible(TSharedPtr<FUObjectHolder> Holder) const
+{
+	if (Holder->IsValid())
+		return Holder->IsVisible() ? EVisibility::Visible : EVisibility::Collapsed;
+
+	return EVisibility::Collapsed;
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -19,10 +19,17 @@ public:
 
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
+
+	TSharedRef<class ITableRow> GenerateRowWidget(TSharedPtr<FUObjectHolder> Item, const TSharedRef<STableViewBase>& OwnerTable);
+
+	TSharedRef<SWidget> MakeWidget();
 	virtual void ShutdownModule() override;
 
 	void OnObjectAdded(TSharedPtr<FUObjectHolder> ObjectInfo);
 	void OnObjectDeleted(TSharedPtr<FUObjectHolder> ObjectInfo);
+
+	void OnSearchTextChanged(const FText& Text);
+	EVisibility GetRowVisible(TSharedPtr<FUObjectHolder> Holder) const;
 
 private:
 	TSharedPtr<FUObjectDetailHolder> DetailHolder;
