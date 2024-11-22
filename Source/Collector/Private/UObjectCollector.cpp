@@ -64,7 +64,7 @@ namespace UObjectCollector
 		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
 		{
 			TSharedPtr<FUObjectHolder> Holder = It.Value();
-			if (Holder->GetObjectInfo()->GetName() == Name)
+			if (Holder->GetName() == Name)
 			{
 				Result.Add(Holder);
 			}
@@ -78,7 +78,7 @@ namespace UObjectCollector
 		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
 		{
 			TSharedPtr<FUObjectHolder> Holder = It.Value();
-			if (Holder->GetObjectInfo()->GetSuperClassName() == ClassName)
+			if (Holder->GetSuperClassName() == ClassName)
 			{
 				Result.Add(Holder);
 			}
@@ -92,7 +92,7 @@ namespace UObjectCollector
 		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
 		{
 			TSharedPtr<FUObjectHolder> Holder = It.Value();
-			if (Holder->GetObjectInfo()->GetClassName() == ClassName)
+			if (Holder->GetClassName() == ClassName)
 			{
 				Result.Add(Holder);
 			}
@@ -120,7 +120,7 @@ namespace UObjectCollector
 		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
 		{
 			TSharedPtr<FUObjectHolder> Holder = It.Value();
-			if (Holder->GetObjectInfo()->IsInModule(Module))
+			if (Holder->IsInModule(Module))
 			{
 				Result.Add(Holder);
 			}

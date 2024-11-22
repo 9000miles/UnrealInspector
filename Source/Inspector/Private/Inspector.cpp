@@ -19,8 +19,9 @@ void FInspectorModule::StartupModule()
 
 	FUObjectCollector::Get().GetAll(ObjectList);
 
-	ObjectListView = SNew(SListView<TSharedPtr<FUObjectHolder>>)
-		.ListItemsSource(&ObjectList)
+	ObjectTreeView = SNew(STreeView<TSharedPtr<FUObjectHolder>>)
+		.OnGetChildren_Raw(this, &FInspectorModule::OnGetChildren)
+		.TreeItemsSource(&ObjectList)
 		.OnGenerateRow_Raw(this, &FInspectorModule::GenerateRowWidget)
 		.OnSelectionChanged_Lambda([this](TSharedPtr<FUObjectHolder> Item, ESelectInfo::Type SelectInfo)
 			{
@@ -28,12 +29,9 @@ void FInspectorModule::StartupModule()
 			})
 		;
 
-	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Blueprint));
 	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Class));
-	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Enum));
-	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Other));
+	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Outer));
 	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Package));
-	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Struct));
 
 	ObjectInspector = SNew(SBox)
 		[
@@ -44,12 +42,20 @@ void FInspectorModule::StartupModule()
 					SNew(STileView<TSharedPtr<FUObjectClassify>>)
 						.ListItemsSource(&ClassifyList)
 						.SelectionMode(ESelectionMode::SingleToggle)
+						.ItemHeight(40)
+						.ItemWidth(80)
+						.ClearSelectionOnClick(false)
 						.OnSelectionChanged_Raw(this, &FInspectorModule::OnClassifySelectionChanged)
 						.OnGenerateTile_Lambda([this](TSharedPtr<FUObjectClassify> Item, const TSharedRef< class STableViewBase >& OwnerTable)
 							{
 								return SNew(STableRow<TSharedPtr<FUObjectClassify>>, OwnerTable)
 									[
-										SNew(STextBlock).Text(FText::FromString(Item->GetTypeName()))
+										SNew(SBox)
+											.VAlign(VAlign_Center)
+											.HAlign(HAlign_Center)
+											[
+												SNew(STextBlock).Text(FText::FromString(Item->GetTypeName()))
+											]
 									]
 									;
 							})
@@ -62,7 +68,7 @@ void FInspectorModule::StartupModule()
 				]
 				+ SVerticalBox::Slot()
 				[
-					ObjectListView.ToSharedRef()
+					ObjectTreeView.ToSharedRef()
 				]
 		]
 		;
@@ -92,14 +98,14 @@ TSharedRef<class ITableRow> FInspectorModule::GenerateRowWidget(TSharedPtr<FUObj
 				.Padding(2.0f)
 				[
 					SNew(STextBlock)
-						.Text(FText::FromString(Item->GetObjectInfo()->GetName()))
+						.Text(FText::FromString(Item->GetName()))
 				]
 				+ SHorizontalBox::Slot()
 				.HAlign(HAlign_Right)
 				.Padding(2.0f)
 				[
 					SNew(STextBlock)
-						.Text(FText::FromString(Item->GetObjectInfo()->GetClassName()))
+						.Text(FText::FromString(Item->GetClassName()))
 				]
 		];
 }
@@ -135,12 +141,12 @@ void FInspectorModule::ShutdownModule()
 void FInspectorModule::OnObjectAdded(TSharedPtr<FUObjectHolder> ObjectInfo)
 {
 	ObjectList.Add(ObjectInfo);
-	ObjectListView->RequestListRefresh();
+	ObjectTreeView->RequestListRefresh();
 }
 void FInspectorModule::OnObjectDeleted(TSharedPtr<FUObjectHolder> ObjectInfo)
 {
 	ObjectList.Remove(ObjectInfo);
-	ObjectListView->RequestListRefresh();
+	ObjectTreeView->RequestListRefresh();
 }
 
 void FInspectorModule::OnSearchTextChanged(const FText& Text)
@@ -166,7 +172,14 @@ EVisibility FInspectorModule::GetRowVisible(TSharedPtr<FUObjectHolder> Holder) c
 
 void FInspectorModule::OnClassifySelectionChanged(TSharedPtr<FUObjectClassify> NewSelection, ESelectInfo::Type SelectInfo)
 {
+	if (!NewSelection.IsValid()) return;
+
 	UE_LOG(LogTemp, Warning, TEXT("OnClassifySelectionChanged %d"), NewSelection->ClassifyType);
+}
+
+void FInspectorModule::OnGetChildren(TSharedPtr<FUObjectHolder> Node, TArray<TSharedPtr<FUObjectHolder>>& Children)
+{
+	Children = Node->GetChildren();
 }
 
 #undef LOCTEXT_NAMESPACE

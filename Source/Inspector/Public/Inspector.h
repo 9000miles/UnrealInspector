@@ -7,7 +7,7 @@
 #include "Widgets/Views/SListView.h"
 
 namespace UObjectCollector { class FUObjectHolder; }
-namespace UObjectCollector { class FUObjectInfo; }
+namespace UObjectCollector { class FUObjectHolder; }
 namespace DETAILS_VIEWER { class FUObjectDetailHolder; }
 
 
@@ -17,10 +17,7 @@ namespace INSPECTOR
 	{
 		Package,
 		Class,
-		Blueprint,
-		Enum,
-		Struct,
-		Other
+		Outer,
 	};
 
 	class FUObjectClassify
@@ -35,10 +32,7 @@ namespace INSPECTOR
 			{
 			case INSPECTOR::Package: return TEXT("Package");
 			case INSPECTOR::Class: return TEXT("Class");
-			case INSPECTOR::Blueprint: return TEXT("Blueprint");
-			case INSPECTOR::Enum: return TEXT("Enum");
-			case INSPECTOR::Struct: return TEXT("Struct");
-			case INSPECTOR::Other: return TEXT("Other");
+			case INSPECTOR::Outer: return TEXT("Outer");
 			}
 			return FString(TEXT("Unknown"));
 		}
@@ -71,9 +65,11 @@ public:
 
 	void OnClassifySelectionChanged(TSharedPtr<FUObjectClassify> NewSelection, ESelectInfo::Type SelectInfo);
 
+	void OnGetChildren(TSharedPtr<FUObjectHolder> Node, TArray<TSharedPtr<FUObjectHolder>>& Children);
+
 private:
 	TSharedPtr<FUObjectDetailHolder> DetailHolder;
-	TSharedPtr < SListView<TSharedPtr<FUObjectHolder>>> ObjectListView;
+	TSharedPtr<STreeView<TSharedPtr<FUObjectHolder>>> ObjectTreeView;
 	TSharedPtr<SWidget> ObjectInspector;
 	TArray<TSharedPtr<FUObjectHolder>> ObjectList;
 	TArray<TSharedPtr<FUObjectClassify>> ClassifyList;
