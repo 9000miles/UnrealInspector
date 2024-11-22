@@ -8,6 +8,7 @@
 #include "UObjectCollector.h"
 #include "Widgets/Input/SSearchBox.h"
 #include "UObjectHolder.h"
+#include "Widgets/Views/STileView.h"
 
 #define LOCTEXT_NAMESPACE "FInspectorModule"
 
@@ -25,6 +26,45 @@ void FInspectorModule::StartupModule()
 			{
 				DetailHolder->SetObject(Item->Get());
 			})
+		;
+
+	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Blueprint));
+	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Class));
+	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Enum));
+	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Other));
+	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Package));
+	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Struct));
+
+	ObjectInspector = SNew(SBox)
+		[
+			SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				[
+					SNew(STileView<TSharedPtr<FUObjectClassify>>)
+						.ListItemsSource(&ClassifyList)
+						.SelectionMode(ESelectionMode::SingleToggle)
+						.OnSelectionChanged_Raw(this, &FInspectorModule::OnClassifySelectionChanged)
+						.OnGenerateTile_Lambda([this](TSharedPtr<FUObjectClassify> Item, const TSharedRef< class STableViewBase >& OwnerTable)
+							{
+								return SNew(STableRow<TSharedPtr<FUObjectClassify>>, OwnerTable)
+									[
+										SNew(STextBlock).Text(FText::FromString(Item->GetTypeName()))
+									]
+									;
+							})
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				[
+					SNew(SSearchBox)
+						.OnTextChanged_Raw(this, &FInspectorModule::OnSearchTextChanged)
+				]
+				+ SVerticalBox::Slot()
+				[
+					ObjectListView.ToSharedRef()
+				]
+		]
 		;
 
 	TSharedPtr<SWindow> Window = SNew(SWindow)
@@ -73,26 +113,15 @@ TSharedRef<SWidget> FInspectorModule::MakeWidget()
 	TSharedPtr<SWidget> DetailViewer = DetailHolder->GetWidget();
 
 	TSharedPtr<SWidget> Widget =
-		SNew(SVerticalBox)
-		+ SVerticalBox::Slot()
-		.AutoHeight()
+		SNew(SSplitter)
+		+ SSplitter::Slot()
+		.Value(0.35f)
 		[
-			SNew(SSearchBox)
-				.OnTextChanged_Raw(this, &FInspectorModule::OnSearchTextChanged)
+			ObjectInspector.ToSharedRef()
 		]
-		+ SVerticalBox::Slot()
-		.FillHeight(1.0f)
+		+ SSplitter::Slot()
 		[
-			SNew(SSplitter)
-				+ SSplitter::Slot()
-				.Value(0.35f)
-				[
-					ObjectListView.ToSharedRef()
-				]
-				+ SSplitter::Slot()
-				[
-					DetailViewer.ToSharedRef()
-				]
+			DetailViewer.ToSharedRef()
 		]
 		;
 
@@ -133,6 +162,11 @@ EVisibility FInspectorModule::GetRowVisible(TSharedPtr<FUObjectHolder> Holder) c
 		return Holder->IsVisible() ? EVisibility::Visible : EVisibility::Collapsed;
 
 	return EVisibility::Collapsed;
+}
+
+void FInspectorModule::OnClassifySelectionChanged(TSharedPtr<FUObjectClassify> NewSelection, ESelectInfo::Type SelectInfo)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnClassifySelectionChanged %d"), NewSelection->ClassifyType);
 }
 
 #undef LOCTEXT_NAMESPACE
