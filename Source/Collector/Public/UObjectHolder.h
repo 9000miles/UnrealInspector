@@ -46,6 +46,7 @@ namespace UObjectCollector
 		}
 
 		bool IsInModule(const FString& Module);
+		void Sort();
 
 		FString ToString();
 		TSharedPtr<FJsonObject> ToJSON();

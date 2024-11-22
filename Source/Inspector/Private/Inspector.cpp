@@ -14,8 +14,9 @@
 
 void FInspectorModule::StartupModule()
 {
-	FUObjectCollector::OnObjectAddEvent.AddRaw(this, &FInspectorModule::OnObjectAdded);
-	FUObjectCollector::OnObjectDeleteEvent.AddRaw(this, &FInspectorModule::OnObjectDeleted);
+	//ÊÖ¶¯Ë¢ÐÂ
+	//FUObjectCollector::OnObjectAddEvent.AddRaw(this, &FInspectorModule::OnObjectAdded);
+	//FUObjectCollector::OnObjectDeleteEvent.AddRaw(this, &FInspectorModule::OnObjectDeleted);
 
 	FUObjectCollector::Get().GetAll(ObjectList);
 
@@ -25,6 +26,8 @@ void FInspectorModule::StartupModule()
 		.OnGenerateRow_Raw(this, &FInspectorModule::GenerateRowWidget)
 		.OnSelectionChanged_Lambda([this](TSharedPtr<FUObjectHolder> Item, ESelectInfo::Type SelectInfo)
 			{
+				if (!Item.IsValid()) return;
+
 				DetailHolder->SetObject(Item->Get());
 			})
 		;
@@ -121,7 +124,7 @@ TSharedRef<SWidget> FInspectorModule::MakeWidget()
 	TSharedPtr<SWidget> Widget =
 		SNew(SSplitter)
 		+ SSplitter::Slot()
-		.Value(0.35f)
+		.Value(0.5f)
 		[
 			ObjectInspector.ToSharedRef()
 		]
@@ -175,6 +178,18 @@ void FInspectorModule::OnClassifySelectionChanged(TSharedPtr<FUObjectClassify> N
 	if (!NewSelection.IsValid()) return;
 
 	UE_LOG(LogTemp, Warning, TEXT("OnClassifySelectionChanged %d"), NewSelection->ClassifyType);
+
+	TArray<TSharedPtr<FUObjectHolder>> ObjectArray;
+	FUObjectCollector::Get().GetAll(ObjectArray);
+
+	ObjectTreeView->ClearSelection();
+	//ObjectTreeView->ClearItemsSource();
+
+    ObjectList.Empty();
+	ObjectList = NewSelection->Classify(ObjectArray);
+    //ObjectTreeView->SetItemsSource(&ObjectList);
+
+	ObjectTreeView->RequestTreeRefresh();
 }
 
 void FInspectorModule::OnGetChildren(TSharedPtr<FUObjectHolder> Node, TArray<TSharedPtr<FUObjectHolder>>& Children)

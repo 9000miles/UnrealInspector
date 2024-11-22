@@ -45,6 +45,20 @@ namespace UObjectCollector
 		return ClassPath.StartsWith(Module);
 	}
 
+
+	void FUObjectHolder::Sort()
+	{
+		Children.Sort([](const TSharedPtr<FUObjectHolder>& A, const TSharedPtr<FUObjectHolder>& B)
+			{
+				return A->GetName() < B->GetName();
+			});
+
+		for (auto& Child : Children)
+		{
+			Child->Sort();
+		}
+	}
+
 	FString FUObjectHolder::ToString()
 	{
 		TSharedPtr<FJsonObject> Json = ToJSON();
