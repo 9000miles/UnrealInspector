@@ -29,6 +29,7 @@ namespace UObjectCollector
 		inline FString GetObjectPath() const { return ObjectPath; }
 		inline TWeakObjectPtr<UObject> GetObject() const { return ObjectPtr; }
 		inline UObject* GetUObject() const { return ObjectPtr.Get(); }
+		inline void ClearChildren() { Children.Empty(); }
 		inline TArray<TSharedPtr<FUObjectHolder>>& GetChildren() { return Children; }
 
 		inline bool IsNull() const { return ObjectPtr.IsValid() == false; }

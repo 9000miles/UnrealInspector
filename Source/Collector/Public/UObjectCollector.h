@@ -34,6 +34,7 @@ namespace UObjectCollector
 		TArray<TWeakPtr<FUObjectHolder>> FindByModule(const FString& Module);
 
 		void GetAll(TArray<TSharedPtr<FUObjectHolder>>& Out);
+		void ClearChildren();
 
 	private:
 		TMap<int32, TSharedPtr<FUObjectHolder>> ObjectHolders;

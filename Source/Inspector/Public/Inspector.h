@@ -29,6 +29,22 @@ namespace INSPECTOR
 	{
 	public:
 		virtual TArray<TSharedPtr<FUObjectHolder>> Classify(TArray<TSharedPtr<FUObjectHolder>>& Array) = 0;
+		virtual void Sort(TArray<TSharedPtr<FUObjectHolder>>& Array)
+		{
+			Array.Sort([](const TSharedPtr<FUObjectHolder>& A, const TSharedPtr<FUObjectHolder>& B)
+				{
+					return A->GetName() < B->GetName();
+				});
+
+			for (auto& ObjectHolder : Array)
+			{
+				ObjectHolder->Sort();
+			}
+		}
+		virtual void ClearChildren()
+		{
+			FUObjectCollector::Get().ClearChildren();
+		}
 	};
 
 	class FClassifyPackage : public IClassifyHandler
@@ -43,16 +59,50 @@ namespace INSPECTOR
 	{
 		TArray<TSharedPtr<FUObjectHolder>> Classify(TArray<TSharedPtr<FUObjectHolder>>& Array) override
 		{
+			ClearChildren();
 
-			return TArray<TSharedPtr<FUObjectHolder>>();
-		}
+			TArray<TSharedPtr<FUObjectHolder>> Result;
+
+			for (int32 i = 0; i < Array.Num(); i++)
+			{
+				TSharedPtr<FUObjectHolder> ObjectHolder = Array[i];
+				if (!ObjectHolder->IsValid()) continue;
+
+				UClass* Class = ObjectHolder->GetObject()->GetClass();
+				UClass* SuperClass = Class->GetSuperClass();
+				if (!SuperClass)
+				{
+					uint32 ObjectIndex = Class->GetUniqueID();
+					TSharedPtr<FUObjectHolder> RootClassObjectHolder = FUObjectCollector::Get().GetObject(ObjectIndex);
+					if (!Result.Contains(RootClassObjectHolder))
+						Result.Add(RootClassObjectHolder);
+				}
+				else
+				{
+					uint32 SuperObjectIndex = SuperClass->GetUniqueID();
+					TSharedPtr<FUObjectHolder> SuperClassObjectHolder = FUObjectCollector::Get().GetObject(SuperObjectIndex);
+
+					uint32 ClassObjectIndex = Class->GetUniqueID();
+					TSharedPtr<FUObjectHolder> ClassObjectHolder = FUObjectCollector::Get().GetObject(ClassObjectIndex);
+
+					if (!SuperClassObjectHolder->GetChildren().Contains(ClassObjectHolder))
+						SuperClassObjectHolder->GetChildren().Add(ClassObjectHolder);
+				}
+			}
+
+			Sort(Result);
+
+			return Result;
+		};
 	};
 
 	class FClassifyOuter : public IClassifyHandler
 	{
 		TArray<TSharedPtr<FUObjectHolder>> Classify(TArray<TSharedPtr<FUObjectHolder>>& Array) override
 		{
-			TArray<TSharedPtr<FUObjectHolder>> OuterObjects;
+			ClearChildren();
+
+			TArray<TSharedPtr<FUObjectHolder>> Result;
 
 			for (int32 i = 0; i < Array.Num(); i++)
 			{
@@ -62,7 +112,7 @@ namespace INSPECTOR
 				UObject* Outer = ObjectHolder->GetObject()->GetOuter();
 				if (!Outer)
 				{
-					OuterObjects.Add(ObjectHolder);
+					Result.Add(ObjectHolder);
 					continue;
 				}
 
@@ -74,17 +124,9 @@ namespace INSPECTOR
 				}
 			}
 
-			OuterObjects.Sort([](const TSharedPtr<FUObjectHolder>& A, const TSharedPtr<FUObjectHolder>& B)
-				{
-					return A->GetName() < B->GetName();
-				});
+			Sort(Result);
 
-			for (auto& ObjectHolder : OuterObjects)
-			{
-				ObjectHolder->Sort();
-			}
-
-			return OuterObjects;
+			return Result;
 		}
 	};
 
@@ -129,7 +171,7 @@ namespace INSPECTOR
 		EClassifyType ClassifyType;
 		TSharedPtr<IClassifyHandler> ClassifyHandler;
 	};
-}
+};
 
 using namespace INSPECTOR;
 

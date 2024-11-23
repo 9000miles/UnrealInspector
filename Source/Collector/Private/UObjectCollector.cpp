@@ -132,4 +132,13 @@ namespace UObjectCollector
 	{
 		ObjectHolders.GenerateValueArray(Out);
 	}
+
+	void FUObjectCollector::ClearChildren()
+	{
+		for (auto It = ObjectHolders.CreateIterator(); It; ++It)
+		{
+			It.Value()->ClearChildren();
+		}
+	}
+
 }
