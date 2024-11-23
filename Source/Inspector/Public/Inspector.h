@@ -69,7 +69,8 @@ namespace INSPECTOR
 				TSharedPtr<FUObjectHolder> Object_Holder = Array[i];
 				if (!Object_Holder->IsValid()) continue;
 
-				UClass* ObjectClass = Object_Holder->GetObject()->GetClass();
+				UObject* Object = Object_Holder->GetObject().Get();
+				UClass* ObjectClass = Object->GetClass();
 				UClass* ObjectSuperClass = ObjectClass->GetSuperClass();
 				if (!ObjectSuperClass)
 				{
@@ -89,12 +90,12 @@ namespace INSPECTOR
 					if (!ObjectSuperClass_Holder->GetChildren().Contains(ObjectClass_Holder))
 						ObjectSuperClass_Holder->GetChildren().Add(ObjectClass_Holder);
 
-					if (CoreUObjectClass == Object_Holder->GetObject())
+					if (CoreUObjectClass == Object || Object->GetUniqueID() == 0)
 						continue;
 
 					UClass* ObjectClassClass = ObjectClass_Holder->GetObject()->GetClass();
-					//if (ObjectClassClass == CoreUObjectClass)
-					//	ObjectClass_Holder->GetChildren().Add(Object_Holder);
+					if (ObjectClassClass == CoreUObjectClass)
+						ObjectClass_Holder->GetChildren().Add(Object_Holder);
 				}
 			}
 
