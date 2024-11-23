@@ -62,31 +62,39 @@ namespace INSPECTOR
 			ClearChildren();
 
 			TArray<TSharedPtr<FUObjectHolder>> Result;
+			UClass* CoreUObjectClass = LoadClass<UClass>(nullptr, TEXT("/Script/CoreUObject.Class"));
 
 			for (int32 i = 0; i < Array.Num(); i++)
 			{
-				TSharedPtr<FUObjectHolder> ObjectHolder = Array[i];
-				if (!ObjectHolder->IsValid()) continue;
+				TSharedPtr<FUObjectHolder> Object_Holder = Array[i];
+				if (!Object_Holder->IsValid()) continue;
 
-				UClass* Class = ObjectHolder->GetObject()->GetClass();
-				UClass* SuperClass = Class->GetSuperClass();
-				if (!SuperClass)
+				UClass* ObjectClass = Object_Holder->GetObject()->GetClass();
+				UClass* ObjectSuperClass = ObjectClass->GetSuperClass();
+				if (!ObjectSuperClass)
 				{
-					uint32 ObjectIndex = Class->GetUniqueID();
+					uint32 ObjectIndex = ObjectClass->GetUniqueID();
 					TSharedPtr<FUObjectHolder> RootClassObjectHolder = FUObjectCollector::Get().GetObject(ObjectIndex);
 					if (!Result.Contains(RootClassObjectHolder))
 						Result.Add(RootClassObjectHolder);
 				}
 				else
 				{
-					uint32 SuperObjectIndex = SuperClass->GetUniqueID();
-					TSharedPtr<FUObjectHolder> SuperClassObjectHolder = FUObjectCollector::Get().GetObject(SuperObjectIndex);
+					uint32 SuperObjectIndex = ObjectSuperClass->GetUniqueID();
+					TSharedPtr<FUObjectHolder> ObjectSuperClass_Holder = FUObjectCollector::Get().GetObject(SuperObjectIndex);
 
-					uint32 ClassObjectIndex = Class->GetUniqueID();
-					TSharedPtr<FUObjectHolder> ClassObjectHolder = FUObjectCollector::Get().GetObject(ClassObjectIndex);
+					uint32 ClassObjectIndex = ObjectClass->GetUniqueID();
+					TSharedPtr<FUObjectHolder> ObjectClass_Holder = FUObjectCollector::Get().GetObject(ClassObjectIndex);
 
-					if (!SuperClassObjectHolder->GetChildren().Contains(ClassObjectHolder))
-						SuperClassObjectHolder->GetChildren().Add(ClassObjectHolder);
+					if (!ObjectSuperClass_Holder->GetChildren().Contains(ObjectClass_Holder))
+						ObjectSuperClass_Holder->GetChildren().Add(ObjectClass_Holder);
+
+					if (CoreUObjectClass == Object_Holder->GetObject())
+						continue;
+
+					UClass* ObjectClassClass = ObjectClass_Holder->GetObject()->GetClass();
+					//if (ObjectClassClass == CoreUObjectClass)
+					//	ObjectClass_Holder->GetChildren().Add(Object_Holder);
 				}
 			}
 
