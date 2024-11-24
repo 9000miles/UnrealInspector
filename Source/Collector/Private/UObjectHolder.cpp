@@ -4,6 +4,8 @@
 #include "Define.h"
 #include "UObjectCollector.h"
 
+#define LOCTEXT_NAMESPACE "FUObjectHolder"
+
 namespace UObjectCollector
 {
 	FUObjectHolder::FUObjectHolder(UObject* InObjectPtr) :
@@ -90,12 +92,40 @@ namespace UObjectCollector
 		ObjectPath = JsonObject->GetStringField(TEXT("ObjectPath"));
 	}
 
-	void FUObjectHolder::OnSearch(const FText& Text)
+	void FUObjectHolder::OnSearch(const FText& Text, EObjectSearchType SearchType)
 	{
 		if (!IsValid()) bVisible = false;
 
-		const FString& MyName = GetName();
-		bVisible = MyName.Contains(Text.ToString());
+		switch (SearchType)
+		{
+		case EObjectSearchType::Name: bVisible = Name.Contains(Text.ToString()); break;
+		case EObjectSearchType::Path: bVisible = ObjectPath.Contains(Text.ToString()); break;
+		case EObjectSearchType::Class: bVisible = ClassName.Contains(Text.ToString()); break;
+		case EObjectSearchType::Package: bVisible = ObjectPath.Contains(Text.ToString()); break;
+		case EObjectSearchType::Module: bVisible = ClassPath.Contains(Text.ToString()); break;
+		case EObjectSearchType::Function: bVisible = HasFunction(Text); break;
+		default:
+			break;
+		}
+
+		for (auto& Child : Children)
+		{
+			Child->OnSearch(Text, SearchType);
+		}
+	}
+
+	bool FUObjectHolder::HasFunction(const FText& Text)
+	{
+		if (!ObjectPtr.IsValid()) return false;
+
+		for (TFieldIterator<UFunction> FuncIt(ObjectPtr->GetClass(), EFieldIteratorFlags::IncludeSuper); FuncIt; ++FuncIt)
+		{
+			UFunction* Function = *FuncIt;
+			if (Function->GetName().Contains(Text.ToString()))
+				return true;
+		}
+
+		return false;
 	}
 
 	void FUObjectHolder::CloseSearch()
@@ -103,4 +133,20 @@ namespace UObjectCollector
 		bVisible = true;
 	}
 
+	FText FObjectSearchType::GetText() const
+	{
+		switch (SearchType)
+		{
+		case EObjectSearchType::Name: return LOCTEXT("Name", "Name");
+		case EObjectSearchType::Path: return LOCTEXT("Path", "Path");
+		case EObjectSearchType::Class: return LOCTEXT("Class", "Class");
+		case EObjectSearchType::Package: return LOCTEXT("Package", "Package");
+		case EObjectSearchType::Module: return LOCTEXT("Module", "Module");
+		case EObjectSearchType::Function: return LOCTEXT("Function", "Function");
+		default: return LOCTEXT("NoneSearchType", "NoneSearchType");
+		}
+	}
+
 }
+
+#undef LOCTEXT_NAMESPACE

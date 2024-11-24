@@ -7,6 +7,26 @@
 
 namespace UObjectCollector
 {
+	enum class EObjectSearchType :uint8
+	{
+		Name,
+		Path,
+		Class,
+		Package,
+		Module,
+		Function,
+	};
+
+	struct UOBJECTCOLLECTOR_API FObjectSearchType
+	{
+		FObjectSearchType(EObjectSearchType InSearchType)
+			:SearchType(InSearchType)
+		{ }
+
+		FText GetText() const;
+		EObjectSearchType SearchType;
+	};
+
 	/**
 	 * $Comment$
 	 */
@@ -54,7 +74,8 @@ namespace UObjectCollector
 		void FromJson(TSharedPtr<FJsonObject> JsonObject);
 
 
-		void OnSearch(const FText& Text);
+		void OnSearch(const FText& Text, EObjectSearchType SearchType);
+		bool HasFunction(const FText& Text);
 		void CloseSearch();
 		inline bool IsVisible() const { return bVisible; }
 

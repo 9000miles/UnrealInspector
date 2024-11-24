@@ -9,12 +9,13 @@
 #include "Widgets/Input/SSearchBox.h"
 #include "UObjectHolder.h"
 #include "Widgets/Views/STileView.h"
+#include "Widgets/Layout/SWidgetSwitcher.h"
 
 #define LOCTEXT_NAMESPACE "FInspectorModule"
 
 void FInspectorModule::StartupModule()
 {
-	//ÊÖ¶¯Ë¢ÐÂ
+	//ï¿½Ö¶ï¿½Ë¢ï¿½ï¿½
 	//FUObjectCollector::OnObjectAddEvent.AddRaw(this, &FInspectorModule::OnObjectAdded);
 	//FUObjectCollector::OnObjectDeleteEvent.AddRaw(this, &FInspectorModule::OnObjectDeleted);
 
@@ -30,6 +31,32 @@ void FInspectorModule::StartupModule()
 
 				DetailHolder->SetObject(Item->Get());
 			})
+		;
+
+	SearchTypeList.Add(MakeShared<FObjectSearchType>(EObjectSearchType::Name));
+	SearchTypeList.Add(MakeShared<FObjectSearchType>(EObjectSearchType::Path));
+	SearchTypeList.Add(MakeShared<FObjectSearchType>(EObjectSearchType::Class));
+	SearchTypeList.Add(MakeShared<FObjectSearchType>(EObjectSearchType::Package));
+	SearchTypeList.Add(MakeShared<FObjectSearchType>(EObjectSearchType::Module));
+	SearchTypeList.Add(MakeShared<FObjectSearchType>(EObjectSearchType::Function));
+
+	SAssignNew(SearchTypeComboBox, SComboBox<TSharedPtr<FObjectSearchType>>)
+		.OptionsSource(&SearchTypeList)
+		.OnSelectionChanged_Lambda([this](TSharedPtr<FObjectSearchType> NewSelection, ESelectInfo::Type SelectInfo)
+			{
+			})
+		.OnGenerateWidget_Lambda([](TSharedPtr<FObjectSearchType> Item)
+			{
+				return SNew(STextBlock).Text(Item->GetText());
+			})
+		.InitiallySelectedItem(SearchTypeList[0])
+		//.Content()
+		[
+			SNew(STextBlock).Text_Lambda([this]()
+				{
+					return SearchTypeComboBox->GetSelectedItem()->GetText();
+				})
+		]
 		;
 
 	ClassifyList.Add(MakeShared<FUObjectClassify>(EClassifyType::Class));
@@ -66,8 +93,20 @@ void FInspectorModule::StartupModule()
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				[
-					SNew(SSearchBox)
-						.OnTextChanged_Raw(this, &FInspectorModule::OnSearchTextChanged)
+					SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.Padding(2.0f)
+						[
+							SearchTypeComboBox.ToSharedRef()
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						.Padding(2.0f)
+						[
+							SNew(SSearchBox)
+								.OnTextChanged_Raw(this, &FInspectorModule::OnSearchTextChanged)
+						]
 				]
 				+ SVerticalBox::Slot()
 				[
@@ -130,7 +169,43 @@ TSharedRef<SWidget> FInspectorModule::MakeWidget()
 		]
 		+ SSplitter::Slot()
 		[
-			DetailViewer.ToSharedRef()
+			SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				[
+					SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						[
+							SNew(SButton).Text(LOCTEXT("Properties", "Properties"))
+								.OnClicked_Lambda([this]()
+									{
+										DetailWidgetPtr->SetActiveWidgetIndex(0);
+										return FReply::Handled();
+									})
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						[
+							SNew(SButton).Text(LOCTEXT("Functions", "Functions"))
+								.OnClicked_Lambda([this]()
+									{
+										DetailWidgetPtr->SetActiveWidgetIndex(1);
+										return FReply::Handled();
+									})
+						]
+				]
+				+ SVerticalBox::Slot()
+				[
+					SAssignNew(DetailWidgetPtr, SWidgetSwitcher)
+						+ SWidgetSwitcher::Slot()
+						[
+							DetailViewer.ToSharedRef()
+						]
+						+ SWidgetSwitcher::Slot()
+						[
+							SNew(STextBlock).Text(LOCTEXT("No Object Selected", "Functions"))
+						]
+				]
 		]
 		;
 
@@ -159,9 +234,14 @@ void FInspectorModule::OnSearchTextChanged(const FText& Text)
 	for (const auto Holder : ObjectList)
 	{
 		if (bIsEmpty)
+		{
 			Holder->CloseSearch();
+		}
 		else
-			Holder->OnSearch(Text);
+		{
+			const EObjectSearchType SearchType = SearchTypeComboBox->GetSelectedItem()->SearchType;
+			Holder->OnSearch(Text, SearchType);
+		}
 	}
 }
 
@@ -185,9 +265,9 @@ void FInspectorModule::OnClassifySelectionChanged(TSharedPtr<FUObjectClassify> N
 	ObjectTreeView->ClearSelection();
 	//ObjectTreeView->ClearItemsSource();
 
-    ObjectList.Empty();
+	ObjectList.Empty();
 	ObjectList = NewSelection->Classify(ObjectArray);
-    //ObjectTreeView->SetItemsSource(&ObjectList);
+	//ObjectTreeView->SetItemsSource(&ObjectList);
 
 	ObjectTreeView->RequestTreeRefresh();
 }

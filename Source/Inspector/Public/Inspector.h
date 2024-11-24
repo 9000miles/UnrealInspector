@@ -93,9 +93,9 @@ namespace INSPECTOR
 					if (CoreUObjectClass == Object || Object->GetUniqueID() == 0)
 						continue;
 
-					UClass* ObjectClassClass = ObjectClass_Holder->GetObject()->GetClass();
-					if (ObjectClassClass == CoreUObjectClass)
-						ObjectClass_Holder->GetChildren().Add(Object_Holder);
+					//UClass* ObjectClassClass = ObjectClass_Holder->GetObject()->GetClass();
+					//if (ObjectClassClass == CoreUObjectClass)
+					//	ObjectClass_Holder->GetChildren().Add(Object_Holder);
 				}
 			}
 
@@ -212,4 +212,8 @@ private:
 	TSharedPtr<SWidget> ObjectInspector;
 	TArray<TSharedPtr<FUObjectHolder>> ObjectList;
 	TArray<TSharedPtr<FUObjectClassify>> ClassifyList;
+	TSharedPtr<SComboBox<TSharedPtr<FObjectSearchType>>> SearchTypeComboBox;
+	TArray<TSharedPtr<FObjectSearchType>> SearchTypeList;
+
+	TSharedPtr <SWidgetSwitcher> DetailWidgetPtr;
 };
