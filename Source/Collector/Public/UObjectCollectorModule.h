@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-namespace UObjectCollector { class FUObjectListener; }
+namespace UOBJECT_COLLECTOR { class FUObjectListener; }
 
 class FUObjectCollectorModule : public IModuleInterface
 {
@@ -15,5 +15,5 @@ public:
 	virtual void ShutdownModule() override;
 
 private:
-	TSharedPtr<UObjectCollector::FUObjectListener> ObjectListener;
+	TSharedPtr<UOBJECT_COLLECTOR::FUObjectListener> ObjectListener;
 };

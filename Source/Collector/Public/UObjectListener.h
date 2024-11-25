@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/UObjectArray.h"
 
-namespace UObjectCollector
+namespace UOBJECT_COLLECTOR
 {
 	/**
 	 * $Comment$

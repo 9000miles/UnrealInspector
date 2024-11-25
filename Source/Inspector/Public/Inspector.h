@@ -8,12 +8,14 @@
 #include "UObjectHolder.h"
 #include "UObjectCollector.h"
 
+class SFunctionViewer;
 
-namespace UObjectCollector { class FUObjectHolder; }
+
+namespace UOBJECT_COLLECTOR { class FUObjectHolder; }
 namespace DETAILS_VIEWER { class FUObjectDetailHolder; }
 
 
-using namespace UObjectCollector;
+using namespace UOBJECT_COLLECTOR;
 using namespace DETAILS_VIEWER;
 
 namespace INSPECTOR
@@ -196,6 +198,7 @@ public:
 	TSharedRef<SWidget> MakeWidget();
 	virtual void ShutdownModule() override;
 
+	TSharedRef<SWidget> MakeFunctionsTree();
 	void OnObjectAdded(TSharedPtr<FUObjectHolder> ObjectInfo);
 	void OnObjectDeleted(TSharedPtr<FUObjectHolder> ObjectInfo);
 
@@ -216,4 +219,8 @@ private:
 	TArray<TSharedPtr<FObjectSearchType>> SearchTypeList;
 
 	TSharedPtr <SWidgetSwitcher> DetailWidgetPtr;
+	TSharedPtr<SFunctionViewer> FunctionsWidget;
 };
+
+
+

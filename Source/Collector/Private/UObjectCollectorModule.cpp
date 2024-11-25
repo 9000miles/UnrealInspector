@@ -6,7 +6,7 @@
 
 void FUObjectCollectorModule::StartupModule()
 {
-	ObjectListener = MakeShared<UObjectCollector::FUObjectListener>();
+	ObjectListener = MakeShared<UOBJECT_COLLECTOR::FUObjectListener>();
 }
 
 void FUObjectCollectorModule::ShutdownModule()
@@ -17,4 +17,4 @@ void FUObjectCollectorModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 
-IMPLEMENT_MODULE(FUObjectCollectorModule, UObjectCollector);
+IMPLEMENT_MODULE(FUObjectCollectorModule, UOBJECT_COLLECTOR);

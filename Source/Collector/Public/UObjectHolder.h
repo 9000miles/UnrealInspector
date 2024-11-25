@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObjectInfo.h"
 
-namespace UObjectCollector
+namespace UOBJECT_COLLECTOR
 {
 	enum class EObjectSearchType :uint8
 	{
@@ -91,5 +91,25 @@ namespace UObjectCollector
 		TWeakObjectPtr<UObject> ObjectPtr;
 		TSharedPtr<FUObjectHolder> Parent;
 		TArray<TSharedPtr<FUObjectHolder>> Children;
+	};
+
+	class UOBJECTCOLLECTOR_API FFunctionHolder : public TSharedFromThis<FFunctionHolder>
+	{
+	public:
+		FString Name;
+		UFunction* Function;
+		FFunctionHolder(UFunction* InFunction)
+			:Function(InFunction)
+		{
+			Name = InFunction->GetName();
+		}
+
+		FText GetFunctionName();
+		FText GetFunctionSignature();
+
+	private:
+		FString GetReturn();
+		FString GetParameters();
+		FString ParameterToString(FProperty* Parameter);
 	};
 }

@@ -5,12 +5,12 @@
 #include "Define.h"
 #include "UObjectInfo.h"
 
-namespace UObjectCollector
+namespace UOBJECT_COLLECTOR
 {
 
-	UObjectCollector::FUObjectEvent FUObjectCollector::OnObjectAddEvent;
+	UOBJECT_COLLECTOR::FUObjectEvent FUObjectCollector::OnObjectAddEvent;
 
-	UObjectCollector::FUObjectEvent FUObjectCollector::OnObjectDeleteEvent;
+	UOBJECT_COLLECTOR::FUObjectEvent FUObjectCollector::OnObjectDeleteEvent;
 
 	FUObjectCollector& FUObjectCollector::Get()
 	{

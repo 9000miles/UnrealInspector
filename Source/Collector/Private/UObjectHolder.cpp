@@ -6,7 +6,7 @@
 
 #define LOCTEXT_NAMESPACE "FUObjectHolder"
 
-namespace UObjectCollector
+namespace UOBJECT_COLLECTOR
 {
 	FUObjectHolder::FUObjectHolder(UObject* InObjectPtr) :
 		ObjectPtr(InObjectPtr)
@@ -145,6 +145,49 @@ namespace UObjectCollector
 		case EObjectSearchType::Function: return LOCTEXT("Function", "Function");
 		default: return LOCTEXT("NoneSearchType", "NoneSearchType");
 		}
+	}
+
+	FText FFunctionHolder::GetFunctionName()
+	{
+		return FText::FromString(Function->GetName());
+	}
+
+	FText FFunctionHolder::GetFunctionSignature()
+	{
+		FString Return = GetReturn();
+		FString Parameters = GetParameters();
+		return FText::FromString(FString::Printf(TEXT("%s %s(%s)"), *Return, *Function->GetName(), *Parameters));
+	}
+
+	FString FFunctionHolder::GetReturn()
+	{
+		FProperty* Property = Function->GetReturnProperty();
+		if (!Property) return TEXT("void");
+
+		return ParameterToString(Function->GetReturnProperty());
+	}
+
+	FString FFunctionHolder::GetParameters()
+	{
+		FString Result;
+		for (TFieldIterator<FProperty> It(Function); It; ++It)
+		{
+			FProperty* Property = *It;
+			if (Property->GetName() != "ReturnValue")
+			{
+				const FString Parameter = ParameterToString(Property);
+				Result += FString::Printf(TEXT("%s, "), *Parameter);
+			}
+		}
+		Result.RemoveFromEnd(TEXT(", "));
+		return Result;
+	}
+
+	FString FFunctionHolder::ParameterToString(FProperty* Parameter)
+	{
+		FString ParameterName = Parameter->GetName();
+		FString ParameterType = Parameter->GetCPPType();
+		return FString::Printf(TEXT("%s %s"), *ParameterType, *ParameterName);
 	}
 
 }

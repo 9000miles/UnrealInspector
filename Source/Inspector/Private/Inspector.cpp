@@ -10,6 +10,7 @@
 #include "UObjectHolder.h"
 #include "Widgets/Views/STileView.h"
 #include "Widgets/Layout/SWidgetSwitcher.h"
+#include "SFunctionViewer.h"
 
 #define LOCTEXT_NAMESPACE "FInspectorModule"
 
@@ -30,6 +31,7 @@ void FInspectorModule::StartupModule()
 				if (!Item.IsValid()) return;
 
 				DetailHolder->SetObject(Item->Get());
+				FunctionsWidget->SetObject(Item->Get());
 			})
 		;
 
@@ -203,7 +205,8 @@ TSharedRef<SWidget> FInspectorModule::MakeWidget()
 						]
 						+ SWidgetSwitcher::Slot()
 						[
-							SNew(STextBlock).Text(LOCTEXT("No Object Selected", "Functions"))
+							//SNew(STextBlock).Text(LOCTEXT("No Object Selected", "Functions"))
+							MakeFunctionsTree()
 						]
 				]
 		]
@@ -214,6 +217,12 @@ TSharedRef<SWidget> FInspectorModule::MakeWidget()
 
 void FInspectorModule::ShutdownModule()
 {
+}
+
+TSharedRef<SWidget> FInspectorModule::MakeFunctionsTree()
+{
+	return SAssignNew(FunctionsWidget, SFunctionViewer)
+		;
 }
 
 void FInspectorModule::OnObjectAdded(TSharedPtr<FUObjectHolder> ObjectInfo)

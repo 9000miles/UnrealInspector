@@ -3,7 +3,7 @@
 #include "UObjectCollector.h"
 #include "UObject/UObjectArray.h"
 
-namespace UObjectCollector
+namespace UOBJECT_COLLECTOR
 {
 	FUObjectListener::FUObjectListener()
 	{

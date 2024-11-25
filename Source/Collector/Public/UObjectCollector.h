@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObjectHolder.h"
 
-namespace UObjectCollector
+namespace UOBJECT_COLLECTOR
 {
 	DECLARE_MULTICAST_DELEGATE_OneParam(FUObjectEvent, TSharedPtr<FUObjectHolder>);
 
