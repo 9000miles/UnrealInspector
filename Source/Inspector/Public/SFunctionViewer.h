@@ -31,6 +31,7 @@ public:
 
 	TSharedRef<class ITableRow> GenerateRowWidget(TSharedPtr<FFunctionHolder> Item, const TSharedRef<STableViewBase>& OwnerTable);
 	void OnSelectionChanged(TSharedPtr<FFunctionHolder> NewSelection, ESelectInfo::Type SelectInfo);
+	FReply OnExecute();
 
 private:
 	TWeakObjectPtr<UObject> Object;

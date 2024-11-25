@@ -22,37 +22,60 @@ void SFunctionViewer::Construct(const FArguments& InArgs)
 
 	ChildSlot
 		[
-			SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot()
+			SNew(SSplitter)
+				+ SSplitter::Slot()
+				.Value(0.75f)
 				[
-					// Populate the widget
 					SAssignNew(FunctionGroups, SVerticalBox)
 				]
-				+ SHorizontalBox::Slot()
+				+ SSplitter::Slot()
 				[
 					SNew(SVerticalBox)
 						+ SVerticalBox::Slot()
 						[
-							SNew(SHorizontalBox)
-								+ SHorizontalBox::Slot().FillWidth(0.2f)
+							SNew(SSplitter)
+								+ SSplitter::Slot()
 								[
-									SNew(STextBlock).Text(LOCTEXT("Parameters", "Parameters"))
+									SNew(SVerticalBox)
+										+ SVerticalBox::Slot().FillHeight(0.1f).HAlign(HAlign_Center).VAlign(VAlign_Center)
+										[
+											SNew(STextBlock).Text(LOCTEXT("Parameters", "Parameters"))
+										]
+										+ SVerticalBox::Slot()
+										[
+											ParameterDetailsViewer.ToSharedRef()
+										]
 								]
-								+ SHorizontalBox::Slot()
+								+ SSplitter::Slot()
 								[
-									ParameterDetailsViewer.ToSharedRef()
+									SNew(SVerticalBox)
+										+ SVerticalBox::Slot().FillHeight(0.1f).HAlign(HAlign_Center).VAlign(VAlign_Center)
+										[
+											SNew(STextBlock).Text(LOCTEXT("Return", "Return"))
+										]
+										+ SVerticalBox::Slot()
+										[
+											ReturnDetailsViewer.ToSharedRef()
+										]
 								]
 						]
 						+ SVerticalBox::Slot()
+						.FillHeight(0.1f)
+						//.AutoHeight()
 						[
-							SNew(SHorizontalBox)
-								+ SHorizontalBox::Slot().FillWidth(0.2f)
+							SNew(SBox)
+								.HAlign(HAlign_Fill).VAlign(VAlign_Fill)
+								//.HAlign(HAlign_Center).VAlign(VAlign_Center)
 								[
-									SNew(STextBlock).Text(LOCTEXT("Return", "Return"))
-								]
-								+ SHorizontalBox::Slot()
-								[
-									ReturnDetailsViewer.ToSharedRef()
+									SNew(SButton)
+										//.Text(LOCTEXT("Execute", "Execute"))
+										.OnClicked(this, &SFunctionViewer::OnExecute)
+										//.IsEnabled(this, &SFunctionViewer::CanExecute)
+										.HAlign(HAlign_Center).VAlign(VAlign_Center)
+										[
+											SNew(STextBlock)
+												.Text(LOCTEXT("Execute", "Execute"))
+										]
 								]
 						]
 				]
@@ -117,29 +140,6 @@ TSharedRef<SWidget> SFunctionViewer::MakeFunctionList(EFuncitonAccess Access)
 
 	TSharedPtr<SListView<TSharedPtr<FFunctionHolder>>> FunctionListView;
 
-	//SNew(SVerticalBox)
-	//	+ SVerticalBox::Slot()
-	//	[
-#if 0
-	SAssignNew(FunctionListView, SListView<TSharedPtr<FFunctionHolder>>)
-		.OnGenerateRow(this, &SUObjectFunctions::GenerateRowWidget)
-		.OnSelectionChanged(this, &SUObjectFunctions::OnSelectionChanged)
-		.SelectionMode(ESelectionMode::Single)
-		.ItemHeight(20.0f)
-		;
-	//];
-
-	switch (Access)
-	{
-	case EFuncitonAccess::Static: FunctionListView->SetItemsSource(&StaticFunctions); break;
-	case EFuncitonAccess::Public: FunctionListView->SetItemsSource(&PublicFunctions); break;
-	case EFuncitonAccess::Protected: FunctionListView->SetItemsSource(&ProtectedFunctions); break;
-	case EFuncitonAccess::Private: FunctionListView->SetItemsSource(&PrivateFunctions); break;
-	default: break;
-	}
-#endif // 0
-
-
 	switch (Access)
 	{
 	case EFuncitonAccess::Static:
@@ -156,7 +156,7 @@ TSharedRef<SWidget> SFunctionViewer::MakeFunctionList(EFuncitonAccess Access)
 			.OnGenerateRow(this, &SFunctionViewer::GenerateRowWidget)
 			.OnSelectionChanged(this, &SFunctionViewer::OnSelectionChanged)
 			.SelectionMode(ESelectionMode::Single)
-			.ItemHeight(20.0f)
+			.ItemHeight(50.0f)
 			;
 	case EFuncitonAccess::Protected:
 		return SNew(SListView<TSharedPtr<FFunctionHolder>>)
@@ -184,7 +184,7 @@ TSharedRef<class ITableRow> SFunctionViewer::GenerateRowWidget(TSharedPtr<FFunct
 	return SNew(STableRow<TSharedPtr<FFunctionHolder>>, OwnerTable)
 		[
 			SNew(STextBlock)
-				.Text(Item->GetFunctionSignature())
+				.Text(Item->GetFunctionName())
 				.ToolTipText(Item->GetFunctionSignature())
 		];
 }
@@ -192,6 +192,11 @@ TSharedRef<class ITableRow> SFunctionViewer::GenerateRowWidget(TSharedPtr<FFunct
 void SFunctionViewer::OnSelectionChanged(TSharedPtr<FFunctionHolder> NewSelection, ESelectInfo::Type SelectInfo)
 {
 
+}
+
+FReply SFunctionViewer::OnExecute()
+{
+	return FReply::Handled();
 }
 
 #undef LOCTEXT_NAMESPACE
