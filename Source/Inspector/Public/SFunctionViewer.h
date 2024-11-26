@@ -3,9 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Core/DetailInfo.h"
 
 namespace UOBJECT_COLLECTOR { class FFunctionHolder; }
 
+
+class FFunctionDetailHolder :public IDetailHolder
+{
+	IMPLEMENT_ITYPENAME(FFunctionDetailHolder)
+public:
+	void Init(TSharedPtr<FDetailOptions> Options) override;
+	void SetDetailInfo(TSharedPtr<FDetailInfo> Info) override;
+	TSharedPtr<SWidget> GetWidget() override;
+
+	void SetFunction(UFunction* InFunction);
+
+	FString GetPropertyType(UE_Property* Property);
+private:
+	UFunction* Function;
+	TSharedPtr<FDetailInfo> DetailInfo;
+	TSharedPtr<SDetailViewer> DetailViewer;
+};
 /**
  * Comment
  */
@@ -44,7 +62,5 @@ private:
 
 	TArray<TSharedPtr<FFunctionHolder>> FunctionList;
 
-	TSharedPtr< FUObjectDetailHolder> ParameterDetailHolder;
-	TSharedPtr< FUObjectDetailHolder> ReturnDetailHolder;
+	TSharedPtr< FFunctionDetailHolder> FunctionDetailHolder;
 };
-

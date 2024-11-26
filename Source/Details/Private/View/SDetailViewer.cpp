@@ -222,6 +222,14 @@ namespace DETAILS_VIEWER
 		}
 	}
 
+	void SDetailViewer::ExpandAll(const bool bExpand)
+	{
+		for (TSharedPtr<FTreeNode> Node : TreeNodes)
+		{
+			TreeView->SetItemExpansion(Node, bExpand);
+		}
+	}
+
 	void SDetailViewer::Paste(TSharedPtr<FTreeNode> Node)
 	{
 		Node->Paste();

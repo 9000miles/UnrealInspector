@@ -207,6 +207,13 @@ namespace DETAILS_VIEWER
 
 			return MakeShareable(new FJsonValueNull());
 		}
+
+		FString FUEPropertyHelper::GetPropertyType(UE_Property* Property)
+		{
+			if (Property->IsA<FEnumProperty>())	return "Enum";
+			return Property->GetCPPType();
+		}
+
 #undef LOCTEXT_NAMESPACE
 
 		//void FUEPropertySetter::SetValue(const bool value)
@@ -238,21 +245,19 @@ namespace DETAILS_VIEWER
 		{
 			DetailInfo.Reset();
 			DetailInfo = nullptr;
-			return;
 		}
-
-		DetailInfo = MakeShareable(new FDetailInfo());
-		DetailInfo->Name = Object->GetName();
-		DetailInfo->DisplayName = Object->GetName();
-		DetailInfo->Description = Object->GetName();
-		DetailInfo->Commander = MakeShareable(new FUObjectDetailCommander());
-
-		IteratorField(Object, DetailInfo->CategoryList);
-
-		if (DetailViewer.IsValid())
+		else
 		{
-			DetailViewer->SetDetailInfo(DetailInfo);
+			DetailInfo = MakeShareable(new FDetailInfo());
+			DetailInfo->Name = Object->GetName();
+			DetailInfo->DisplayName = Object->GetName();
+			DetailInfo->Description = Object->GetName();
+			DetailInfo->Commander = MakeShareable(new FUObjectDetailCommander());
+
+			IteratorField(Object, DetailInfo->CategoryList);
 		}
+
+		SetDetailInfo(DetailInfo);
 	}
 
 	void FUObjectDetailHolder::SetObject()
@@ -299,14 +304,6 @@ namespace DETAILS_VIEWER
 
 			ExistCategory->Add(PropertyInfo);
 		}
-
-		CategoryList->Sort();
-	}
-
-	FString FUObjectDetailHolder::GetPropertyType(UE_Property* Property)
-	{
-		if (Property->IsA<FEnumProperty>())	return "Enum";
-		return Property->GetCPPType();
 	}
 
 	TSharedPtr<DETAILS_VIEWER::FPropertyInfo> FUObjectDetailHolder::MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, void* DefaultValuePtr, FString Category, TWeakObjectPtr<UObject> InObject, void* Container)
@@ -316,7 +313,7 @@ namespace DETAILS_VIEWER
 		PropertyInfo->Name = PropertyName;
 		PropertyInfo->DisplayName = DisplayName.IsEmpty() ? PropertyName : DisplayName;
 		PropertyInfo->Description = Property->GetMetaData(TEXT("Description"));
-		PropertyInfo->Type = GetPropertyType(Property);
+		PropertyInfo->Type = PROPERTY::FUEPropertyHelper::GetPropertyType(Property);
 		PropertyInfo->Category = Category;
 		PropertyInfo->Advanced = Property->HasMetaData(TEXT("AdvancedDisplay"));
 		PropertyInfo->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(InObject, Property, Container, DefaultValuePtr));
@@ -368,7 +365,15 @@ namespace DETAILS_VIEWER
 
 	void FUObjectDetailHolder::SetDetailInfo(TSharedPtr<FDetailInfo> Info)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (DetailInfo.IsValid())
+		{
+			DetailInfo->CategoryList->Sort();
+		}
+
+		if (DetailViewer.IsValid())
+		{
+			DetailViewer->SetDetailInfo(Info);
+		}
 	}
 
 	TSharedPtr<SWidget> FUObjectDetailHolder::GetWidget()

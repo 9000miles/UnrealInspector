@@ -41,6 +41,8 @@ namespace DETAILS_VIEWER
 		void OnSearchTextCommitted(const FText& Text, ETextCommit::Type CommitType);
 		void OnSearchTextChanged(const FText& Text);
 
+		void ExpandAll(const bool bExpand);
+
 	private:
 		void GenerateTreeNodes();
 		TSharedRef<class ITableRow> OnGenerateRow(TSharedPtr<FTreeNode> Node, const TSharedRef<class STableViewBase>& TableView);

@@ -58,14 +58,14 @@ namespace DETAILS_VIEWER
 	/**
 	 * ϸ����幹����
 	 */
-	class IDetailMaker :public IJsonable, public ITypeName
+	class DETAILSVIEWER_API IDetailMaker :public IJsonable, public ITypeName
 	{
 	public:
 		virtual ~IDetailMaker() {}
 		virtual TSharedPtr<SWidget> MakeWidget(TSharedPtr<FTreeNode> Node) = 0;
 	};
 
-	class FDetailMaker : public IDetailMaker
+	class DETAILSVIEWER_API FDetailMaker : public IDetailMaker
 	{
 	public:
 		virtual ~FDetailMaker() {}
@@ -75,7 +75,7 @@ namespace DETAILS_VIEWER
 
 	};
 
-	class FCustomDetailMaker :public IDetailMaker
+	class DETAILSVIEWER_API FCustomDetailMaker :public IDetailMaker
 	{
 	public:
 		virtual ~FCustomDetailMaker() {}
@@ -85,14 +85,14 @@ namespace DETAILS_VIEWER
 
 	};
 
-	class ICopier
+	class DETAILSVIEWER_API ICopier
 	{
 	public:
 		virtual ~ICopier() {}
 		virtual const FString Execute() = 0;
 	};
 
-	class IPaster
+	class DETAILSVIEWER_API IPaster
 	{
 	public:
 		virtual ~IPaster() {}
@@ -103,7 +103,7 @@ namespace DETAILS_VIEWER
 	 * 细节面板指挥官
 	 * 负责创建细节面板，整个面板的复制和粘贴
 	 */
-	class IDetailCommander :public IJsonable, public ITypeName
+	class DETAILSVIEWER_API IDetailCommander :public IJsonable, public ITypeName
 	{
 	public:
 		virtual ~IDetailCommander() {}
@@ -119,7 +119,7 @@ namespace DETAILS_VIEWER
 		TSharedPtr<IPaster> PasteExecutor;
 	};
 
-	class ICategoryExecutor :public IJsonable
+	class DETAILSVIEWER_API ICategoryExecutor :public IJsonable
 	{
 	public:
 		virtual void Execute() = 0;
@@ -257,7 +257,7 @@ namespace DETAILS_VIEWER
 			virtual TSharedRef<SWidget> MakeWidget(TSharedPtr<FTreeNode> Node) = 0;
 		};
 
-		class IExecutor :public IJsonable
+		class DETAILSVIEWER_API IExecutor :public IJsonable
 		{
 		public:
 			IExecutor()
@@ -277,7 +277,7 @@ namespace DETAILS_VIEWER
 			TSharedPtr<IPaster> Paster;
 		};
 
-		class FMetadata :public IJsonable
+		class DETAILSVIEWER_API FMetadata :public IJsonable
 		{
 		public:
 			virtual ~FMetadata()
@@ -412,7 +412,7 @@ namespace DETAILS_VIEWER
 
 
 
-	class FPropertyInfo :public TSharedFromThis<FPropertyInfo>, public IJsonable
+	class DETAILSVIEWER_API FPropertyInfo :public TSharedFromThis<FPropertyInfo>, public IJsonable
 	{
 	public:
 		virtual ~FPropertyInfo()
@@ -441,7 +441,7 @@ namespace DETAILS_VIEWER
 
 	};
 
-	class FPropertyList :public IJsonable
+	class DETAILSVIEWER_API FPropertyList :public IJsonable
 	{
 	public:
 		virtual ~FPropertyList()
@@ -464,7 +464,7 @@ namespace DETAILS_VIEWER
 		TArray<TSharedPtr<FPropertyInfo>> Parameters;
 	};
 
-	class FCategoryInfo :public IJsonable
+	class DETAILSVIEWER_API FCategoryInfo :public IJsonable
 	{
 	public:
 		FCategoryInfo();
@@ -487,7 +487,7 @@ namespace DETAILS_VIEWER
 		TSharedPtr<FPropertyList> PropertyList;
 	};
 
-	class FCategoryList :public IJsonable
+	class DETAILSVIEWER_API FCategoryList :public IJsonable
 	{
 	public:
 		virtual ~FCategoryList()
@@ -509,7 +509,7 @@ namespace DETAILS_VIEWER
 	/**
 	 * $Comment$
 	 */
-	class FDetailInfo :public IJsonable
+	class DETAILSVIEWER_API FDetailInfo :public IJsonable
 	{
 	public:
 		FDetailInfo();
@@ -529,7 +529,7 @@ namespace DETAILS_VIEWER
 		TSharedPtr<FCategoryList> CategoryList;
 	};
 
-	class IDetailHolder :public ITypeName
+	class DETAILSVIEWER_API IDetailHolder :public ITypeName
 	{
 	public:
 		virtual void Init(TSharedPtr<FDetailOptions> Options) = 0;

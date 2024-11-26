@@ -107,6 +107,8 @@ namespace UOBJECT_COLLECTOR
 		FText GetFunctionName();
 		FText GetFunctionSignature();
 
+		bool HasReturn();
+
 	private:
 		FString GetReturn();
 		FString GetParameters();

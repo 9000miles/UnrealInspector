@@ -14,17 +14,14 @@ void SFunctionViewer::Construct(const FArguments& InArgs)
 {
 	FDetialManager& Manager = FDetialManager::Get();
 	TSharedPtr<FDetailOptions> Options = MakeShared<FDetailOptions>();
-	ParameterDetailHolder = Manager.Create<FUObjectDetailHolder>(Options);
-	TSharedPtr<SWidget> ParameterDetailsViewer = ParameterDetailHolder->GetWidget();
-
-	ReturnDetailHolder = Manager.Create<FUObjectDetailHolder>(Options);
-	TSharedPtr<SWidget> ReturnDetailsViewer = ReturnDetailHolder->GetWidget();
+	FunctionDetailHolder = Manager.Create<FFunctionDetailHolder>(Options);
+	TSharedPtr<SWidget> FunctionDetailsViewer = FunctionDetailHolder->GetWidget();
 
 	ChildSlot
 		[
 			SNew(SSplitter)
 				+ SSplitter::Slot()
-				.Value(0.75f)
+				.Value(1.45f)
 				[
 					SAssignNew(FunctionGroups, SVerticalBox)
 				]
@@ -33,40 +30,7 @@ void SFunctionViewer::Construct(const FArguments& InArgs)
 					SNew(SVerticalBox)
 						+ SVerticalBox::Slot()
 						[
-							SNew(SSplitter)
-								.Orientation(Orient_Vertical)
-								+ SSplitter::Slot()
-								[
-									SNew(SVerticalBox)
-										+ SVerticalBox::Slot().AutoHeight()
-										[
-											SNew(SBox).HeightOverride(30)
-												.HAlign(HAlign_Center).VAlign(VAlign_Center)
-												[
-													SNew(STextBlock).Text(LOCTEXT("Parameters", "Parameters"))
-												]
-										]
-										+ SVerticalBox::Slot()
-										[
-											ParameterDetailsViewer.ToSharedRef()
-										]
-								]
-								+ SSplitter::Slot()
-								[
-									SNew(SVerticalBox)
-										+ SVerticalBox::Slot().AutoHeight()
-										[
-											SNew(SBox).HeightOverride(30)
-												.HAlign(HAlign_Center).VAlign(VAlign_Center)
-												[
-													SNew(STextBlock).Text(LOCTEXT("Return", "Return"))
-												]
-										]
-										+ SVerticalBox::Slot()
-										[
-											ReturnDetailsViewer.ToSharedRef()
-										]
-								]
+							FunctionDetailsViewer.ToSharedRef()
 						]
 						+ SVerticalBox::Slot()
 						.FillHeight(0.1f)
@@ -211,7 +175,8 @@ TSharedRef<class ITableRow> SFunctionViewer::GenerateRowWidget(TSharedPtr<FFunct
 
 void SFunctionViewer::OnSelectionChanged(TSharedPtr<FFunctionHolder> NewSelection, ESelectInfo::Type SelectInfo)
 {
-
+	TSharedPtr<FDetailInfo> ParameterDetailInfo = MakeShared<FDetailInfo>();
+	FunctionDetailHolder->SetFunction(NewSelection->Function);
 }
 
 FReply SFunctionViewer::OnExecute()
@@ -220,3 +185,95 @@ FReply SFunctionViewer::OnExecute()
 }
 
 #undef LOCTEXT_NAMESPACE
+
+void FFunctionDetailHolder::Init(TSharedPtr<FDetailOptions> Options)
+{
+}
+
+void FFunctionDetailHolder::SetDetailInfo(TSharedPtr<FDetailInfo> Info)
+{
+	if (DetailInfo.IsValid())
+	{
+		DetailInfo->CategoryList->Sort();
+	}
+
+	if (DetailViewer.IsValid())
+	{
+		DetailViewer->SetDetailInfo(Info);
+		DetailViewer->ExpandAll(true);
+	}
+}
+
+TSharedPtr<SWidget> FFunctionDetailHolder::GetWidget()
+{
+	if (DetailViewer.IsValid())
+		return DetailViewer;
+
+	DetailViewer = SNew(SDetailViewer)
+		.DetailInfo(DetailInfo)
+		;
+
+	return DetailViewer;
+}
+
+void FFunctionDetailHolder::SetFunction(UFunction* InFunction)
+{
+	Function = InFunction;
+
+	if (Function == nullptr)
+	{
+		DetailInfo.Reset();
+		DetailInfo = nullptr;
+	}
+	else
+	{
+		DetailInfo = MakeShareable(new FDetailInfo());
+		DetailInfo->Name = Function->GetName();
+		DetailInfo->DisplayName = Function->GetName();
+		DetailInfo->Description = Function->GetName();
+		//DetailInfo->Commander = MakeShareable(new FUObjectDetailCommander());
+
+		TSharedPtr<FCategoryInfo> ParameterCategoryInfo = MakeShareable(new FCategoryInfo());
+		ParameterCategoryInfo->Name = TEXT("Parameters");
+
+		TSharedPtr<FCategoryInfo> ReturnCategoryInfo = MakeShareable(new FCategoryInfo());
+		ReturnCategoryInfo->Name = TEXT("Return");
+
+		for (TFieldIterator<FProperty> It(Function); It; ++It)
+		{
+			FProperty* Property = *It;
+			if (Property->HasAnyPropertyFlags(CPF_Parm))
+			{
+				if (!Property->HasAnyPropertyFlags(CPF_ReturnParm))
+				{
+					// Parameter
+					TSharedPtr<FPropertyInfo> PropertyInfo = MakeShareable(new FPropertyInfo());
+					PropertyInfo->Name = Property->GetName();
+					PropertyInfo->Type = PROPERTY::FUEPropertyHelper::GetPropertyType(Property);
+					PropertyInfo->Category = ParameterCategoryInfo->Name;
+					PropertyInfo->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(Function, Property, Function, nullptr));
+					PropertyInfo->Metadata = MakeShareable(new PROPERTY::FUEPropertyMetadata(Property));
+
+					ParameterCategoryInfo->Add(PropertyInfo);
+				}
+				else
+				{
+					// Return Parameter
+					TSharedPtr<FPropertyInfo> PropertyInfo = MakeShareable(new FPropertyInfo());
+					PropertyInfo->Name = TEXT("Return");
+					PropertyInfo->Type = PROPERTY::FUEPropertyHelper::GetPropertyType(Property);
+					PropertyInfo->Category = ReturnCategoryInfo->Name;
+					PropertyInfo->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(Function, Property, Function, nullptr));
+					PropertyInfo->Metadata = MakeShareable(new PROPERTY::FUEPropertyMetadata(Property));
+
+					ReturnCategoryInfo->Add(PropertyInfo);
+				}
+			}
+		}
+
+		DetailInfo->CategoryList->Add(ParameterCategoryInfo);
+		DetailInfo->CategoryList->Add(ReturnCategoryInfo);
+	}
+
+	SetDetailInfo(DetailInfo);
+}

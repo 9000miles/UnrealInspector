@@ -14,8 +14,12 @@
 
 #define LOCTEXT_NAMESPACE "FInspectorModule"
 
+using namespace DETAILS_VIEWER;
+
 void FInspectorModule::StartupModule()
 {
+
+	Factory::Register<FFunctionDetailHolder>();
 	//�ֶ�ˢ��
 	//FUObjectCollector::OnObjectAddEvent.AddRaw(this, &FInspectorModule::OnObjectAdded);
 	//FUObjectCollector::OnObjectDeleteEvent.AddRaw(this, &FInspectorModule::OnObjectDeleted);

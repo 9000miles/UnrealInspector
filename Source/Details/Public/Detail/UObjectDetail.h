@@ -11,7 +11,7 @@ namespace DETAILS_VIEWER
 {
 	namespace PROPERTY
 	{
-		class FUEPropertyHelper
+		class DETAILSVIEWER_API FUEPropertyHelper
 		{
 		public:
 			static FString PropertyToJson(UObject* Object, FName Name);
@@ -21,9 +21,10 @@ namespace DETAILS_VIEWER
 			static FString JsonValueToString(TSharedPtr<FJsonValue> JsonValue);
 			static TSharedPtr<FJsonValue> StringToJsonValue(const FString& JsonString);
 
+			static FString GetPropertyType(UE_Property* Property);
 		};
 
-		class FUEPropertyAccessor :public IPropertyAccessor
+		class DETAILSVIEWER_API FUEPropertyAccessor :public IPropertyAccessor
 		{
 		public:
 			FUEPropertyAccessor(void* InContainer, UE_Property* InProperty, void* DefaultValue)
@@ -190,7 +191,7 @@ namespace DETAILS_VIEWER
 			TWeakObjectPtr<UObject> OwnerObject;
 		};
 
-		class FUEConditionEvaluator :public IConditionEvaluator
+		class DETAILSVIEWER_API FUEConditionEvaluator :public IConditionEvaluator
 		{
 		public:
 			FUEConditionEvaluator(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
@@ -278,7 +279,7 @@ namespace DETAILS_VIEWER
 			UE_Property* Property;
 		};
 
-		class FUEPropertyWidgetMaker :public IWidgetMaker
+		class DETAILSVIEWER_API FUEPropertyWidgetMaker :public IWidgetMaker
 		{
 		public:
 			FUEPropertyWidgetMaker(UE_Property* InProperty)
@@ -294,7 +295,7 @@ namespace DETAILS_VIEWER
 			UE_Property* Property;
 		};
 
-		class FUEPropertyCopier :public ICopier
+		class DETAILSVIEWER_API FUEPropertyCopier :public ICopier
 		{
 		public:
 			FUEPropertyCopier(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
@@ -312,7 +313,7 @@ namespace DETAILS_VIEWER
 			TWeakObjectPtr<UObject> Object;
 		};
 
-		class FUEPropertyPaster :public IPaster
+		class DETAILSVIEWER_API FUEPropertyPaster :public IPaster
 		{
 		public:
 			FUEPropertyPaster(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty)
@@ -329,7 +330,7 @@ namespace DETAILS_VIEWER
 			TWeakObjectPtr<UObject> Object;
 		};
 
-		class FUEPropertyMetadata :public FMetadata
+		class DETAILSVIEWER_API FUEPropertyMetadata :public FMetadata
 		{
 		public:
 			FUEPropertyMetadata(UE_Property* InProperty)
@@ -346,7 +347,7 @@ namespace DETAILS_VIEWER
 			UE_Property* Property;
 		};
 
-		class FUObjectParameterExecutor :public IExecutor
+		class DETAILSVIEWER_API FUObjectParameterExecutor :public IExecutor
 		{
 		public:
 			FUObjectParameterExecutor(TWeakObjectPtr<UObject> InObject, UE_Property* InProperty, void* InContainer, void* DefaultValue)
@@ -398,7 +399,6 @@ namespace DETAILS_VIEWER
 		void SetObject();
 		void IteratorField(TWeakObjectPtr<UObject> InObject, TSharedPtr<FCategoryList> CategoryList);
 
-		FString GetPropertyType(UE_Property* Property);
 		TSharedPtr<FPropertyInfo> MakePropertyInfo(const FString PropertyName, const FString DisplayName, UE_Property* Property, void* DefaultValuePtr, FString Category, TWeakObjectPtr<UObject> InObject, void* Container);
 
 		static FString TypeName() { return TEXT("UObjectDetail"); }

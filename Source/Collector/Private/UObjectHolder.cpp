@@ -159,6 +159,11 @@ namespace UOBJECT_COLLECTOR
 		return FText::FromString(FString::Printf(TEXT("%s %s(%s)"), *Return, *Function->GetName(), *Parameters));
 	}
 
+	bool FFunctionHolder::HasReturn()
+	{
+		return !!Function->GetReturnProperty();
+	}
+
 	FString FFunctionHolder::GetReturn()
 	{
 		FProperty* Property = Function->GetReturnProperty();
