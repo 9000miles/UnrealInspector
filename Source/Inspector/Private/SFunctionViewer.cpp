@@ -34,12 +34,17 @@ void SFunctionViewer::Construct(const FArguments& InArgs)
 						+ SVerticalBox::Slot()
 						[
 							SNew(SSplitter)
+								.Orientation(Orient_Vertical)
 								+ SSplitter::Slot()
 								[
 									SNew(SVerticalBox)
-										+ SVerticalBox::Slot().FillHeight(0.1f).HAlign(HAlign_Center).VAlign(VAlign_Center)
+										+ SVerticalBox::Slot().AutoHeight()
 										[
-											SNew(STextBlock).Text(LOCTEXT("Parameters", "Parameters"))
+											SNew(SBox).HeightOverride(30)
+												.HAlign(HAlign_Center).VAlign(VAlign_Center)
+												[
+													SNew(STextBlock).Text(LOCTEXT("Parameters", "Parameters"))
+												]
 										]
 										+ SVerticalBox::Slot()
 										[
@@ -49,9 +54,13 @@ void SFunctionViewer::Construct(const FArguments& InArgs)
 								+ SSplitter::Slot()
 								[
 									SNew(SVerticalBox)
-										+ SVerticalBox::Slot().FillHeight(0.1f).HAlign(HAlign_Center).VAlign(VAlign_Center)
+										+ SVerticalBox::Slot().AutoHeight()
 										[
-											SNew(STextBlock).Text(LOCTEXT("Return", "Return"))
+											SNew(SBox).HeightOverride(30)
+												.HAlign(HAlign_Center).VAlign(VAlign_Center)
+												[
+													SNew(STextBlock).Text(LOCTEXT("Return", "Return"))
+												]
 										]
 										+ SVerticalBox::Slot()
 										[
@@ -181,11 +190,22 @@ TSharedRef<SWidget> SFunctionViewer::MakeFunctionList(EFuncitonAccess Access)
 
 TSharedRef<class ITableRow> SFunctionViewer::GenerateRowWidget(TSharedPtr<FFunctionHolder> Item, const TSharedRef<STableViewBase>& OwnerTable)
 {
+	TSharedRef<SToolTip> ToolTip = SNew(SToolTip)
+		.BorderImage(FCoreStyle::Get().GetBrush("PopupText.Background"))
+		.TextMargin(FMargin(15.0f, 15.0f))
+		[
+			SNew(STextBlock).Text(Item->GetFunctionSignature())
+		]
+		;
+
+	TSharedRef<SWidget> Widget = SNew(STextBlock)
+		.Text(Item->GetFunctionName())
+		;
+	Widget->SetToolTip(ToolTip);
+
 	return SNew(STableRow<TSharedPtr<FFunctionHolder>>, OwnerTable)
 		[
-			SNew(STextBlock)
-				.Text(Item->GetFunctionName())
-				.ToolTipText(Item->GetFunctionSignature())
+			Widget
 		];
 }
 
