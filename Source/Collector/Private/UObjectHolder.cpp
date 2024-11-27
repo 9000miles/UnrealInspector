@@ -50,14 +50,14 @@ namespace UOBJECT_COLLECTOR
 
 	void FUObjectHolder::Sort()
 	{
-		Children.Sort([](const TSharedPtr<FUObjectHolder>& A, const TSharedPtr<FUObjectHolder>& B)
+		Children.Sort([](const TWeakPtr<FUObjectHolder>& A, const TWeakPtr<FUObjectHolder>& B)
 			{
-				return A->GetName() < B->GetName();
+				return A.Pin()->GetName() < B.Pin()->GetName();
 			});
 
 		for (auto& Child : Children)
 		{
-			Child->Sort();
+			Child.Pin()->Sort();
 		}
 	}
 
@@ -92,6 +92,24 @@ namespace UOBJECT_COLLECTOR
 		ObjectPath = JsonObject->GetStringField(TEXT("ObjectPath"));
 	}
 
+	void FUObjectHolder::GetChildren(TArray<TSharedPtr<FUObjectHolder>>& OutChildren)
+	{
+		for (auto& Child : Children)
+		{
+			OutChildren.Add(Child.Pin());
+		}
+	}
+
+	bool FUObjectHolder::Contains(TSharedPtr<FUObjectHolder>& Child)
+	{
+		return Children.Contains(Child);
+	}
+
+	void FUObjectHolder::AddChild(TSharedPtr<FUObjectHolder>& Child)
+	{
+		Children.Add(Child);
+	}
+
 	void FUObjectHolder::OnSearch(const FText& Text, EObjectSearchType SearchType)
 	{
 		if (!IsValid()) bVisible = false;
@@ -110,7 +128,7 @@ namespace UOBJECT_COLLECTOR
 
 		for (auto& Child : Children)
 		{
-			Child->OnSearch(Text, SearchType);
+			Child.Pin()->OnSearch(Text, SearchType);
 		}
 	}
 

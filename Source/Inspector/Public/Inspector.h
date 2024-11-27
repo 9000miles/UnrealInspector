@@ -89,8 +89,8 @@ namespace INSPECTOR
 					uint32 ClassObjectIndex = ObjectClass->GetUniqueID();
 					TSharedPtr<FUObjectHolder> ObjectClass_Holder = FUObjectCollector::Get().GetObject(ClassObjectIndex);
 
-					if (!ObjectSuperClass_Holder->GetChildren().Contains(ObjectClass_Holder))
-						ObjectSuperClass_Holder->GetChildren().Add(ObjectClass_Holder);
+					if (!ObjectSuperClass_Holder->Contains(ObjectClass_Holder))
+						ObjectSuperClass_Holder->AddChild(ObjectClass_Holder);
 
 					if (CoreUObjectClass == Object || Object->GetUniqueID() == 0)
 						continue;
@@ -131,7 +131,7 @@ namespace INSPECTOR
 				TSharedPtr<FUObjectHolder> OuterObjectHolder = FUObjectCollector::Get().GetObject(ObjectIndex);
 				if (OuterObjectHolder.IsValid())
 				{
-					OuterObjectHolder->GetChildren().Add(ObjectHolder);
+					OuterObjectHolder->AddChild(ObjectHolder);
 				}
 			}
 

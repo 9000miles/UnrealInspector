@@ -287,7 +287,7 @@ void FInspectorModule::OnClassifySelectionChanged(TSharedPtr<FUObjectClassify> N
 
 void FInspectorModule::OnGetChildren(TSharedPtr<FUObjectHolder> Node, TArray<TSharedPtr<FUObjectHolder>>& Children)
 {
-	Children = Node->GetChildren();
+	Node->GetChildren(Children);
 }
 
 #undef LOCTEXT_NAMESPACE

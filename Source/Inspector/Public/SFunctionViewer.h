@@ -5,13 +5,21 @@
 #include "CoreMinimal.h"
 #include "Core/DetailInfo.h"
 
+using namespace DETAILS_VIEWER;
+
 namespace UOBJECT_COLLECTOR { class FFunctionHolder; }
 
+class FFunctionParameterExecutor :public PROPERTY::IExecutor
+{
+
+
+};
 
 class FFunctionDetailHolder :public IDetailHolder
 {
 	IMPLEMENT_ITYPENAME(FFunctionDetailHolder)
 public:
+	virtual ~FFunctionDetailHolder() {}
 	void Init(TSharedPtr<FDetailOptions> Options) override;
 	void SetDetailInfo(TSharedPtr<FDetailInfo> Info) override;
 	TSharedPtr<SWidget> GetWidget() override;

@@ -50,21 +50,13 @@ namespace UOBJECT_COLLECTOR
 		inline TWeakObjectPtr<UObject> GetObject() const { return ObjectPtr; }
 		inline UObject* GetUObject() const { return ObjectPtr.Get(); }
 		inline void ClearChildren() { Children.Empty(); }
-		inline TArray<TSharedPtr<FUObjectHolder>>& GetChildren() { return Children; }
 
 		inline bool IsNull() const { return ObjectPtr.IsValid() == false; }
 		inline bool IsValidIndex() const { return ObjectIndex != INDEX_NONE; }
 		inline bool IsNullIndex() const { return ObjectIndex == INDEX_NONE; }
 
-		inline bool operator==(const FUObjectHolder& Other) const
-		{
-			return ObjectPtr == Other.ObjectPtr;
-		}
-
-		inline bool operator!=(const FUObjectHolder& Other) const
-		{
-			return ObjectPtr != Other.ObjectPtr;
-		}
+		inline bool operator==(const FUObjectHolder& Other) const { return ObjectPtr == Other.ObjectPtr; }
+		inline bool operator!=(const FUObjectHolder& Other) const { return ObjectPtr != Other.ObjectPtr; }
 
 		bool IsInModule(const FString& Module);
 		void Sort();
@@ -73,6 +65,9 @@ namespace UOBJECT_COLLECTOR
 		TSharedPtr<FJsonObject> ToJSON();
 		void FromJson(TSharedPtr<FJsonObject> JsonObject);
 
+		void GetChildren(TArray<TSharedPtr<FUObjectHolder>>& OutChildren);
+		bool Contains(TSharedPtr<FUObjectHolder>& Child);
+		void AddChild(TSharedPtr<FUObjectHolder>& Child);
 
 		void OnSearch(const FText& Text, EObjectSearchType SearchType);
 		bool HasFunction(const FText& Text);
@@ -89,8 +84,8 @@ namespace UOBJECT_COLLECTOR
 		FString ObjectPath;
 
 		TWeakObjectPtr<UObject> ObjectPtr;
-		TSharedPtr<FUObjectHolder> Parent;
-		TArray<TSharedPtr<FUObjectHolder>> Children;
+		TWeakPtr<FUObjectHolder> Parent;
+		TArray<TWeakPtr<FUObjectHolder>> Children;
 	};
 
 	class UOBJECTCOLLECTOR_API FFunctionHolder : public TSharedFromThis<FFunctionHolder>
