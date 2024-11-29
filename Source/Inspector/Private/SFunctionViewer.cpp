@@ -6,6 +6,7 @@
 #include "UObjectHolder.h"
 #include "Core/DetailDefine.h"
 #include "Detail/UObjectDetail.h"
+#include "../Test/AAA.h"
 
 #define LOCTEXT_NAMESPACE "SUObjectFunctions"
 
@@ -58,8 +59,15 @@ END_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 void SFunctionViewer::SetObject(UObject* InObject)
 {
-	Object = InObject;
+	if (!AAA.IsValid())
+	{
+		AAA = TStrongObjectPtr<UAAA>(NewObject<UAAA>(GetTransientPackage(), TEXT("Instance_AAA"), RF_MarkAsRootSet));
+	}
+
+	Object = AAA.Get();
 	if (!Object.IsValid()) return;
+
+	UClass* Class = Object->IsA(UClass::StaticClass()) ? Cast<UClass>(Object) : Object->GetClass();
 
 	FunctionGroups->ClearChildren();
 	StaticFunctions.Empty();
@@ -67,17 +75,17 @@ void SFunctionViewer::SetObject(UObject* InObject)
 	ProtectedFunctions.Empty();
 	PrivateFunctions.Empty();
 
-	for (TFieldIterator<UFunction> FuncIt(Object->GetClass(), EFieldIteratorFlags::IncludeSuper); FuncIt; ++FuncIt)
+	for (TFieldIterator<UFunction> FuncIt(Class, EFieldIteratorFlags::IncludeSuper); FuncIt; ++FuncIt)
 	{
 		UFunction* Function = *FuncIt;
 		if (Function->HasAnyFunctionFlags(EFunctionFlags::FUNC_Static))
-			StaticFunctions.Add(MakeShared<FFunctionHolder>(Function));
+			StaticFunctions.Add(MakeShared<FFunctionHolder>(Function, Object));
 		else if (Function->HasAnyFunctionFlags(EFunctionFlags::FUNC_Public))
-			PublicFunctions.Add(MakeShared<FFunctionHolder>(Function));
+			PublicFunctions.Add(MakeShared<FFunctionHolder>(Function, Object));
 		else if (Function->HasAnyFunctionFlags(EFunctionFlags::FUNC_Protected))
-			ProtectedFunctions.Add(MakeShared<FFunctionHolder>(Function));
+			ProtectedFunctions.Add(MakeShared<FFunctionHolder>(Function, Object));
 		else if (Function->HasAnyFunctionFlags(EFunctionFlags::FUNC_Private))
-			PrivateFunctions.Add(MakeShared<FFunctionHolder>(Function));
+			PrivateFunctions.Add(MakeShared<FFunctionHolder>(Function, Object));
 	}
 
 	FunctionGroups->AddSlot()[MakeFunctionGroup(EFuncitonAccess::Static)];
@@ -173,18 +181,27 @@ TSharedRef<class ITableRow> SFunctionViewer::GenerateRowWidget(TSharedPtr<FFunct
 		];
 }
 
-void SFunctionViewer::OnSelectionChanged(TSharedPtr<FFunctionHolder> NewSelection, ESelectInfo::Type SelectInfo)
+void SFunctionViewer::OnSelectionChanged(TSharedPtr<FFunctionHolder> Holder, ESelectInfo::Type SelectInfo)
 {
 	TSharedPtr<FDetailInfo> ParameterDetailInfo = MakeShared<FDetailInfo>();
-	FunctionDetailHolder->SetFunction(NewSelection->Function);
+	FunctionDetailHolder->SetFunction(Holder);
 }
 
 FReply SFunctionViewer::OnExecute()
 {
+	FunctionDetailHolder->InvokeFunction();
 	return FReply::Handled();
 }
 
 #undef LOCTEXT_NAMESPACE
+
+FFunctionDetailHolder::~FFunctionDetailHolder()
+{
+	if (ParameterPtr)
+	{
+		FMemory::Free(ParameterPtr);
+	}
+}
 
 void FFunctionDetailHolder::Init(TSharedPtr<FDetailOptions> Options)
 {
@@ -216,11 +233,18 @@ TSharedPtr<SWidget> FFunctionDetailHolder::GetWidget()
 	return DetailViewer;
 }
 
-void FFunctionDetailHolder::SetFunction(UFunction* InFunction)
+void FFunctionDetailHolder::SetFunction(TSharedPtr<FFunctionHolder> FunctionHolder)
 {
-	Function = InFunction;
+	Holder = FunctionHolder;
 
-	if (Function == nullptr)
+	if (ParameterPtr)
+	{
+		FMemory::Free(ParameterPtr);
+		ParameterPtr = nullptr;
+	}
+	ParameterPtr = (uint8*)FMemory::MallocZeroed(Holder->GetPropertiesSize());
+
+	if (!Holder.IsValid())
 	{
 		DetailInfo.Reset();
 		DetailInfo = nullptr;
@@ -228,9 +252,9 @@ void FFunctionDetailHolder::SetFunction(UFunction* InFunction)
 	else
 	{
 		DetailInfo = MakeShareable(new FDetailInfo());
-		DetailInfo->Name = Function->GetName();
-		DetailInfo->DisplayName = Function->GetName();
-		DetailInfo->Description = Function->GetName();
+		DetailInfo->Name = Holder->GetFunctionName().ToString();
+		DetailInfo->DisplayName = Holder->GetFunctionName().ToString();
+		DetailInfo->Description = Holder->GetFunctionName().ToString();
 		//DetailInfo->Commander = MakeShareable(new FUObjectDetailCommander());
 
 		TSharedPtr<FCategoryInfo> ParameterCategoryInfo = MakeShareable(new FCategoryInfo());
@@ -239,6 +263,11 @@ void FFunctionDetailHolder::SetFunction(UFunction* InFunction)
 		TSharedPtr<FCategoryInfo> ReturnCategoryInfo = MakeShareable(new FCategoryInfo());
 		ReturnCategoryInfo->Name = TEXT("Return");
 
+		UObject* DefaultObject = Holder->ObjectPtr->GetClass()->GetDefaultObject();
+		FString FunctionName = Holder->GetFunctionName().ToString();
+		UFunction* DefaultFunction = DefaultObject->FindFunction(FName(*FunctionName));
+
+		UFunction* Function = Holder->Function;
 		for (TFieldIterator<FProperty> It(Function); It; ++It)
 		{
 			FProperty* Property = *It;
@@ -251,7 +280,7 @@ void FFunctionDetailHolder::SetFunction(UFunction* InFunction)
 					PropertyInfo->Name = Property->GetName();
 					PropertyInfo->Type = PROPERTY::FUEPropertyHelper::GetPropertyType(Property);
 					PropertyInfo->Category = ParameterCategoryInfo->Name;
-					PropertyInfo->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(Function, Property, Function, nullptr));
+					PropertyInfo->Executor = MakeShareable(new FFunctionParameterExecutor(Function, Property, ParameterPtr));
 					PropertyInfo->Metadata = MakeShareable(new PROPERTY::FUEPropertyMetadata(Property));
 
 					ParameterCategoryInfo->Add(PropertyInfo);
@@ -263,7 +292,7 @@ void FFunctionDetailHolder::SetFunction(UFunction* InFunction)
 					PropertyInfo->Name = TEXT("Return");
 					PropertyInfo->Type = PROPERTY::FUEPropertyHelper::GetPropertyType(Property);
 					PropertyInfo->Category = ReturnCategoryInfo->Name;
-					PropertyInfo->Executor = MakeShareable(new PROPERTY::FUObjectParameterExecutor(Function, Property, Function, nullptr));
+					PropertyInfo->Executor = MakeShareable(new FFunctionParameterExecutor(Function, Property, ParameterPtr));
 					PropertyInfo->Metadata = MakeShareable(new PROPERTY::FUEPropertyMetadata(Property));
 
 					ReturnCategoryInfo->Add(PropertyInfo);
@@ -276,4 +305,9 @@ void FFunctionDetailHolder::SetFunction(UFunction* InFunction)
 	}
 
 	SetDetailInfo(DetailInfo);
+}
+
+void FFunctionDetailHolder::InvokeFunction()
+{
+	Holder->Invoke(ParameterPtr);
 }

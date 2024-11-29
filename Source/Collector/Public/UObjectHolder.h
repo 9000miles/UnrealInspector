@@ -21,7 +21,8 @@ namespace UOBJECT_COLLECTOR
 	{
 		FObjectSearchType(EObjectSearchType InSearchType)
 			:SearchType(InSearchType)
-		{ }
+		{
+		}
 
 		FText GetText() const;
 		EObjectSearchType SearchType;
@@ -93,14 +94,19 @@ namespace UOBJECT_COLLECTOR
 	public:
 		FString Name;
 		UFunction* Function;
-		FFunctionHolder(UFunction* InFunction)
-			:Function(InFunction)
+		TWeakObjectPtr<UObject> ObjectPtr;
+
+		FFunctionHolder(UFunction* InFunction, TWeakObjectPtr<UObject> InObject)
+			:Function(InFunction),
+			ObjectPtr(InObject)
 		{
 			Name = InFunction->GetName();
 		}
 
 		FText GetFunctionName();
 		FText GetFunctionSignature();
+		int32 GetPropertiesSize() { return Function->GetPropertiesSize(); }
+		void Invoke(uint8* Parameters);
 
 		bool HasReturn();
 

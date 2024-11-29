@@ -177,6 +177,20 @@ namespace UOBJECT_COLLECTOR
 		return FText::FromString(FString::Printf(TEXT("%s %s(%s)"), *Return, *Function->GetName(), *Parameters));
 	}
 
+	void FFunctionHolder::Invoke(uint8* Parameters)
+	{
+		if (!ObjectPtr.IsValid()) return;
+
+		ObjectPtr->ProcessEvent(Function, Parameters);
+
+		if (Function->ReturnValueOffset != MAX_uint16)
+		{
+			FProperty* ReturnProperty = Function->GetReturnProperty();
+			void* Value = Parameters + Function->ReturnValueOffset;
+			UE_LOG(LogTemp, Log, TEXT("Function return"))
+		}
+	}
+
 	bool FFunctionHolder::HasReturn()
 	{
 		return !!Function->GetReturnProperty();

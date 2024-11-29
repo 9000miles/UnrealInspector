@@ -43,6 +43,7 @@ public class Inspector : ModuleRules
                 "InputCore",
                 "UObjectCollector",
                 "DetailsViewer",
+                "JsonUtilities",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

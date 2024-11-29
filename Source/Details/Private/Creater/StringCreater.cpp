@@ -49,25 +49,33 @@ namespace DETAILS_VIEWER
 		if (Type == TEXT("FString"))
 		{
 			FString Result;
-			GetAccessor()->Get(Result);
+			if (!GetAccessor()->Get(&Result, sizeof(FString)))
+				Result = TEXT("");
+
 			return FText::FromString(Result);
 		}
 		else if (Type == TEXT("string"))
 		{
 			FString Result;
-			GetAccessor()->Get(Result);
+			if (!GetAccessor()->Get(&Result, sizeof(FString)))
+				Result = TEXT("");
+
 			return FText::FromString(Result);
 		}
 		else if (Type == TEXT("FName"))
 		{
 			FName Result;
-			GetAccessor()->Get(Result);
+			if (!GetAccessor()->Get(&Result, sizeof(FName)))
+				Result = FName();
+
 			return FText::FromString(Result.ToString());
 		}
 		else if (Type == TEXT("FText"))
 		{
 			FText Result;
-			GetAccessor()->Get(Result);
+			if (!GetAccessor()->Get(&Result, sizeof(FText)))
+				Result = FText();
+
 			return Result;
 		}
 
@@ -79,19 +87,20 @@ namespace DETAILS_VIEWER
 		const FString Type = PropertyInfo->Type;
 		if (Type == TEXT("FString"))
 		{
-			GetAccessor()->Set(Text.ToString());
+			GetAccessor()->Set(&Text.ToString(), sizeof(FString));
 		}
 		else if (Type == TEXT("string"))
 		{
-			GetAccessor()->Set(Text.ToString());
+			GetAccessor()->Set(&Text.ToString(), sizeof(FString));
 		}
 		else if (Type == TEXT("FName"))
 		{
-			GetAccessor()->Set(FName(*Text.ToString()));
+			FName Value(*Text.ToString());
+			GetAccessor()->Set(&Value, sizeof(FName));
 		}
 		else if (Type == TEXT("FText"))
 		{
-			GetAccessor()->Set(Text);
+			GetAccessor()->Set(&Text, sizeof(FText));
 		}
 	}
 

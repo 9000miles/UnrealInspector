@@ -142,47 +142,61 @@ namespace DETAILS_VIEWER
 			uint8 Value = 0;
 		};
 
-		class IPropertyAccessor :public IJsonable
+		/**
+		* @TODO 考虑改成模板函数，然后使用Container和属性类型大小偏移来实现，然后就可以支持所有容器了
+		*/
+#if 1
+		class DETAILSVIEWER_API IPropertyAccessor :public IJsonable
 		{
 		public:
-			virtual void Set(const bool Value) = 0;
-			virtual void Set(const float Value) = 0;
-			virtual void Set(const double Value) = 0;
-			//virtual void Set(const int Value) = 0;
-			virtual void Set(const uint8 Value) = 0;
-			virtual void Set(const FEnumValue Value) = 0;
-			virtual void Set(const int32 Value) = 0;
-			virtual void Set(const FString Value) = 0;
-			virtual void Set(const FName Value) = 0;
-			virtual void Set(const FText Value) = 0;
-			virtual void Set(const FGuid Value) = 0;
-			virtual void Set(const FVector2D Value) = 0;
-			virtual void Set(const FVector Value) = 0;
-			virtual void Set(const FVector4 Value) = 0;
-			virtual void Set(const FTransform Value) = 0;
+			virtual void Set(const void* In, int32 Size) = 0;
+			virtual bool Get(void* Out, int32 Size) = 0;
+			virtual void Reset() = 0;
+			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action) = 0;
+		};
+#else
+		class DETAILSVIEWER_API IPropertyAccessor :public IJsonable
+		{
+		public:
+			virtual void Set(const bool Value) {}
+			virtual void Set(const float Value) {}
+			virtual void Set(const double Value) {}
+			//virtual void Set(const int Value) {}
+			virtual void Set(const uint8 Value) {}
+			virtual void Set(const FEnumValue Value) {}
+			virtual void Set(const int32 Value) {}
+			virtual void Set(const FString Value) {}
+			virtual void Set(const FName Value) {}
+			virtual void Set(const FText Value) {}
+			virtual void Set(const FGuid Value) {}
+			virtual void Set(const FVector2D Value) {}
+			virtual void Set(const FVector Value) {}
+			virtual void Set(const FVector4 Value) {}
+			virtual void Set(const FTransform Value) {}
 
-			virtual void Get(bool& Out) = 0;
-			virtual void Get(float& Out) = 0;
-			virtual void Get(double& Out) = 0;
-			//virtual void Get(int& Out) = 0;
-			virtual void Get(uint8& Out) = 0;
-			virtual void Get(FEnumValue& Out) = 0;
-			virtual void Get(int32& Out) = 0;
-			virtual void Get(FString& Out) = 0;
-			virtual void Get(FName& Out) = 0;
-			virtual void Get(FText& Out) = 0;
-			virtual void Get(FGuid& Out) = 0;
-			virtual void Get(FVector2D& Out) = 0;
-			virtual void Get(FVector& Out) = 0;
-			virtual void Get(FVector4& Out) = 0;
-			virtual void Get(FTransform& Out) = 0;
+			virtual void Get(bool& Out) {}
+			virtual void Get(float& Out) {}
+			virtual void Get(double& Out) {}
+			//virtual void Get(int& Out) {}
+			virtual void Get(uint8& Out) {}
+			virtual void Get(FEnumValue& Out) {}
+			virtual void Get(int32& Out) {}
+			virtual void Get(FString& Out) {}
+			virtual void Get(FName& Out) {}
+			virtual void Get(FText& Out) {}
+			virtual void Get(FGuid& Out) {}
+			virtual void Get(FVector2D& Out) {}
+			virtual void Get(FVector& Out) {}
+			virtual void Get(FVector4& Out) {}
+			virtual void Get(FTransform& Out) {}
 
 			virtual void Reset() = 0;
 
 			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action) = 0;
 		};
+#endif // 0
 
-		class IConditionEvaluator :public IJsonable
+		class DETAILSVIEWER_API IConditionEvaluator :public IJsonable
 		{
 		public:
 			enum EType
@@ -214,7 +228,7 @@ namespace DETAILS_VIEWER
 				{
 					if (Condition.IsEmpty()) continue;
 
-                    Condition.TrimStartAndEndInline();
+					Condition.TrimStartAndEndInline();
 
 					bool bNotValue = false;
 					if (Condition.StartsWith(TEXT("!"))) {
@@ -224,7 +238,7 @@ namespace DETAILS_VIEWER
 
 					EType ComparisionType = EType::Bool;
 					if (Condition.Equals(TEXT("true"), ESearchCase::IgnoreCase)) return true;
-					else if (Condition.Equals(TEXT("false"), ESearchCase::IgnoreCase)) if (bIsAndExpression) return false;
+					else if (Condition.Equals(TEXT("false"), ESearchCase::IgnoreCase)) { if (bIsAndExpression) return false; }
 					else if (Condition.Contains(TEXT("=="))) ComparisionType = EType::Equal;
 					else if (Condition.Contains(TEXT("!="))) ComparisionType = EType::NotEqual;
 					else if (Condition.Contains(TEXT("<="))) ComparisionType = EType::LessEqual;
@@ -251,7 +265,7 @@ namespace DETAILS_VIEWER
 			virtual bool EvaluateSingleCondition(const FString& Condition, EType Type) = 0;
 		};
 
-		class IWidgetMaker :public IJsonable
+		class DETAILSVIEWER_API IWidgetMaker :public IJsonable
 		{
 		public:
 			virtual TSharedRef<SWidget> MakeWidget(TSharedPtr<FTreeNode> Node) = 0;

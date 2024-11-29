@@ -18,7 +18,8 @@ namespace DETAILS_VIEWER
 	{
 	public:
 		SLATE_BEGIN_ARGS(SPropertyWidgetNumeric)
-			{}
+			{
+			}
 		SLATE_END_ARGS()
 
 		template<typename T>
@@ -67,17 +68,19 @@ namespace DETAILS_VIEWER
 
 		void OnValueChanged(NumericType Value)
 		{
-			GetAccessor()->Set(Value);
+			GetAccessor()->Set(&Value, sizeof(decltype(Value)));
 		}
 		void OnValueCommitted(NumericType Value, ETextCommit::Type CommitType)
 		{
-			GetAccessor()->Set(Value);
+			GetAccessor()->Set(&Value, sizeof(decltype(Value)));
 		}
 
 		NumericType GetPropertyValue() const
 		{
 			NumericType Value;
-			GetAccessor()->Get(Value);
+			if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+				Value = 0;
+
 			return Value;
 		}
 

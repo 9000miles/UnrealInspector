@@ -24,14 +24,16 @@ namespace DETAILS_VIEWER
 	ECheckBoxState SPropertyWidgetBool::IsChecked() const
 	{
 		bool Value = false;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			Value = false;
+
 		return Value ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
 	}
 
 	void SPropertyWidgetBool::OnCheckStateChanged(ECheckBoxState State)
 	{
 		const bool Value = State == ECheckBoxState::Checked;
-		GetAccessor()->Set(Value);
+		GetAccessor()->Set(&Value, sizeof(decltype(Value)));
 	}
 
 	TSharedPtr<SWidget> FWidgetCreaterBool::MakeWidget(TSharedPtr<FTreeNode> TreeNode)

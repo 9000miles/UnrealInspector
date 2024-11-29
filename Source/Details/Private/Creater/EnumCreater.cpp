@@ -37,15 +37,17 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetEnum::OnSelectionChanged(FName InSelectedItem, ESelectInfo::Type SelectInfo)
 	{
-		uint8 Index = EnumNames.IndexOfByKey(InSelectedItem);
-		GetAccessor()->Set(PROPERTY::FEnumValue(Index));
+		uint8 Value = EnumNames.IndexOfByKey(InSelectedItem);
+		GetAccessor()->Set(&Value, sizeof(decltype(Value)));
 	}
 
 	FText SPropertyWidgetEnum::GetPropertyValue() const
 	{
-		PROPERTY::FEnumValue Result;
-		GetAccessor()->Get(Result);
-		return FText::FromName(EnumNames[Result.Value]);
+		uint8 Value = 0;
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			Value = 0;
+
+		return FText::FromName(EnumNames[Value]);
 	}
 
 

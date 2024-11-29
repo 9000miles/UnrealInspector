@@ -10,7 +10,9 @@ namespace DETAILS_VIEWER
 		SPropertyWidget::Construct(InPropertyInfo);
 		const FLinearColor LabelClr = FLinearColor(1.f, 1.f, 1.f, 0.f);
 
-		GetAccessor()->Get(Transform);
+		if (!GetAccessor()->Get(&Transform, sizeof(decltype(Transform))))
+			Transform = FTransform();
+
 		const float Width = 80.f;
 
 		ChildSlot[
@@ -61,7 +63,9 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Translation_X() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0.f;
+
 		return Value.GetTranslation().X;
 	}
 
@@ -259,7 +263,9 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Translation_Y() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetTranslation().Y;
 	}
 
@@ -267,16 +273,19 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Translation_Z() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetTranslation().Z;
 	}
 
 
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Rotation_X() const
 	{
-
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetRotation().X;
 	}
 
@@ -284,7 +293,9 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Rotation_Y() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetRotation().Y;
 	}
 
@@ -292,7 +303,9 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Rotation_Z() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetRotation().Z;
 	}
 
@@ -300,7 +313,9 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Rotation_W() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetRotation().W;
 	}
 
@@ -308,7 +323,9 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Scale3D_X() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetScale3D().X;
 	}
 
@@ -316,7 +333,9 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Scale3D_Y() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetScale3D().Y;
 	}
 
@@ -324,7 +343,9 @@ namespace DETAILS_VIEWER
 	TOptional<float> SPropertyWidgetTransform::GetPropertyValue_Scale3D_Z() const
 	{
 		FTransform Value;
-		GetAccessor()->Get(Value);
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+			return 0;
+
 		return Value.GetScale3D().Z;
 	}
 
@@ -386,77 +407,77 @@ namespace DETAILS_VIEWER
 	void SPropertyWidgetTransform::OnCommitted_Scale3D_Z(float NewValue, ETextCommit::Type Type)
 	{
 		Transform.SetScale3D(FVector(Transform.GetScale3D().X, Transform.GetScale3D().Y, NewValue));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Translation_X(float NewValue)
 	{
 		Transform.SetTranslation(FVector(NewValue, Transform.GetTranslation().Y, Transform.GetTranslation().Z));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Translation_Y(float NewValue)
 	{
 		Transform.SetTranslation(FVector(Transform.GetTranslation().X, NewValue, Transform.GetTranslation().Z));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Translation_Z(float NewValue)
 	{
 		Transform.SetTranslation(FVector(Transform.GetTranslation().X, Transform.GetTranslation().Y, NewValue));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Rotation_X(float NewValue)
 	{
 		Transform.SetRotation(FQuat(NewValue, Transform.GetRotation().Y, Transform.GetRotation().Z, Transform.GetRotation().W));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Rotation_Y(float NewValue)
 	{
 		Transform.SetRotation(FQuat(Transform.GetRotation().X, NewValue, Transform.GetRotation().Z, Transform.GetRotation().W));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Rotation_Z(float NewValue)
 	{
 		Transform.SetRotation(FQuat(Transform.GetRotation().X, Transform.GetRotation().Y, NewValue, Transform.GetRotation().W));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Rotation_W(float NewValue)
 	{
 		Transform.SetRotation(FQuat(Transform.GetRotation().X, Transform.GetRotation().Y, Transform.GetRotation().Z, NewValue));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Scale3D_X(float NewValue)
 	{
 		Transform.SetScale3D(FVector(NewValue, Transform.GetScale3D().Y, Transform.GetScale3D().Z));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Scale3D_Y(float NewValue)
 	{
 		Transform.SetScale3D(FVector(Transform.GetScale3D().X, NewValue, Transform.GetScale3D().Z));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 
 
 	void SPropertyWidgetTransform::OnChanged_Scale3D_Z(float NewValue)
 	{
 		Transform.SetScale3D(FVector(Transform.GetScale3D().X, Transform.GetScale3D().Y, NewValue));
-		GetAccessor()->Set(Transform);
+		GetAccessor()->Set(&Transform, sizeof(decltype(Transform)));
 	}
 #undef LOCTEXT_NAMESPACE
 

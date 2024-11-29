@@ -36,6 +36,27 @@ namespace DETAILS_VIEWER
 			}
 			virtual ~FUEPropertyAccessor() {}
 
+			void Set(const void* In, int32 Size) override
+			{
+				check(Container && Property);
+				check(Size == Property->GetSize());
+
+				uint8* Ptr = (uint8*)Container;
+				void* Value = Ptr + Property->GetOffset_ForInternal();
+				FMemory::Memcpy(Value, In, Size);
+			}
+			bool Get(void* Out, int32 Size) override
+			{
+				check(Container && Property);
+				check(Size == Property->GetSize());
+
+				uint8* Ptr = (uint8*)Container;
+				void* Value = Ptr + Property->GetOffset_ForInternal();
+				FMemory::Memcpy(Out, Value, Size);
+
+                return true;
+			}
+
 			//* ============================== Set ================================= *//
 			void Set(FString Value) { SetValue<FString, FStrProperty>(Value); }
 			void Set(FName Value) { SetValue<FName, FNameProperty>(Value); }

@@ -67,19 +67,26 @@ namespace DETAILS_VIEWER
 
 	void SPropertyWidgetGuid::OnTextCommitted(const FText& Text, ETextCommit::Type Type)
 	{
-		GetAccessor()->Set(FGuid(Text.ToString()));
+		FGuid Value(Text.ToString());
+		GetAccessor()->Set(&Value, sizeof(decltype(Value)));
 	}
 
 	FText SPropertyWidgetGuid::GetPropertyValue() const
 	{
-		FGuid Guid;
-		GetAccessor()->Get(Guid);
-		return FText::FromString(Guid.ToString(GuidFormat));
+		FGuid Value;
+		if (!GetAccessor()->Get(&Value, sizeof(decltype(Value))))
+		{
+			static FGuid EmptyGuid;
+			return FText::FromString(EmptyGuid.ToString(GuidFormat));
+		}
+
+		return FText::FromString(Value.ToString(GuidFormat));
 	}
 
 	FReply SPropertyWidgetGuid::OnButtonClicked()
 	{
-		GetAccessor()->Set(FGuid::NewGuid());
+		FGuid Value = FGuid::NewGuid();
+		GetAccessor()->Set(&Value, sizeof(decltype(Value)));
 		return FReply::Handled();
 	}
 
