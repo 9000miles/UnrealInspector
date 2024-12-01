@@ -242,7 +242,10 @@ void FFunctionDetailHolder::SetFunction(TSharedPtr<FFunctionHolder> FunctionHold
 		FMemory::Free(ParameterPtr);
 		ParameterPtr = nullptr;
 	}
-	ParameterPtr = (uint8*)FMemory::MallocZeroed(Holder->GetPropertiesSize());
+	if (Holder.IsValid())
+	{
+		ParameterPtr = (uint8*)FMemory::MallocZeroed(Holder->GetPropertiesSize());
+	}
 
 	if (!Holder.IsValid())
 	{
