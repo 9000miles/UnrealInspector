@@ -50,9 +50,7 @@ public:
 			}
 		}
 
-		void* Value = Container + Offset;
-		FMemory::Memcpy(Out, Value, Size);
-
+		Property->GetValue_InContainer(Container, Out);
 		return true;
 	}
 
@@ -61,8 +59,7 @@ public:
 		check(Container && Property);
 		check(Size == Property->GetSize());
 
-		void* Value = Container + Property->GetOffset_ForInternal();
-		FMemory::Memcpy(Value, In, Size);
+		Property->SetValue_InContainer(Container, In);
 
 		bDefaultValueCached = true;
 	}

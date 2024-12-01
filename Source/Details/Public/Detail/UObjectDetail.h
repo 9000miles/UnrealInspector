@@ -36,168 +36,38 @@ namespace DETAILS_VIEWER
 			}
 			virtual ~FUEPropertyAccessor() {}
 
-			void Set(const void* In, int32 Size) override
+		private:
+			void Check(int32 Size)
 			{
 				checkf(Container && Property, TEXT("Container && Property is null"));
 				checkf(Property->GetSize() == Size, TEXT("Property size is not equal to size"));
+			}
+
+			void Set(const void* In, int32 Size) override
+			{
+				Check(Size);
 
 				Property->SetValue_InContainer(Container, In);
 			}
 			bool Get(void* Out, int32 Size) override
 			{
-				checkf(Container && Property, TEXT("Container && Property is null"));
-				checkf(Property->GetSize() == Size, TEXT("Property size is not equal to size"));
+				Check(Size);
 
 				Property->GetValue_InContainer(Container, Out);
 				return true;
 			}
 
-			//* ============================== Set ================================= *//
-			void Set(FString Value) { SetValue<FString, FStrProperty>(Value); }
-			void Set(FName Value) { SetValue<FName, FNameProperty>(Value); }
-			void Set(FText Value) { SetValue<FText, FTextProperty>(Value); }
-			void Set(FGuid Value) { SetStructValue<FGuid>(Value); }
-			void Set(FVector2D Value) { SetStructValue<FVector2D>(Value); }
-			void Set(FVector Value) { SetStructValue<FVector>(Value); }
-			void Set(FVector4 Value) { SetStructValue<FVector4>(Value); }
-			void Set(FTransform Value) { SetStructValue<FTransform>(Value); }
-			void Set(uint16 Value) { SetValue<uint16, FUInt16Property>(Value); }
-			void Set(uint32 Value) { SetValue<uint32, FUInt32Property>(Value); }
-			void Set(uint64 Value) { SetValue<uint64, FUInt64Property>(Value); }
-			void Set(int8 Value) { SetValue<int8, FInt8Property>(Value); }
-			void Set(int16 Value) { SetValue<int16, FInt16Property>(Value); }
-			void Set(int32 Value) { SetValue<int32, FIntProperty>(Value); }
-			void Set(int64 Value) { SetValue<int64, FInt64Property>(Value); }
-			void Set(bool Value) { SetValue<bool, FBoolProperty>(Value); }
-			void Set(uint8 Value) { SetValue<uint8, FByteProperty>(Value); }
-			void Set(FEnumValue Value) {
-				if (!Container || Property == nullptr) return;
-
-				FEnumProperty* Ptr = CastField<FEnumProperty>(Property);
-				check(Ptr);
-
-				UEnum* Enum = Ptr->GetEnum();
-				const uint8 NewEnumValue = Value.Value;
-				if (NewEnumValue < 0 || NewEnumValue >= Enum->NumEnums())
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Invalid enum value: %d"), NewEnumValue);
-					return;
-				}
-				uint8* EnumValuePtr = Ptr->ContainerPtrToValuePtr<uint8>(Container);
-				*EnumValuePtr = NewEnumValue;
-			}
-			void Set(float Value) { SetValue<float, FFloatProperty>(Value); }
-			void Set(double Value) { SetValue<double, FDoubleProperty>(Value); }
-			void Set(UObject* Value) { SetValue<UObject*, FObjectProperty>(Value); }
-			void Set(UClass* Value) { SetValue<UClass*, FClassProperty>(Value); }
-
-#define DEFINE_SET_FUNC_CONTAINER(Type, PropType) \
-			template<typename T> \
-			void Set(const Type<T>& Value) { \
-				if (!Container || Property == nullptr) return; \
-				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Container, Value); \
-			}
-			DEFINE_SET_FUNC_CONTAINER(TArray, FArrayProperty);
-			DEFINE_SET_FUNC_CONTAINER(TSet, FSetProperty);
-
-			// 宏定义 Map 类型
-#define DEFINE_SET_FUNC_MAP(PropType) \
-			template<typename K, typename V> \
-			void Set(const TMap<K, V>& Value) {\
-				if (!Container || Property == nullptr) return; \
-				PropType* Ptr = CastField<PropType>(Property); \
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Container, Value); \
-			}
-			DEFINE_SET_FUNC_MAP(FMapProperty);
-
-
-			//* ============================== Get ================================= *//
-			void Get(bool& Out) { GetValue<bool, FBoolProperty>(Out); }
-			void Get(float& Out) { GetValue<float, FFloatProperty>(Out); }
-			void Get(double& Out) { GetValue<double, FDoubleProperty>(Out); }
-			void Get(uint8& Out) { GetValue<uint8, FByteProperty>(Out); }
-			void Get(FEnumValue& Out) {
-				if (!Container || Property == nullptr) return;
-
-				FEnumProperty* Ptr = CastField<FEnumProperty>(Property);
-				check(Ptr);
-
-				uint8* EnumValuePtr = Ptr->ContainerPtrToValuePtr<uint8>(Container);
-				Out.Value = *EnumValuePtr;
-			}
-			void Get(int32& Out) { GetValue<int32, FIntProperty>(Out); }
-			void Get(FString& Out) { GetValue<FString, FStrProperty>(Out); }
-			void Get(FName& Out) { GetValue<FName, FNameProperty>(Out); }
-			void Get(FText& Out) { GetValue<FText, FTextProperty>(Out); }
-			void Get(FGuid& Out) { GetStructValue<FGuid>(Out); }
-			void Get(FVector2D& Out) { GetStructValue<FVector2D>(Out); }
-			void Get(FVector& Out) { GetStructValue<FVector>(Out); }
-			void Get(FVector4& Out) { GetStructValue<FVector4>(Out); }
-			void Get(FTransform& Out) { GetStructValue<FTransform>(Out); }
-
 			//* ============================== Reset ================================= *//
 			void Reset() {
-				if (!Container) return;
+				Check(Property->GetSize());
 
-				void* ValuePtr = Property->ContainerPtrToValuePtr<void>(Container);
-				if (!ValuePtr || !DefaultValuePtr) return; // 检查指针是否为空
-
-				// 使用 memcpy 进行内存拷贝，避免直接解引用 void* 指针
-				memcpy(ValuePtr, DefaultValuePtr, Property->GetSize());
+				Property->SetValue_InContainer(Container, DefaultValuePtr);
 			}
 
 			//* ============================== OnPropertyChanged ================================= *//
 			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action)
 			{
 
-			}
-
-		protected:
-			template<typename TValue, typename TPropertyType>
-			void SetValue(TValue Value) {
-				if (!Container || Property == nullptr) return;
-
-				TPropertyType* Ptr = CastField<TPropertyType>(Property);
-				check(Ptr);
-				if (Ptr) Ptr->SetPropertyValue_InContainer(Container, Value);
-
-				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
-			}
-			template<typename TValue>
-			void SetStructValue(TValue Value)
-			{
-				if (!Container || Property == nullptr) return;
-
-				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
-				UScriptStruct* StructType = StructProperty->Struct;
-				check(StructType == TBaseStructure<TValue>::Get());
-
-				StructProperty->SetValue_InContainer(Container, &Value);
-
-				OnPropertyChanged(Property->GetName(), TEXT(""), EPropertyChangeAction::Unspecified);
-			}
-
-
-			template<typename TValue, typename TPropertyType>
-			void GetValue(TValue& Out) {
-				if (!Container || Property == nullptr) return;
-
-				TPropertyType* Ptr = CastField<TPropertyType>(Property);
-				check(Ptr);
-				if (Ptr) Out = Ptr->GetPropertyValue_InContainer(Container);
-			}
-
-			template<typename TValue>
-			void GetStructValue(TValue& Out)
-			{
-				if (!Container || Property == nullptr) return;
-
-				FStructProperty* StructProperty = CastField<FStructProperty>(Property);
-				UScriptStruct* StructType = StructProperty->Struct;
-				check(StructType == TBaseStructure<TValue>::Get());
-
-				StructProperty->GetValue_InContainer(Container, &Out);
 			}
 
 		private:

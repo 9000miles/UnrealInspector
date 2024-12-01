@@ -142,10 +142,6 @@ namespace DETAILS_VIEWER
 			uint8 Value = 0;
 		};
 
-		/**
-		* @TODO 考虑改成模板函数，然后使用Container和属性类型大小偏移来实现，然后就可以支持所有容器了
-		*/
-#if 1
 		class DETAILSVIEWER_API IPropertyAccessor :public IJsonable
 		{
 		public:
@@ -154,47 +150,6 @@ namespace DETAILS_VIEWER
 			virtual void Reset() = 0;
 			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action) = 0;
 		};
-#else
-		class DETAILSVIEWER_API IPropertyAccessor :public IJsonable
-		{
-		public:
-			virtual void Set(const bool Value) {}
-			virtual void Set(const float Value) {}
-			virtual void Set(const double Value) {}
-			//virtual void Set(const int Value) {}
-			virtual void Set(const uint8 Value) {}
-			virtual void Set(const FEnumValue Value) {}
-			virtual void Set(const int32 Value) {}
-			virtual void Set(const FString Value) {}
-			virtual void Set(const FName Value) {}
-			virtual void Set(const FText Value) {}
-			virtual void Set(const FGuid Value) {}
-			virtual void Set(const FVector2D Value) {}
-			virtual void Set(const FVector Value) {}
-			virtual void Set(const FVector4 Value) {}
-			virtual void Set(const FTransform Value) {}
-
-			virtual void Get(bool& Out) {}
-			virtual void Get(float& Out) {}
-			virtual void Get(double& Out) {}
-			//virtual void Get(int& Out) {}
-			virtual void Get(uint8& Out) {}
-			virtual void Get(FEnumValue& Out) {}
-			virtual void Get(int32& Out) {}
-			virtual void Get(FString& Out) {}
-			virtual void Get(FName& Out) {}
-			virtual void Get(FText& Out) {}
-			virtual void Get(FGuid& Out) {}
-			virtual void Get(FVector2D& Out) {}
-			virtual void Get(FVector& Out) {}
-			virtual void Get(FVector4& Out) {}
-			virtual void Get(FTransform& Out) {}
-
-			virtual void Reset() = 0;
-
-			virtual void OnPropertyChanged(FString MemberName, FString InnerName, EPropertyChangeAction Action) = 0;
-		};
-#endif // 0
 
 		class DETAILSVIEWER_API IConditionEvaluator :public IJsonable
 		{
