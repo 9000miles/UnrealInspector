@@ -38,23 +38,18 @@ namespace DETAILS_VIEWER
 
 			void Set(const void* In, int32 Size) override
 			{
-				check(Container && Property);
-				check(Size == Property->GetSize());
+				checkf(Container && Property, TEXT("Container && Property is null"));
+				checkf(Property->GetSize() == Size, TEXT("Property size is not equal to size"));
 
-				uint8* Ptr = (uint8*)Container;
-				void* Value = Ptr + Property->GetOffset_ForInternal();
-				FMemory::Memcpy(Value, In, Size);
+				Property->SetValue_InContainer(Container, In);
 			}
 			bool Get(void* Out, int32 Size) override
 			{
-				check(Container && Property);
-				check(Size == Property->GetSize());
+				checkf(Container && Property, TEXT("Container && Property is null"));
+				checkf(Property->GetSize() == Size, TEXT("Property size is not equal to size"));
 
-				uint8* Ptr = (uint8*)Container;
-				void* Value = Ptr + Property->GetOffset_ForInternal();
-				FMemory::Memcpy(Out, Value, Size);
-
-                return true;
+				Property->GetValue_InContainer(Container, Out);
+				return true;
 			}
 
 			//* ============================== Set ================================= *//
